@@ -1010,21 +1010,25 @@ async function loadAllData(){
   APP.rewards=Store.lsGet('rewards/list')||{items:DEFAULT_REWARDS.slice()};
   render();
   if(Store.db){
+    // Firebase Realtime Database silently drops keys whose value is an empty
+    // array/object (e.g. badges:[] or checkins:{}) instead of storing them —
+    // merging onto a freshly-built default object restores those keys so the
+    // UI never sees `undefined` where it expects an array/object.
     for(const id of Object.keys(LEARNERS_META)){
       const remote=await Store.dbGet(`learners/${id}`);
-      if(remote){ APP.learners[id]=remote; Store.lsSet(`learners/${id}`,remote); }
+      if(remote){ const merged=Object.assign(defaultLearner(id),remote); APP.learners[id]=merged; Store.lsSet(`learners/${id}`,merged); }
       else{ Store.dbSet(`learners/${id}`,APP.learners[id]); }
       const remoteWs=await Store.dbGet(`learners/${id}/workshop`);
-      if(remoteWs){ APP.workshops[id]=remoteWs; Store.lsSet(`learners/${id}/workshop`,remoteWs); }
+      if(remoteWs){ const mergedWs=Object.assign(defaultWorkshop(),remoteWs); APP.workshops[id]=mergedWs; Store.lsSet(`learners/${id}/workshop`,mergedWs); }
       else{ Store.dbSet(`learners/${id}/workshop`,APP.workshops[id]); }
       for(const sk of LEARNERS_META[id].skills){
         const remoteSk=await Store.dbGet(`learners/${id}/skills/${sk.id}`);
-        if(remoteSk){ APP.skillStates[id][sk.id]=remoteSk; Store.lsSet(`learners/${id}/skills/${sk.id}`,remoteSk); }
+        if(remoteSk){ const mergedSk=Object.assign(makeSkillState(),remoteSk); APP.skillStates[id][sk.id]=mergedSk; Store.lsSet(`learners/${id}/skills/${sk.id}`,mergedSk); }
         else{ Store.dbSet(`learners/${id}/skills/${sk.id}`,APP.skillStates[id][sk.id]); }
       }
     }
     const remoteRewards=await Store.dbGet('rewards/list');
-    if(remoteRewards){ APP.rewards=remoteRewards; Store.lsSet('rewards/list',remoteRewards); }
+    if(remoteRewards){ const mergedRewards=Object.assign({items:DEFAULT_REWARDS.slice()},remoteRewards); APP.rewards=mergedRewards; Store.lsSet('rewards/list',mergedRewards); }
     else{ Store.dbSet('rewards/list',APP.rewards); }
     render();
   }
