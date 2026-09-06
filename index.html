@@ -137,6 +137,17 @@ label.flabel{font-size:.76rem;color:var(--ink-soft);font-weight:600;display:bloc
 .area-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));}
 .area-card{padding:16px;display:flex;flex-direction:column;gap:8px;cursor:pointer;border:1.5px solid var(--border);}
 .area-card[data-active="true"]{border-color:var(--teal);background:var(--teal-soft);}
+.step-card{padding:18px;margin-bottom:18px;}
+.step-card[data-locked="true"]{opacity:.55;}
+.step-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--surface-3);color:var(--ink-soft);font-family:var(--font-mono);font-weight:700;font-size:.82rem;display:flex;align-items:center;justify-content:center;flex:none;}
+.step-num[data-done="true"]{background:var(--good);color:#fff;}
+.step-title{font-family:var(--font-display);font-weight:600;font-size:1.08rem;flex:1;}
+.step-body{font-size:.86rem;color:var(--ink-soft);line-height:1.55;margin-bottom:10px;}
+.howto-box{background:var(--teal-soft);border-radius:12px;padding:11px 14px;font-size:.82rem;color:var(--ink);line-height:1.55;margin:10px 0 4px;}
+.howto-box b{color:var(--teal-strong);}
+.lock-hint{font-size:.82rem;color:var(--ink-faint);font-style:italic;}
+.checkin-dot[data-today="true"]{outline:2px solid var(--accent);outline-offset:2px;}
 ::-webkit-scrollbar{width:8px;height:8px;}
 ::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:8px;}
 @media (max-width:600px){.choices{grid-template-columns:1fr;}}
@@ -705,6 +716,16 @@ connect:{g2:[{t:'Kindness Mission',d:'Do one kind act daily for a week and log i
 grit:{g2:[{t:'10-Day Skill Streak',d:'Pick a hard skill (tying shoes, a puzzle) and practice daily.'},{t:'Chore Marathon',d:'Complete one big chore fully without giving up.'}],
       g4:[{t:'Personal Challenge',d:'Train toward a physical goal (push-ups, a mile run) for 2 weeks.'},{t:'Fix-It Project',d:'Repair or build something that takes several attempts.'}]}
 };
+/* "Showcase" = a real, small audience-and-stakes moment at the end of a mission
+   (inspired by Alpha School's "AlphaTest" idea: mastery is shown to a real
+   audience, not a worksheet). Shown once a mission is picked, as the finish line. */
+const AREA_SHOWCASE={
+  team:'Showcase idea: gather everyone you organized and actually run the thing — the game, the chore system, the cleanup — while your family watches.',
+  story:'Showcase idea: perform it live for the family, or press play on your recording. A story only counts once someone else hears it!',
+  build:'Showcase idea: show your family the money ledger and the finished product — what you made, sold, or saved, and exactly how much.',
+  connect:'Showcase idea: tell your family what you did and how it went, or read your letter out loud before you send it.',
+  grit:'Showcase idea: do the hard thing in front of your family on the last day — the run, the trick, the fix — so they can see how far you came.'
+};
 
 /* ================= BADGE DEFINITIONS ================= */
 const BADGE_DEFS=[
@@ -971,6 +992,7 @@ const DEFAULT_REWARDS=[
 const APP={
   currentLearnerId:null,
   activeTab:'today',
+  workshopFocus:null,
   learners:{}, skillStates:{comet:{},voyager:{}}, workshops:{}, rewards:[],
   booted:false,
   auth:{users:{}, currentUser:null, screen:'login', error:'', notice:'', regRole:'student'}
@@ -1113,7 +1135,7 @@ function renderTabbar(){
   el.innerHTML=TABS.filter(t=>allowed.includes(t.id)).map(t=>`<button class="tab-btn" data-active="${APP.activeTab===t.id}" onclick="setTab('${t.id}')">${icon(t.icon,APP.activeTab===t.id?'var(--accent)':'var(--ink-faint)',16)}${t.label}</button>`).join('');
 }
 function setLearner(id){ if(!visibleLearnerIds().includes(id))return; APP.currentLearnerId=id; render(); }
-function setTab(id){ if(!allowedTabsFor(APP.auth.currentUser).includes(id))return; APP.activeTab=id; render(); }
+function setTab(id,focus){ if(!allowedTabsFor(APP.auth.currentUser).includes(id))return; APP.activeTab=id; APP.workshopFocus=focus||null; render(); }
 function render(){
   if(!APP.auth.currentUser){
     document.getElementById('topbar').innerHTML=`<div class="brand">${icon('mountain','var(--accent)',34)}<div><div class="brand-name">Two Peaks</div><div class="brand-sub">Home Basecamp</div></div></div>`;
@@ -1132,6 +1154,20 @@ function render(){
   else if(APP.activeTab==='workshop') view.innerHTML=renderTrailTime();
   else if(APP.activeTab==='camp') view.innerHTML=renderCampLog();
   else if(APP.activeTab==='admin') view.innerHTML=renderAdmin();
+  if(APP.activeTab==='workshop' && APP.workshopFocus){
+    const focus=APP.workshopFocus; APP.workshopFocus=null;
+    const targetId=focus==='journal'?'closingCircleCard':(focus==='mission'?'missionCard':null);
+    if(targetId&&typeof requestAnimationFrame==='function'){
+      requestAnimationFrame(()=>{
+        const node=document.getElementById(targetId);
+        if(node&&node.scrollIntoView) node.scrollIntoView({behavior:'smooth',block:'start'});
+        if(focus==='journal'){
+          const ta=document.getElementById('journalInput');
+          if(ta&&ta.focus) ta.focus();
+        }
+      });
+    }
+  }
 }
 
 /* ================= TODAY'S ROUTE ================= */
@@ -1140,15 +1176,15 @@ function renderToday(){
   const log=learner.todayLog;
   const ws=APP.workshops[id];
   const items=[
-    {key:'mathDone',title:'Math Trail focus block',sub:'~10 quick adaptive questions',tab:'math'},
-    {key:'readingDone',title:'Reading Trail focus block',sub:'Sight words, vocabulary or a passage',tab:'reading'},
-    {key:'workshopDone',title:'Trail Time project work',sub:ws.projectTitle?('Working on: '+ws.projectTitle):'Pick a project in Trail Time',tab:'workshop'},
-    {key:'journalDone',title:'Closing Circle reflection',sub:'Write one line about today’s win',tab:'workshop'}
+    {key:'mathDone',title:'Math Trail focus block',sub:'~10 quick adaptive questions',tab:'math',cta:'Go'},
+    {key:'readingDone',title:'Reading Trail focus block',sub:'Sight words, vocabulary or a passage',tab:'reading',cta:'Go'},
+    {key:'workshopDone',title:'Trail Time project work',sub:ws.projectTitle?('Working on: '+ws.projectTitle):'Pick a project in Trail Time',tab:'workshop',focus:'mission',cta:'Go'},
+    {key:'journalDone',title:'Closing Circle reflection',sub:'Write one line about today’s win',tab:'workshop',focus:'journal',cta:'Reflect'}
   ];
   const rows=items.map(it=>`<div class="card route-item">
       <div class="route-check" data-done="${!!log[it.key]}">${log[it.key]?'✓':''}</div>
       <div class="route-body"><div class="route-title">${it.title}</div><div class="route-sub">${it.sub}</div></div>
-      <button class="btn btn-secondary" onclick="setTab('${it.tab}')">Go</button>
+      <button class="btn btn-secondary" onclick="setTab('${it.tab}'${it.focus?`,'${it.focus}'`:''})">${it.cta}</button>
     </div>`).join('');
   const av=accentVars(LEARNERS_META[id].color);
   const mascot=LEARNERS_META[id].mascot;
@@ -1418,40 +1454,68 @@ function quitComp(){ closeModal(); comp=null; render(); }
 function last14Days(){ const days=[]; for(let i=13;i>=0;i--){ days.push(new Date(Date.now()-i*86400000).toISOString().slice(0,10)); } return days; }
 function renderTrailTime(){
   const id=APP.currentLearnerId; const meta=LEARNERS_META[id]; const ws=APP.workshops[id]; const av=accentVars(meta.color);
+  const learner=APP.learners[id]; ensureTodayLog(learner); const log=learner.todayLog;
+  const today=todayStr();
+  const step1Done=!!ws.areaId;
+  const step2Done=!!ws.projectTitle;
+  const step3Done=!!ws.checkins[today];
+  const step4Done=!!log.journalDone;
+
   const areaCards=WORKSHOP_AREAS.map(a=>`<div class="card area-card" data-active="${ws.areaId===a.id}" onclick="pickArea('${a.id}')">
       <div class="skill-icon" style="background:var(--teal-soft)">${icon(a.icon,'var(--teal)',18)}</div>
       <b style="font-family:var(--font-display);font-size:1rem">${a.label}</b>
       <span class="section-sub" style="margin:0">${a.blurb}</span>
     </div>`).join('');
-  let ideasHtml='';
-  if(ws.areaId){
+
+  let step2Inner;
+  if(!ws.areaId){
+    step2Inner=`<div class="lock-hint">Pick a trail in Step 1 above first — then your mission ideas will show up here.</div>`;
+  }else{
     const ideas=PROJECT_IDEAS[ws.areaId][meta.gradeKey];
-    ideasHtml=`<div class="grid" style="grid-template-columns:1fr 1fr;margin-top:10px">${ideas.map(i=>`<div class="idea-card"><b>${i.t}</b>${i.d}<div style="height:8px"></div><button class="btn btn-secondary" onclick="chooseIdea(${JSON.stringify(i.t).replace(/"/g,'&quot;')})">Use this mission</button></div>`).join('')}</div>`;
-  }
-  const days=last14Days();
-  const strip=days.map(d=>`<button class="checkin-dot" data-on="${!!ws.checkins[d]}" title="${d}" onclick="toggleCheckin('${d}')"></button>`).join('');
-  const journalHtml=(ws.journal||[]).slice(0,6).map(j=>`<div class="journal-entry"><div class="journal-date mono">${j.date}</div>${esc(j.text)}</div>`).join('')||'<div class="section-sub">No reflections yet.</div>';
-  return `
-  <div class="section-title">Trail Time</div>
-  <div class="section-sub">${meta.ageLabel} · Afternoon life-skills project, inspired by real-world teamwork, storytelling, business, kindness, and grit challenges.</div>
-  <div class="grid area-grid">${areaCards}</div>
-  ${ideasHtml}
-  <div style="height:22px"></div>
-  <div class="card" style="padding:18px">
-    <label class="flabel">This week's mission</label>
+    const ideasHtml=`<div class="grid" style="grid-template-columns:1fr 1fr;margin-top:6px">${ideas.map(i=>`<div class="idea-card"><b>${i.t}</b>${i.d}<div style="height:8px"></div><button class="btn btn-secondary" onclick="chooseIdea(${JSON.stringify(i.t).replace(/"/g,'&quot;')})">Use this mission</button></div>`).join('')}</div>`;
+    const showcase=AREA_SHOWCASE[ws.areaId];
+    step2Inner=`
+    <div class="step-body">Pick one of the mission ideas below with one click, or make up your own in the box. Say your mission out loud to a grown-up — telling someone your plan is what makes it official!</div>
+    ${ideasHtml}
+    <div style="height:14px"></div>
+    <label class="flabel">This week's mission (what you're actually doing)</label>
     <div class="field"><input type="text" id="projectTitleInput" placeholder="e.g. Neighborhood Cleanup Captain" value="${esc(ws.projectTitle)}"></div>
-    <label class="flabel">What does success look like?</label>
+    <label class="flabel">What does "done" look like?</label>
     <div class="field"><textarea id="goalTextInput" rows="2" placeholder="e.g. Organize 3 friends and clean the park block on Saturday.">${esc(ws.goalText)}</textarea></div>
     <button class="btn btn-primary" onclick="saveMission()">Save Mission</button>
+    ${ws.projectTitle?`<div class="howto-box"><b>Finish line:</b> ${esc(showcase)}</div>`:''}
+    `;
+  }
+
+  const days=last14Days();
+  const strip=days.map(d=>`<button class="checkin-dot" data-on="${!!ws.checkins[d]}" data-today="${d===today}" title="${d}${d===today?' (today)':''}" onclick="toggleCheckin('${d}')"></button>`).join('');
+
+  const journalHtml=(ws.journal||[]).slice(0,6).map(j=>`<div class="journal-entry"><div class="journal-date mono">${j.date}</div>${esc(j.text)}</div>`).join('')||'<div class="section-sub">No reflections yet.</div>';
+
+  return `
+  <div class="section-title">Trail Time</div>
+  <div class="section-sub">${meta.ageLabel} · Your own afternoon project — 4 simple steps, one project a week. Real teamwork, real stories, real money, real kindness, real grit.</div>
+
+  <div class="card step-card">
+    <div class="step-head"><span class="step-num" data-done="${step1Done}">${step1Done?'✓':'1'}</span><span class="step-title">Pick Your Trail</span></div>
+    <div class="step-body">Choose the kind of adventure you want to go on this week. You can switch trails next week — try them all eventually!</div>
+    <div class="grid area-grid">${areaCards}</div>
   </div>
-  <div style="height:22px"></div>
-  <div class="card" style="padding:18px">
-    <label class="flabel">Worked on it today?</label>
+
+  <div class="card step-card" id="missionCard">
+    <div class="step-head"><span class="step-num" data-done="${step2Done}">${step2Done?'✓':'2'}</span><span class="step-title">Choose Your Mission</span></div>
+    ${step2Inner}
+  </div>
+
+  <div class="card step-card">
+    <div class="step-head"><span class="step-num" data-done="${step3Done}">${step3Done?'✓':'3'}</span><span class="step-title">Work On It Each Day</span></div>
+    <div class="step-body">Every day you spend a little time on your mission, tap today's box (it has a ring around it). Try to fill the whole row — it doesn't have to be long, just real work on your mission.</div>
     <div class="checkin-strip">${strip}</div>
   </div>
-  <div style="height:22px"></div>
-  <div class="card" style="padding:18px">
-    <label class="flabel">Closing Circle — today's win</label>
+
+  <div class="card step-card" id="closingCircleCard">
+    <div class="step-head"><span class="step-num" data-done="${step4Done}">${step4Done?'✓':'4'}</span><span class="step-title">Closing Circle — Share Your Win</span></div>
+    <div class="step-body">At the end of the day, sit with a grown-up (or just find one!) and say one thing you're proud of from today — big or small. Then type it below so it's saved.</div>
     <div class="field"><textarea id="journalInput" rows="2" placeholder="What are you proud of today?"></textarea></div>
     <button class="btn btn-primary" onclick="addJournal()">Add Reflection</button>
     <div style="height:14px"></div>
