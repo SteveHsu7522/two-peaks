@@ -1,0 +1,1777 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Two Peaks</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Libre+Franklin:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --bg:#FBF7EF; --surface:#FFFFFF; --surface-2:#F3ECDC; --surface-3:#EAE1CC;
+  --ink:#232A3D; --ink-soft:#5B6178; --ink-faint:#8C90A3; --border:#E1D6BE;
+  --accent:#E8912E; --accent-strong:#C97417; --accent-soft:#FBEBD3;
+  --teal:#1F8A82; --teal-strong:#146760; --teal-soft:#DCF0EC;
+  --plum:#8B5FBF; --plum-strong:#6F3FA0; --plum-soft:#EFE4F7;
+  --sky:#2F86C9; --sky-strong:#1F63A0; --sky-soft:#DDEEFA;
+  --good:#3D8F5B; --good-soft:#E1F3E6; --warn:#C9791A; --warn-soft:#FBE9D2;
+  --bad:#C6435A; --bad-soft:#FAE1E5;
+  --shadow-sm:0 1px 2px rgba(35,30,15,.08); --shadow-md:0 6px 20px rgba(35,30,15,.10);
+  --radius-sm:10px; --radius-md:16px; --radius-lg:24px;
+  --font-display:'Fraunces',Georgia,serif; --font-body:'Libre Franklin',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; --font-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#141826; --surface:#1D2338; --surface-2:#242B45; --surface-3:#323A58;
+  --ink:#EDEFF7; --ink-soft:#B7BCD3; --ink-faint:#7D839C; --border:#333D5C;
+  --accent:#F0A63E; --accent-strong:#FFC670; --accent-soft:#3A2C14;
+  --teal:#3FC2B7; --teal-strong:#7EDDD4; --teal-soft:#123230;
+  --good:#5FC486; --good-soft:#173322; --warn:#E2A24C; --warn-soft:#3A2A10;
+  --bad:#F2748A; --bad-soft:#3A1B22;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4); --shadow-md:0 10px 30px rgba(0,0,0,.45);
+}}
+:root[data-theme="dark"]{
+  --bg:#141826; --surface:#1D2338; --surface-2:#242B45; --surface-3:#323A58;
+  --ink:#EDEFF7; --ink-soft:#B7BCD3; --ink-faint:#7D839C; --border:#333D5C;
+  --accent:#F0A63E; --accent-strong:#FFC670; --accent-soft:#3A2C14;
+  --teal:#3FC2B7; --teal-strong:#7EDDD4; --teal-soft:#123230;
+  --good:#5FC486; --good-soft:#173322; --warn:#E2A24C; --warn-soft:#3A2A10;
+  --bad:#F2748A; --bad-soft:#3A1B22;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4); --shadow-md:0 10px 30px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box;}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);}
+h1,h2,h3,.display{font-family:var(--font-display);text-wrap:balance;}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+button{font-family:inherit;cursor:pointer;}
+#app{max-width:1080px;margin:0 auto;padding:0 16px 48px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 4px 10px;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-mark{width:34px;height:34px;flex:none;}
+.brand-name{font-family:var(--font-display);font-weight:700;font-size:1.35rem;letter-spacing:.2px;}
+.brand-sub{font-size:.72rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em;margin-top:-2px;}
+.learner-switch{display:flex;gap:8px;}
+.learner-btn{display:flex;align-items:center;gap:8px;padding:7px 12px 7px 7px;border-radius:999px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);transition:border-color .15s,background .15s;}
+.learner-btn .dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-display);font-weight:700;font-size:.85rem;overflow:hidden;flex:none;}
+.learner-btn .dot svg{width:100%;height:100%;}
+.learner-btn[data-active="true"]{border-color:var(--accent-color,var(--accent));background:var(--accent-color-soft,var(--accent-soft));}
+.learner-btn .lbl{text-align:left;line-height:1.15;}
+.learner-btn .lbl b{display:block;font-size:.85rem;}
+.learner-btn .lbl span{display:block;font-size:.68rem;color:var(--ink-faint);}
+.stat-strip{display:flex;gap:14px;flex-wrap:wrap;padding:2px 4px 14px;}
+.stat-chip{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:7px 12px;box-shadow:var(--shadow-sm);}
+.stat-chip .num{font-family:var(--font-mono);font-weight:600;font-size:.95rem;}
+.stat-chip .cap{font-size:.66rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;}
+.xpbar-wrap{flex:1;min-width:160px;display:flex;flex-direction:column;justify-content:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 14px;box-shadow:var(--shadow-sm);}
+.xpbar-top{display:flex;justify-content:space-between;font-size:.7rem;color:var(--ink-faint);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em;}
+.xpbar-track{height:8px;border-radius:999px;background:var(--surface-3);overflow:hidden;}
+.xpbar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent-color,var(--accent)),var(--accent-color-strong,var(--accent-strong)));}
+.tabbar{display:flex;gap:6px;border-bottom:1.5px solid var(--border);margin-bottom:20px;overflow-x:auto;}
+.tab-btn{display:flex;align-items:center;gap:7px;padding:10px 14px;border:none;background:none;color:var(--ink-soft);font-weight:600;font-size:.88rem;border-bottom:2.5px solid transparent;white-space:nowrap;}
+.tab-btn[data-active="true"]{color:var(--ink);border-bottom-color:var(--accent-color,var(--accent));}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);}
+.section-title{font-family:var(--font-display);font-weight:600;font-size:1.3rem;margin:0 0 4px;}
+.section-sub{color:var(--ink-soft);font-size:.9rem;margin:0 0 16px;}
+.grid{display:grid;gap:14px;}
+.grid-skills{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));}
+.skill-card{padding:16px;display:flex;flex-direction:column;gap:10px;}
+.skill-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.skill-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;}
+.skill-name{font-weight:600;font-size:.95rem;}
+.elev-badge{font-size:.66rem;font-family:var(--font-mono);padding:2px 7px;border-radius:999px;background:var(--surface-2);color:var(--ink-soft);white-space:nowrap;}
+.ascent{display:flex;align-items:center;gap:6px;}
+.ascent-track{flex:1;height:7px;border-radius:999px;background:var(--surface-3);overflow:hidden;}
+.ascent-fill{height:100%;background:var(--teal);border-radius:999px;}
+.ascent-pct{font-family:var(--font-mono);font-size:.7rem;color:var(--ink-faint);}
+.skill-meta{font-size:.72rem;color:var(--ink-faint);}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:999px;}
+.pill-good{background:var(--good-soft);color:var(--good);}
+.pill-warn{background:var(--warn-soft);color:var(--warn);}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:10px;border:none;font-weight:600;font-size:.86rem;}
+.btn-primary{background:var(--accent-color,var(--accent));color:#221602;}
+.btn-secondary{background:var(--surface-2);color:var(--ink);border:1px solid var(--border);}
+.btn-block{width:100%;}
+.btn:disabled{opacity:.5;cursor:default;}
+.route-list{display:flex;flex-direction:column;gap:10px;}
+.route-item{display:flex;align-items:center;gap:14px;padding:14px 16px;}
+.route-check{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);flex:none;display:flex;align-items:center;justify-content:center;}
+.route-check[data-done="true"]{background:var(--good);border-color:var(--good);color:#fff;}
+.route-body{flex:1;}
+.route-title{font-weight:600;font-size:.92rem;}
+.route-sub{font-size:.76rem;color:var(--ink-faint);}
+.badge-row{display:flex;flex-wrap:wrap;gap:10px;}
+.badge-tile{width:84px;text-align:center;font-size:.68rem;color:var(--ink-soft);}
+.badge-shape{width:56px;height:56px;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;}
+.badge-tile.locked{opacity:.35;}
+.reward-row{display:flex;align-items:center;justify-content:between;gap:10px;padding:12px 14px;}
+.reward-row .rlbl{flex:1;font-weight:600;font-size:.88rem;}
+.reward-cost{font-family:var(--font-mono);font-size:.8rem;color:var(--accent-strong);}
+.modal-overlay{position:fixed;inset:0;background:rgba(15,12,4,.45);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px;}
+.modal-card{background:var(--surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);max-width:560px;width:100%;max-height:90vh;overflow-y:auto;padding:26px;}
+.qhead{display:flex;justify-content:space-between;align-items:center;font-size:.72rem;color:var(--ink-faint);margin-bottom:14px;font-family:var(--font-mono);}
+.qprompt{font-family:var(--font-display);font-size:1.25rem;font-weight:600;margin:6px 0 18px;white-space:pre-line;}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.choice-btn{padding:14px;border-radius:12px;border:1.5px solid var(--border);background:var(--surface-2);font-weight:600;font-size:1rem;text-align:center;}
+.choice-btn[data-state="correct"]{background:var(--good-soft);border-color:var(--good);color:var(--good);}
+.choice-btn[data-state="wrong"]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad);}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:240px;margin:0 auto;}
+.key-btn{padding:14px 0;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);font-family:var(--font-mono);font-size:1.05rem;font-weight:600;}
+.answer-display{text-align:center;font-family:var(--font-mono);font-size:1.6rem;font-weight:600;padding:10px;border:1.5px dashed var(--border);border-radius:10px;margin-bottom:12px;min-height:46px;}
+.feedback-box{margin-top:16px;padding:14px;border-radius:12px;font-size:.9rem;}
+.feedback-good{background:var(--good-soft);color:var(--good);}
+.feedback-bad{background:var(--bad-soft);color:var(--bad);}
+.center{text-align:center;}
+.stack{display:flex;flex-direction:column;gap:12px;}
+.row{display:flex;gap:10px;flex-wrap:wrap;}
+.tag{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:6px;background:var(--surface-2);color:var(--ink-faint);}
+textarea,input[type=text],input[type=date]{font-family:var(--font-body);border:1px solid var(--border);border-radius:8px;padding:9px 11px;background:var(--surface);color:var(--ink);font-size:.88rem;width:100%;}
+label.flabel{font-size:.76rem;color:var(--ink-soft);font-weight:600;display:block;margin-bottom:4px;}
+.field{margin-bottom:12px;}
+.checkin-strip{display:flex;gap:4px;flex-wrap:wrap;}
+.checkin-dot{width:22px;height:22px;border-radius:6px;background:var(--surface-3);}
+.checkin-dot[data-on="true"]{background:var(--good);}
+.idea-card{padding:12px 14px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border);font-size:.85rem;}
+.idea-card b{display:block;font-family:var(--font-display);font-size:.98rem;margin-bottom:3px;}
+.journal-entry{padding:10px 12px;border-left:3px solid var(--teal);background:var(--surface-2);border-radius:0 8px 8px 0;font-size:.84rem;margin-bottom:8px;}
+.journal-date{font-family:var(--font-mono);font-size:.66rem;color:var(--ink-faint);}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:.82rem;z-index:60;box-shadow:var(--shadow-md);}
+.passage-text{font-size:.95rem;line-height:1.65;background:var(--surface-2);padding:16px;border-radius:12px;margin-bottom:16px;max-height:280px;overflow-y:auto;}
+.area-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));}
+.area-card{padding:16px;display:flex;flex-direction:column;gap:8px;cursor:pointer;border:1.5px solid var(--border);}
+.area-card[data-active="true"]{border-color:var(--teal);background:var(--teal-soft);}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:8px;}
+@media (max-width:600px){.choices{grid-template-columns:1fr;}}
+
+/* ================= MASCOT HERO / MOTIVATION ADD-ONS ================= */
+.hero-card{display:flex;align-items:center;gap:18px;padding:20px 22px;background:linear-gradient(135deg,var(--accent-color-soft,var(--accent-soft)),var(--surface));border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:22px;overflow:hidden;position:relative;}
+.hero-mascot{width:78px;height:78px;flex:none;filter:drop-shadow(0 4px 8px rgba(0,0,0,.12));}
+.hero-mascot svg{animation:bob 3.2s ease-in-out infinite;}
+.hero-greet{font-family:var(--font-display);font-size:1.4rem;font-weight:700;margin:0 0 4px;}
+.hero-sub{font-size:.86rem;color:var(--ink-soft);margin:0;}
+.hero-streak{display:flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:.8rem;color:var(--accent-strong);margin-top:6px;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@media (prefers-reduced-motion: reduce){.hero-mascot svg{animation:none;}}
+
+.elev-path-wrap{margin:2px 0 4px;}
+.flame-row{display:flex;align-items:center;gap:2px;}
+.flame-row svg{filter:drop-shadow(0 1px 1px rgba(0,0,0,.15));}
+
+.feedback-box{animation:pop-in .32s cubic-bezier(.2,1.4,.4,1);}
+@keyframes pop-in{0%{transform:scale(.88);opacity:0}100%{transform:scale(1);opacity:1}}
+@media (prefers-reduced-motion: reduce){.feedback-box{animation:none;}}
+
+.choice-btn{transition:transform .1s ease;}
+.choice-btn[data-state="correct"]{animation:pop-in .32s cubic-bezier(.2,1.4,.4,1);}
+.summit-banner{display:flex;align-items:center;gap:10px;justify-content:center;padding:14px;border-radius:14px;background:linear-gradient(135deg,var(--accent-soft),var(--teal-soft));margin-bottom:14px;font-family:var(--font-display);font-weight:700;font-size:1.1rem;}
+@media (prefers-reduced-motion: reduce){.choice-btn[data-state="correct"]{animation:none;}}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="topbar" id="topbar"></div>
+  <div class="stat-strip" id="statstrip"></div>
+  <div class="tabbar" id="tabbar"></div>
+  <main id="view"></main>
+</div>
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+
+<!-- Firebase (cloud sync across devices). If this ever fails to load (offline,
+     ad-blocker, etc.) the app quietly falls back to this browser's own
+     localStorage — see Store.init() below. -->
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
+<script>
+/* TODO (family admin): this is your own Firebase project's public web config —
+   it is NOT a secret (Firebase is designed to have this embedded in client
+   code); access control is enforced by the Realtime Database "Rules" you set
+   in the Firebase console, not by hiding this object. */
+const FIREBASE_CONFIG={
+  apiKey: "AIzaSyCQBhYXGNVEjcrr-1Di6oVhJ9eCAdHneXc",
+  authDomain: "two-peaks-family.firebaseapp.com",
+  databaseURL: "https://two-peaks-family-default-rtdb.firebaseio.com",
+  projectId: "two-peaks-family",
+  storageBucket: "two-peaks-family.firebasestorage.app",
+  messagingSenderId: "491435009926",
+  appId: "1:491435009926:web:df26eeb77a337df0ecee07"
+};
+</script>
+<script>
+/* ================= UTIL ================= */
+function randInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function pick(arr){return arr[randInt(0,arr.length-1)];}
+function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=randInt(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;}
+function uniqPush(a,v){if(!a.includes(v))a.push(v);return a;}
+function fmtMoney(c){return '$'+(c/100).toFixed(2);}
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function renderPrompt(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');}
+function gcd(a,b){return b===0?a:gcd(b,a%b);}
+function factorsOf(n){const f=[];for(let i=1;i<=n;i++)if(n%i===0)f.push(i);return f;}
+function isPrime(n){if(n<2)return false;for(let i=2;i*i<=n;i++)if(n%i===0)return false;return true;}
+
+/* ================= MATH GENERATORS: GRADE 2 (Comet) ================= */
+function gAdd2(level){let a,b;
+  if(level===1){a=randInt(2,9);b=randInt(2,9);}
+  else if(level===2){a=randInt(10,50);b=randInt(2,9);}
+  else if(level===3){a=randInt(10,60);b=randInt(10,39);}
+  else if(level===4){a=randInt(20,80);b=randInt(15,79);}
+  else{a=randInt(100,400);b=randInt(20,99);}
+  const sum=a+b;
+  return{prompt:`${a} + ${b} = ?`,mode:'numeric',correctAnswer:sum,explanation:`${a} + ${b} = ${sum}`};}
+function gSub2(level){let a,b;
+  if(level===1){a=randInt(5,18);b=randInt(1,a);}
+  else if(level===2){a=randInt(20,60);b=randInt(2,9);}
+  else if(level===3){a=randInt(30,80);b=randInt(11,29);}
+  else if(level===4){a=randInt(40,99);b=randInt(15,a-1);}
+  else{a=randInt(200,500);b=randInt(20,99);}
+  if(b>a)[a,b]=[b,a];
+  const diff=a-b;
+  return{prompt:`${a} - ${b} = ?`,mode:'numeric',correctAnswer:diff,explanation:`${a} - ${b} = ${diff}`};}
+function gPlaceValue2(level){
+  if(level===1){const tens=randInt(1,9),ones=randInt(0,9);const n=tens*10+ones;const askTens=Math.random()<0.5;const correct=askTens?tens:ones;
+    const choices=[...new Set([correct,askTens?ones:tens,randInt(0,9),randInt(0,9)])].slice(0,4);
+    while(choices.length<4)uniqPush(choices,randInt(0,9));
+    return{prompt:`In the number ${n}, how many ${askTens?'tens':'ones'} are there?`,mode:'mc',choices:shuffle(choices),correctAnswer:correct,explanation:`${n} = ${tens} tens and ${ones} ones.`};}
+  if(level===2){const tens=randInt(1,9),ones=randInt(0,9);const n=tens*10+ones;const digit=Math.random()<0.5?tens:ones;const isTensDigit=digit===tens;const value=isTensDigit?tens*10:ones;
+    const choices=[...new Set([value,digit,tens*10,ones,value+10])].slice(0,4);
+    while(choices.length<4)uniqPush(choices,randInt(0,99));
+    return{prompt:`What is the value of the ${digit} in ${n}?`,mode:'mc',choices:shuffle(choices),correctAnswer:value,explanation:`The ${digit} is in the ${isTensDigit?'tens':'ones'} place, so its value is ${value}.`};}
+  if(level===3){const tens=randInt(1,9),ones=randInt(0,9);const n=tens*10+ones;
+    return{prompt:`${tens} tens and ${ones} ones = ?`,mode:'numeric',correctAnswer:n,explanation:`${tens} tens + ${ones} ones = ${n}.`};}
+  if(level===4){const a=randInt(10,99),b=randInt(10,99);if(a===b)return gPlaceValue2(level);const symbol=a>b?'>':'<';
+    return{prompt:`Compare: ${a} ___ ${b}`,mode:'mc',choices:['<','>','='],correctAnswer:symbol,explanation:`${a} ${symbol} ${b}.`};}
+  const h=randInt(1,9),t=randInt(0,9),o=randInt(0,9);const n=h*100+t*10+o;
+  return{prompt:`In the number ${n}, what digit is in the hundreds place?`,mode:'mc',choices:shuffle([...new Set([h,t,o,randInt(0,9)])]).slice(0,4),correctAnswer:h,explanation:`${n} has ${h} in the hundreds place.`};}
+function gSkipMult2(level){
+  if(level===1){const step=pick([2,5,10]);const start=step*randInt(1,5);const seq=[start,start+step,start+step*2];const next=start+step*3;
+    return{prompt:`${seq.join(', ')}, __?`,mode:'numeric',correctAnswer:next,explanation:`Counting by ${step}s: ${seq.join(', ')}, ${next}.`};}
+  if(level===2){const groups=randInt(2,5),each=pick([2,3,5]);const repeated=Array(groups).fill(each).join(' + ');const total=groups*each;
+    return{prompt:`${repeated} = ${groups} groups of ${each} = ?`,mode:'numeric',correctAnswer:total,explanation:`${groups} x ${each} = ${total}.`};}
+  if(level===3){const a=pick([2,5,10]),b=randInt(1,10);
+    return{prompt:`${a} x ${b} = ?`,mode:'numeric',correctAnswer:a*b,explanation:`${a} x ${b} = ${a*b}.`};}
+  if(level===4){const rows=randInt(2,6),cols=randInt(2,6);
+    return{prompt:`There are ${rows} rows of ${cols} apples. How many apples in all?`,mode:'numeric',correctAnswer:rows*cols,explanation:`${rows} x ${cols} = ${rows*cols}.`};}
+  const a=randInt(2,10),b=randInt(2,10);
+  return{prompt:`${a} x ${b} = ?`,mode:'numeric',correctAnswer:a*b,explanation:`${a} x ${b} = ${a*b}.`};}
+function gMoney2(level){const coinVals={penny:1,nickel:5,dime:10,quarter:25};
+  if(level===1){const coin=pick(Object.keys(coinVals));
+    return{prompt:`A ${coin} is worth how many cents?`,mode:'numeric',correctAnswer:coinVals[coin],explanation:`A ${coin} = ${coinVals[coin]} cents.`};}
+  if(level===2){const n1=randInt(1,4),n2=randInt(1,4);const total=n1*10+n2*5;
+    return{prompt:`${n1} dimes and ${n2} nickels = how many cents?`,mode:'numeric',correctAnswer:total,explanation:`${n1} x 10 + ${n2} x 5 = ${total} cents.`};}
+  if(level===3){const q=randInt(1,3),d=randInt(0,3),n=randInt(0,3);const total=q*25+d*10+n*5;
+    return{prompt:`${q} quarters, ${d} dimes, ${n} nickels = how many cents?`,mode:'numeric',correctAnswer:total,explanation:`${q} x 25 + ${d} x 10 + ${n} x 5 = ${total} cents.`};}
+  if(level===4){const priceCents=randInt(20,90);const paidCents=Math.ceil((priceCents+randInt(5,50))/25)*25;const change=paidCents-priceCents;
+    return{prompt:`An item costs ${fmtMoney(priceCents)}. You pay ${fmtMoney(paidCents)}. How much change (in cents)?`,mode:'numeric',correctAnswer:change,explanation:`${fmtMoney(paidCents)} - ${fmtMoney(priceCents)} = ${change} cents.`};}
+  const p1=randInt(50,300),p2=randInt(50,300);
+  return{prompt:`You buy a toy for ${fmtMoney(p1)} and a book for ${fmtMoney(p2)}. What is the total in cents?`,mode:'numeric',correctAnswer:p1+p2,explanation:`${fmtMoney(p1)} + ${fmtMoney(p2)} = ${fmtMoney(p1+p2)} = ${p1+p2} cents.`};}
+function gTime2(level){let h=randInt(1,12),m;
+  if(level===1)m=pick([0,30]);else if(level===2)m=pick([0,15,30,45]);else m=pick([0,5,10,15,20,25,30,35,40,45,50,55]);
+  const correctLabel=`${h}:${m.toString().padStart(2,'0')}`;
+  const distractors=new Set();
+  while(distractors.size<3){const dh=randInt(1,12),dm=pick([0,5,10,15,20,25,30,35,40,45,50,55]);const lbl=`${dh}:${dm.toString().padStart(2,'0')}`;if(lbl!==correctLabel)distractors.add(lbl);}
+  const choices=shuffle([correctLabel,...distractors]);
+  return{prompt:'What time does the clock show?',visual:{type:'clock',h,m},mode:'mc',choices,correctAnswer:correctLabel,explanation:`The clock shows ${correctLabel}.`};}
+function gWordProblems2(level){const names=['Mia','Leo','Ana','Sam','Priya','Noah'];const n1=pick(names);let n2=pick(names);while(n2===n1)n2=pick(names);
+  if(level===1){const a=randInt(4,12),b=randInt(2,8);const isAdd=Math.random()<0.5;
+    return isAdd?{prompt:`${n1} has ${a} stickers. ${n1} gets ${b} more. How many stickers now?`,mode:'numeric',correctAnswer:a+b,explanation:`${a} + ${b} = ${a+b}.`}
+      :{prompt:`${n1} has ${a+b} stickers and gives away ${b}. How many are left?`,mode:'numeric',correctAnswer:a,explanation:`${a+b} - ${b} = ${a}.`};}
+  if(level===2){const a=randInt(20,70),b=randInt(10,40);
+    return{prompt:`${n1} read ${a} pages on Monday and ${b} pages on Tuesday. How many pages in all?`,mode:'numeric',correctAnswer:a+b,explanation:`${a} + ${b} = ${a+b}.`};}
+  if(level===3){const a=randInt(10,40),b=randInt(5,20),c=randInt(5,15);
+    return{prompt:`${n1} had ${a} marbles, found ${b} more, then lost ${c}. How many marbles now?`,mode:'numeric',correctAnswer:a+b-c,explanation:`${a} + ${b} - ${c} = ${a+b-c}.`};}
+  if(level===4){const base=randInt(6,20),more=randInt(2,10);
+    return{prompt:`${n1} has ${base} stickers. ${n2} has ${more} more than ${n1}. How many stickers does ${n2} have?`,mode:'numeric',correctAnswer:base+more,explanation:`${base} + ${more} = ${base+more}.`};}
+  const priceCents=randInt(150,400),coins=randInt(500,900);
+  return{prompt:`${n1} has ${fmtMoney(coins)} and spends ${fmtMoney(priceCents)} on a toy. How much money (in cents) is left?`,mode:'numeric',correctAnswer:coins-priceCents,explanation:`${coins} - ${priceCents} = ${coins-priceCents} cents.`};}
+
+/* ================= MATH GENERATORS: GRADE 4 (Voyager) ================= */
+function gMult4(level){let a,b;
+  if(level===1){a=randInt(11,44);b=randInt(2,4);}
+  else if(level===2){a=randInt(15,89);b=randInt(2,9);}
+  else if(level===3){a=randInt(100,400);b=randInt(2,9);}
+  else if(level===4){a=Math.round(randInt(10,90)/10)*10;b=randInt(11,30);}
+  else{a=randInt(11,99);b=randInt(11,40);}
+  return{prompt:`${a} x ${b} = ?`,mode:'numeric',correctAnswer:a*b,explanation:`${a} x ${b} = ${a*b}.`};}
+function gDiv4(level){let divisor,quotient,dividend,rem=0;
+  if(level===1){divisor=randInt(2,9);quotient=randInt(2,9);dividend=divisor*quotient;}
+  else if(level===2){divisor=randInt(2,9);quotient=randInt(10,20);dividend=divisor*quotient;}
+  else if(level===3){divisor=randInt(3,9);quotient=randInt(10,25);rem=randInt(1,divisor-1);dividend=divisor*quotient+rem;}
+  else if(level===4){divisor=randInt(2,9);quotient=randInt(100,300);dividend=divisor*quotient;}
+  else{divisor=randInt(3,9);quotient=randInt(100,300);rem=randInt(1,divisor-1);dividend=divisor*quotient+rem;}
+  if(rem===0)return{prompt:`${dividend} ÷ ${divisor} = ?`,mode:'numeric',correctAnswer:quotient,explanation:`${dividend} ÷ ${divisor} = ${quotient}.`};
+  return{prompt:`${dividend} ÷ ${divisor} = ? (write the whole number quotient)`,mode:'numeric',correctAnswer:quotient,explanation:`${dividend} ÷ ${divisor} = ${quotient} remainder ${rem}. Quotient = ${quotient}.`};}
+function gFractions4(level){
+  if(level===1){const den=pick([4,6,8,10]);const num=randInt(1,den-1);
+    return{prompt:`A bar is split into ${den} equal parts. ${num} parts are shaded. What fraction is shaded? (numerator only, over ${den})`,mode:'numeric',correctAnswer:num,explanation:`${num} of ${den} parts shaded = ${num}/${den}.`};}
+  if(level===2){const den=pick([2,3,4,5]);const num=randInt(1,den-1);const mult=randInt(2,4);
+    return{prompt:`${num}/${den} = __/${den*mult}`,mode:'numeric',correctAnswer:num*mult,explanation:`Multiply top and bottom by ${mult}: ${num}/${den} = ${num*mult}/${den*mult}.`};}
+  if(level===3){const den=pick([3,4,5,6,8]);let n1=randInt(1,den-1),n2=randInt(1,den-1);while(n1===n2)n2=randInt(1,den-1);const symbol=n1>n2?'>':'<';
+    return{prompt:`Compare: ${n1}/${den} ___ ${n2}/${den}`,mode:'mc',choices:['<','>','='],correctAnswer:symbol,explanation:`${n1}/${den} ${symbol} ${n2}/${den} because ${n1} ${symbol} ${n2}.`};}
+  if(level===4){const den=pick([4,5,6,8,10]);const n1=randInt(1,den-2);const n2=randInt(1,den-n1-1)||1;
+    return{prompt:`${n1}/${den} + ${n2}/${den} = __/${den}`,mode:'numeric',correctAnswer:n1+n2,explanation:`${n1}/${den} + ${n2}/${den} = ${n1+n2}/${den}.`};}
+  const pairs=[[1,2,1,4],[1,2,3,4],[1,4,1,2]];const[n1,d1,n2,d2]=pick(pairs);const v1=n1/d1,v2=n2/d2;const symbol=v1>v2?'>':(v1<v2?'<':'=');
+  return{prompt:`Compare: ${n1}/${d1} ___ ${n2}/${d2}`,mode:'mc',choices:['<','>','='],correctAnswer:symbol,explanation:`${n1}/${d1} = ${v1}, ${n2}/${d2} = ${v2}, so ${n1}/${d1} ${symbol} ${n2}/${d2}.`};}
+function gDecimals4(level){
+  if(level===1){const tenths=randInt(1,9);
+    return{prompt:`${tenths} out of 10 squares are shaded. Write this as a decimal.`,mode:'numeric',correctAnswer:parseFloat((tenths/10).toFixed(1)),explanation:`${tenths}/10 = 0.${tenths}.`};}
+  if(level===2){let a=randInt(1,9)/10,b=randInt(1,9)/10;while(Math.abs(a-b)<0.0001)b=randInt(1,9)/10;const symbol=a>b?'>':'<';
+    return{prompt:`Compare: ${a.toFixed(1)} ___ ${b.toFixed(1)}`,mode:'mc',choices:['<','>','='],correctAnswer:symbol,explanation:`${a.toFixed(1)} ${symbol} ${b.toFixed(1)}.`};}
+  if(level===3){const a=randInt(1,8)/10,b=randInt(1,8)/10;const sum=parseFloat((a+b).toFixed(1));
+    return{prompt:`${a.toFixed(1)} + ${b.toFixed(1)} = ?`,mode:'numeric',correctAnswer:sum,explanation:`${a.toFixed(1)} + ${b.toFixed(1)} = ${sum}.`};}
+  if(level===4){const hundredths=randInt(1,99);const val=parseFloat((hundredths/100).toFixed(2));
+    return{prompt:`Write "${hundredths} hundredths" as a decimal.`,mode:'numeric',correctAnswer:val,explanation:`${hundredths} hundredths = ${val}.`};}
+  const a=randInt(10,80)/100,b=randInt(5,19)/100;const sum=parseFloat((a-b).toFixed(2));
+  return{prompt:`${a.toFixed(2)} - ${b.toFixed(2)} = ?`,mode:'numeric',correctAnswer:sum,explanation:`${a.toFixed(2)} - ${b.toFixed(2)} = ${sum}.`};}
+function gFactors4(level){
+  if(level===1){const n=randInt(12,36);const facs=factorsOf(n);const correct=pick(facs);let wrong=randInt(2,n-1);while(facs.includes(wrong))wrong=randInt(2,n-1);
+    const choices=[...new Set([correct,wrong,wrong+1,correct+1])].slice(0,4);while(choices.length<4)uniqPush(choices,randInt(2,n));
+    return{prompt:`Which of these is a factor of ${n}?`,mode:'mc',choices:shuffle(choices),correctAnswer:correct,explanation:`${n} ÷ ${correct} = ${n/correct}, so ${correct} is a factor.`};}
+  if(level===2){const base=randInt(3,9);const correct=base*randInt(2,6);const choiceSet=new Set([correct]);let guard=0;
+    while(choiceSet.size<4&&guard<200){guard++;const cand=correct+randInt(-8,8);if(cand<=0||cand%base===0)continue;choiceSet.add(cand);}
+    return{prompt:`Which of these is a multiple of ${base}?`,mode:'mc',choices:shuffle([...choiceSet]),correctAnswer:correct,explanation:`${correct} ÷ ${base} = ${correct/base}, so ${correct} is a multiple of ${base}.`};}
+  if(level===3){const n=randInt(2,50);const p=isPrime(n);
+    return{prompt:`Is ${n} prime or composite?`,mode:'mc',choices:['Prime','Composite'],correctAnswer:p?'Prime':'Composite',explanation:p?`${n} has only 1 and itself as factors, so it's prime.`:`${n} has factors besides 1 and itself, so it's composite.`};}
+  if(level===4){const a=pick([4,6,8,9]),b=pick([6,8,12,15]);if(a===b)return gFactors4(level);const fa=factorsOf(a),fb=factorsOf(b);const common=fa.filter(x=>fb.includes(x));const answer=Math.max(...common);
+    return{prompt:`What is the greatest common factor (GCF) of ${a} and ${b}?`,mode:'numeric',correctAnswer:answer,explanation:`Factors of ${a}: ${fa.join(',')}. Factors of ${b}: ${fb.join(',')}. GCF = ${answer}.`};}
+  const a=pick([3,4,5]),b=pick([4,6,8]);if(a===b)return gFactors4(level);let lcm=a;while(lcm%b!==0)lcm+=a;
+  return{prompt:`What is the least common multiple (LCM) of ${a} and ${b}?`,mode:'numeric',correctAnswer:lcm,explanation:`Multiples of ${a}: ${a},${a*2},${a*3}... The smallest one that is also a multiple of ${b} is ${lcm}.`};}
+function gAreaPerim4(level){
+  if(level===1){const l=randInt(3,12),w=randInt(2,10);
+    return{prompt:`A rectangle is ${l} cm by ${w} cm. What is its perimeter (in cm)?`,visual:{type:'rect',l,w},mode:'numeric',correctAnswer:2*(l+w),explanation:`Perimeter = 2 x (${l} + ${w}) = ${2*(l+w)} cm.`};}
+  if(level===2){const l=randInt(3,12),w=randInt(2,10);
+    return{prompt:`A rectangle is ${l} cm by ${w} cm. What is its area (in cm²)?`,visual:{type:'rect',l,w},mode:'numeric',correctAnswer:l*w,explanation:`Area = ${l} x ${w} = ${l*w} cm².`};}
+  if(level===3){const w=randInt(3,10),perim=2*(w+randInt(3,10));const l=perim/2-w;
+    return{prompt:`A rectangle has a width of ${w} cm and a perimeter of ${perim} cm. What is its length (in cm)?`,mode:'numeric',correctAnswer:l,explanation:`Length = Perimeter/2 - width = ${perim/2} - ${w} = ${l} cm.`};}
+  if(level===4){const l1=randInt(4,8),w1=randInt(3,6),l2=randInt(2,4),w2=randInt(2,4);const total=l1*w1+l2*w2;
+    return{prompt:`An L-shaped room is made of a ${l1}x${w1} rectangle plus a ${l2}x${w2} rectangle. What is the total area (in units²)?`,mode:'numeric',correctAnswer:total,explanation:`${l1}x${w1} + ${l2}x${w2} = ${l1*w1} + ${l2*w2} = ${total}.`};}
+  const l=randInt(4,15),w=randInt(3,12);
+  return{prompt:`You want to build a fence around a garden ${l} m by ${w} m. How many meters of fence do you need?`,visual:{type:'rect',l,w},mode:'numeric',correctAnswer:2*(l+w),explanation:`Fence = perimeter = 2 x (${l} + ${w}) = ${2*(l+w)} m.`};}
+function gWordProblems4(level){const names=['Mia','Leo','Ana','Sam','Priya','Noah'];const n1=pick(names);
+  if(level===1){const boxes=randInt(4,9),each=randInt(6,12);
+    return{prompt:`${n1} packs ${boxes} boxes with ${each} pencils each. How many pencils in all?`,mode:'numeric',correctAnswer:boxes*each,explanation:`${boxes} x ${each} = ${boxes*each}.`};}
+  if(level===2){const packs=randInt(3,6),each=randInt(8,15),extra=randInt(5,20);
+    return{prompt:`${n1} buys ${packs} packs of ${each} stickers, then gets ${extra} more free. How many stickers total?`,mode:'numeric',correctAnswer:packs*each+extra,explanation:`${packs} x ${each} + ${extra} = ${packs*each+extra}.`};}
+  if(level===3){const total=randInt(60,200),groups=randInt(4,8);const perGroup=Math.floor(total/groups);const leftover=total-perGroup*groups;
+    return{prompt:`${total} apples are shared equally among ${groups} baskets. How many apples in each basket (whole number)?`,mode:'numeric',correctAnswer:perGroup,explanation:leftover===0?`${total} ÷ ${groups} = ${perGroup}.`:`${total} ÷ ${groups} = ${perGroup} remainder ${leftover}.`};}
+  if(level===4){const priceCents=randInt(150,600),qty=randInt(2,5),paidDollars=randInt(10,30);const totalCents=priceCents*qty;const change=paidDollars*100-totalCents;
+    return{prompt:`${n1} buys ${qty} notebooks at ${fmtMoney(priceCents)} each, paying with $${paidDollars}. How much change (in cents)?`,mode:'numeric',correctAnswer:change,explanation:`${qty} x ${priceCents} = ${totalCents} cents. $${paidDollars} = ${paidDollars*100} cents. Change = ${change} cents.`};}
+  const den=pick([4,5,8]);const num=randInt(1,den-1);const total=randInt(2,6)*den;
+  return{prompt:`${n1} read ${num}/${den} of a ${total}-page book. How many pages did ${n1} read?`,mode:'numeric',correctAnswer:total*num/den,explanation:`${total} x ${num}/${den} = ${total*num/den} pages.`};}
+
+/* ================= READING DATA BANKS ================= */
+function makeBankGenerator(bank,buildQuestion){let queue=[];return function(){if(queue.length===0)queue=shuffle(bank.map((_,i)=>i));const idx=queue.pop();return buildQuestion(bank[idx],bank);};}
+
+const SIGHTWORDS2_BANK=[
+{word:'because',sentence:'I brought an umbrella ___ it looked like rain.',distractors:['before','around','upon']},
+{word:'before',sentence:'Please wash your hands ___ dinner.',distractors:['because','always','both']},
+{word:'always',sentence:'My dog ___ barks at the mail carrier.',distractors:['before','upon','around']},
+{word:'around',sentence:'We walked ___ the block twice.',distractors:['upon','both','always']},
+{word:'both',sentence:'___ of my brothers like pizza.',distractors:['upon','around','first']},
+{word:'buy',sentence:'We need to ___ more milk at the store.',distractors:['sing','wash','pull']},
+{word:'call',sentence:'I will ___ you after school.',distractors:['pull','sit','sleep']},
+{word:'goes',sentence:'The bus ___ downtown every hour.',distractors:['does','write','would']},
+{word:"don't",sentence:"I ___ want to be late for school.",distractors:['would','does','write']},
+{word:'fast',sentence:'The cheetah runs very ___.',distractors:['right','cold','green']},
+{word:'first',sentence:'He was the ___ one in line.',distractors:['best','right','sleep']},
+{word:'found',sentence:'She ___ her lost shoe under the bed.',distractors:['gave','made','sang']},
+{word:'gave',sentence:'Dad ___ me a new book.',distractors:['found','made','told']},
+{word:'does',sentence:'___ your sister like to read?',distractors:['would','goes','write']},
+{word:'green',sentence:'The grass turned ___ after the rain.',distractors:['cold','fast','right']},
+{word:'many',sentence:'There are ___ stars in the sky.',distractors:['both','upon','around']},
+{word:'right',sentence:'Turn ___ at the next corner.',distractors:['green','fast','cold']},
+{word:'write',sentence:'I like to ___ stories about dragons.',distractors:['read','sing','tell']},
+{word:'upon',sentence:'Once ___ a time, there lived a friendly dragon.',distractors:['both','around','always']},
+{word:'sleep',sentence:'Puppies need a lot of ___ to grow.',distractors:['call','sing','pull']},
+{word:'sing',sentence:'The birds ___ every morning outside my window.',distractors:['pull','sit','call']},
+{word:'pull',sentence:'Please ___ the wagon up the hill for me.',distractors:['sing','sit','sleep']},
+{word:'read',sentence:'I like to ___ comic books before bed.',distractors:['write','sing','tell']},
+{word:'tell',sentence:'Can you ___ me a story about the moon?',distractors:['write','read','sing']},
+{word:'best',sentence:'She is my ___ friend in the whole class.',distractors:['first','right','fast']},
+{word:'off',sentence:'Please turn ___ the lights when you leave.',distractors:['upon','both','around']},
+{word:'us',sentence:'The coach picked ___ for the winning team.',distractors:['upon','both','many']},
+{word:'why',sentence:'___ is the sky blue during the day?',distractors:['does','goes','would']},
+{word:'sit',sentence:'Come ___ with me on the porch swing.',distractors:['pull','sing','sleep']},
+{word:'cold',sentence:'Wear a coat — it is very ___ outside today.',distractors:['fast','right','green']}
+];
+const GENERATOR_sightwords2=makeBankGenerator(SIGHTWORDS2_BANK,(item)=>({
+  prompt:`Which word completes the sentence?\n"${item.sentence}"`,mode:'mc',
+  choices:shuffle([item.word,...item.distractors]),correctAnswer:item.word,
+  explanation:`"${item.sentence.replace('___',item.word)}"`}));
+
+const PHONICS2_BANK=[
+{target:'cat',rhyme:'hat',distractors:['dog','sun','bed']},
+{target:'dog',rhyme:'frog',distractors:['cup','tree','milk']},
+{target:'run',rhyme:'sun',distractors:['book','star','fish']},
+{target:'big',rhyme:'pig',distractors:['cup','hat','tree']},
+{target:'red',rhyme:'bed',distractors:['milk','star','frog']},
+{target:'hop',rhyme:'top',distractors:['fish','book','sun']},
+{target:'net',rhyme:'jet',distractors:['dog','cup','star']},
+{target:'pan',rhyme:'man',distractors:['fish','tree','book']},
+{target:'wig',rhyme:'dig',distractors:['sun','milk','hat']},
+{target:'hen',rhyme:'ten',distractors:['cup','dog','tree']},
+{target:'lock',rhyme:'sock',distractors:['tree','fish','sun']},
+{target:'cake',rhyme:'lake',distractors:['dog','cup','star']},
+{target:'bee',rhyme:'tree',distractors:['sun','hat','dog']},
+{target:'rain',rhyme:'train',distractors:['fish','book','sun']},
+{target:'light',rhyme:'night',distractors:['cup','dog','tree']},
+{target:'house',rhyme:'mouse',distractors:['sun','hat','book']},
+{target:'duck',rhyme:'truck',distractors:['tree','star','milk']},
+{target:'king',rhyme:'ring',distractors:['sun','cup','dog']},
+{target:'log',rhyme:'frog',distractors:['star','milk','bee']},
+{target:'map',rhyme:'cap',distractors:['sun','tree','fish']},
+{target:'sock',rhyme:'clock',distractors:['bee','milk','star']},
+{target:'well',rhyme:'bell',distractors:['book','fish','sun']},
+{target:'chick',rhyme:'brick',distractors:['star','milk','tree']},
+{target:'star',rhyme:'car',distractors:['dog','milk','bee']},
+{target:'ball',rhyme:'wall',distractors:['fish','sun','tree']},
+{target:'goat',rhyme:'boat',distractors:['milk','bee','sun']},
+{target:'bug',rhyme:'rug',distractors:['star','fish','tree']},
+{target:'nail',rhyme:'snail',distractors:['sun','dog','milk']},
+{target:'moon',rhyme:'spoon',distractors:['star','bee','tree']},
+{target:'seed',rhyme:'feed',distractors:['dog','milk','sun']}
+];
+const GENERATOR_phonics2=makeBankGenerator(PHONICS2_BANK,(item)=>({
+  prompt:`Which word rhymes with "${item.target}"?`,mode:'mc',
+  choices:shuffle([item.rhyme,...item.distractors]),correctAnswer:item.rhyme,
+  explanation:`"${item.rhyme}" rhymes with "${item.target}".`}));
+
+const VOCAB2_BANK=[
+{word:'enormous',def:'very big',sentence:'The ___ dinosaur towered over the trees.'},
+{word:'glum',def:'feeling sad',sentence:'He felt ___ after losing the game.'},
+{word:'drowsy',def:'feeling sleepy',sentence:'The warm blanket made me feel ___.'},
+{word:'nibble',def:'to take small bites',sentence:'The mouse began to ___ on the cheese.'},
+{word:'chilly',def:'a little bit cold',sentence:'It was a ___ morning, so I wore a jacket.'},
+{word:'gigantic',def:'extremely large',sentence:'A ___ wave crashed onto the shore.'},
+{word:'furious',def:'very angry',sentence:'Mom was ___ when she saw the mess.'},
+{word:'cautious',def:'being careful',sentence:'Be ___ when you cross the street.'},
+{word:'ancient',def:'very old',sentence:'The museum had an ___ vase from long ago.'},
+{word:'brilliant',def:'very bright or very smart',sentence:'The scientist had a ___ idea.'},
+{word:'clumsy',def:'not graceful, easily dropping things',sentence:'The ___ puppy tripped over its own paws.'},
+{word:'delighted',def:'very happy',sentence:'She was ___ to get a new bike.'},
+{word:'exhausted',def:'extremely tired',sentence:'After the race, the runners were ___.'},
+{word:'peculiar',def:'strange or unusual',sentence:"That is a ___ hat — I've never seen one like it."},
+{word:'sturdy',def:'strong and well built',sentence:'The old bridge looked ___ enough to cross safely.'},
+{word:'timid',def:'shy and easily scared',sentence:'The ___ kitten hid under the couch.'},
+{word:'vanish',def:'to disappear',sentence:'The magician made the coin ___.'},
+{word:'wobbly',def:'shaky, not steady',sentence:'The table was ___ because one leg was short.'},
+{word:'tiny',def:'very small',sentence:'A ___ ant carried a crumb across the sidewalk.'},
+{word:'joyful',def:'full of happiness',sentence:'The music at the party made everyone feel ___.'},
+{word:'gentle',def:'soft and kind',sentence:'Grandma gave the kitten a ___ pat on the head.'},
+{word:'grumpy',def:'in a bad, cranky mood',sentence:'He felt ___ after waking up too early.'},
+{word:'silent',def:'completely quiet',sentence:'The library was ___ except for turning pages.'},
+{word:'curious',def:'eager to learn or know more',sentence:'The ___ puppy sniffed at every new box.'},
+{word:'starving',def:'extremely hungry',sentence:'After the long hike, the kids felt ___.'},
+{word:'soggy',def:'very wet and soft',sentence:'The bread got ___ after sitting in the soup.'},
+{word:'proud',def:'feeling pleased about an achievement',sentence:'Dad looked ___ when I rode my bike alone.'},
+{word:'tumble',def:'to fall in a rolling or clumsy way',sentence:'The puppy watched a ball ___ down the hill.'},
+{word:'shimmer',def:'to shine with a soft, sparkling light',sentence:'The lake began to ___ in the sunset.'},
+{word:'stubborn',def:'refusing to change your mind',sentence:'The ___ goat would not move off the path.'}
+];
+function makeVocabGenerator(bank){return makeBankGenerator(bank,(item,fullBank)=>{
+  const others=fullBank.filter(x=>x.word!==item.word).map(x=>x.def);
+  const distractors=shuffle(others).slice(0,3);
+  return{prompt:`What does the word in bold mean?\n"${item.sentence.replace('___','**'+item.word+'**')}"`,mode:'mc',
+    choices:shuffle([item.def,...distractors]),correctAnswer:item.def,
+    explanation:`"${item.word}" means "${item.def}."`};});}
+const GENERATOR_vocab2=makeVocabGenerator(VOCAB2_BANK);
+
+const VOCAB4_BANK=[
+{word:'reluctant',def:'not wanting to do something',sentence:'Sam was ___ to jump into the cold pool.'},
+{word:'cautious',def:'careful to avoid danger',sentence:'The hikers were ___ as they crossed the icy trail.'},
+{word:'absurd',def:'silly or ridiculous',sentence:'It seemed ___ that the tiny key opened such a huge door.'},
+{word:'generous',def:'willing to give or share',sentence:'The ___ neighbor shared his garden vegetables with everyone.'},
+{word:'hesitate',def:'to pause before doing something',sentence:"Don't ___ — answer as soon as you know it."},
+{word:'vast',def:'extremely large in area',sentence:'The desert stretched out, ___ and empty, for miles.'},
+{word:'glimpse',def:'a quick look',sentence:'She caught a ___ of the deer before it ran into the woods.'},
+{word:'fragile',def:'easily broken',sentence:'Handle the old vase carefully; it is very ___.'},
+{word:'weary',def:'very tired',sentence:'After the long hike, the travelers felt ___.'},
+{word:'eager',def:'excited and wanting to do something',sentence:'The puppy was ___ to go outside and play.'},
+{word:'gloomy',def:'dark or sad',sentence:'The sky turned ___ just before the storm.'},
+{word:'clever',def:'smart in a quick way',sentence:'The ___ fox found a way to open the latch.'},
+{word:'stubborn',def:'refusing to change your mind',sentence:'The ___ mule refused to move another step.'},
+{word:'vivid',def:'very bright or clear',sentence:'The sunset painted the sky in ___ colors.'},
+{word:'astonished',def:'very surprised',sentence:'We were ___ when we saw how tall the tower was.'},
+{word:'reckless',def:'careless, taking dangerous risks',sentence:'Driving too fast in the rain is ___.'},
+{word:'humble',def:'not boastful, modest',sentence:'Even after winning, the champion stayed ___.'},
+{word:'persistent',def:'continuing firmly despite difficulty',sentence:'Her ___ practice finally paid off at the recital.'},
+{word:'skeptical',def:'doubtful, not easily convinced',sentence:"She stayed ___ about the salesman's big promises."},
+{word:'immense',def:'huge in size or degree',sentence:"The ship's ___ shadow covered the whole dock."},
+{word:'diligent',def:'showing careful, steady effort',sentence:'The ___ student reviewed her notes every night.'},
+{word:'anxious',def:'worried or nervous about what might happen',sentence:'He felt ___ before the big spelling test.'},
+{word:'plummet',def:'to fall suddenly and quickly',sentence:'The stock price began to ___ overnight.'},
+{word:'triumphant',def:'feeling or showing victory',sentence:'The team returned home ___ after winning the finals.'},
+{word:'meager',def:'small in amount, barely enough',sentence:'The travelers survived on a ___ ration of bread.'},
+{word:'relentless',def:'not stopping or slowing down',sentence:'The ___ rain continued for three straight days.'},
+{word:'candid',def:'honest and straightforward',sentence:'Her ___ answer surprised the interviewer.'},
+{word:'novice',def:'a person new to an activity',sentence:'As a ___, he still made a few beginner mistakes.'},
+{word:'ponder',def:'to think about something carefully',sentence:'She paused to ___ the tricky riddle.'},
+{word:'formidable',def:'impressively strong or difficult to beat',sentence:'The chess champion was a ___ opponent.'}
+];
+const GENERATOR_vocab4=makeVocabGenerator(VOCAB4_BANK);
+
+const GRAMMAR4_BANK=[
+{prompt:"Which word is a noun? 'The brave firefighter rescued the kitten.'",choices:['brave','firefighter','rescued','the'],correct:'firefighter',explanation:"'firefighter' names a person — that's a noun."},
+{prompt:"Which word is a verb? 'The children laughed loudly.'",choices:['children','laughed','loudly','the'],correct:'laughed',explanation:"'laughed' shows the action — that's the verb."},
+{prompt:"Which word is an adjective? 'She wore a shiny necklace.'",choices:['wore','shiny','necklace','she'],correct:'shiny',explanation:"'shiny' describes the necklace — that's an adjective."},
+{prompt:"Which word is an adverb? 'He ran quickly to the bus.'",choices:['ran','quickly','bus','he'],correct:'quickly',explanation:"'quickly' describes how he ran — that's an adverb."},
+{prompt:"What kind of sentence is this? 'Please close the door.'",choices:['Statement','Question','Command','Exclamation'],correct:'Command',explanation:"It asks someone to do something — a command."},
+{prompt:"What kind of sentence is this? 'What time is it?'",choices:['Statement','Question','Command','Exclamation'],correct:'Question',explanation:'It asks something and ends with a question mark.'},
+{prompt:"What kind of sentence is this? ‘I can’t believe we won!’",choices:['Statement','Question','Command','Exclamation'],correct:'Exclamation',explanation:'It shows strong feeling and ends with an exclamation point.'},
+{prompt:'Which sentence uses correct punctuation?',choices:['I like pizza.','I like pizza','i like pizza.','I like pizza!!!!'],correct:'I like pizza.',explanation:'A statement needs a capital letter and a single period.'},
+{prompt:"Choose the correct word: 'The dog wagged ___ tail.'",choices:['its',"it's",'their','there'],correct:'its',explanation:"'its' shows possession here; \"it's\" means 'it is'."},
+{prompt:"Choose the correct word: '___ going to the park later.'",choices:['Their','There',"They're",'Deer'],correct:"They're",explanation:"\"They're\" means 'they are'."},
+{prompt:"Which word is a pronoun? 'Maria gave the book to him.'",choices:['Maria','gave','book','him'],correct:'him',explanation:"'him' stands in for a person's name — that's a pronoun."},
+{prompt:'Which sentence is a complete sentence?',choices:['Running fast down the street.','The dog barked.','Because it was raining.','In the morning.'],correct:'The dog barked.',explanation:'It has a subject and a verb and expresses a complete thought.'},
+{prompt:"Find the subject: 'The tall trees swayed in the wind.'",choices:['tall','trees','swayed','wind'],correct:'trees',explanation:"'trees' is what the sentence is about — the subject."},
+{prompt:"Find the verb: 'The chef cooked a delicious meal.'",choices:['chef','cooked','delicious','meal'],correct:'cooked',explanation:"'cooked' is the action word — the verb."},
+{prompt:"Which word is a conjunction? 'I wanted to go, but it was raining.'",choices:['wanted','go','but','raining'],correct:'but',explanation:"'but' joins the two parts of the sentence — a conjunction."},
+{prompt:"Which is the plural form of 'child'?",choices:['childs','childes','children',"child's"],correct:'children',explanation:"'children' is the irregular plural of 'child'."},
+{prompt:'Which sentence uses correct capitalization?',choices:['my family visited paris in may.','My family visited Paris in May.','My Family Visited Paris In May.','my Family visited paris in May.'],correct:'My family visited Paris in May.',explanation:'Only the first word and proper nouns (Paris, May) are capitalized.'},
+{prompt:"Which word is a preposition? 'The cat sat under the table.'",choices:['cat','sat','under','table'],correct:'under',explanation:"'under' shows where the cat sat — a preposition."},
+{prompt:"Which word is a noun? 'The curious scientist studied the stars.'",choices:['curious','scientist','studied','the'],correct:'scientist',explanation:"'scientist' names a person — that's a noun."},
+{prompt:"Which word is a verb? 'The river flows through the valley.'",choices:['river','flows','valley','the'],correct:'flows',explanation:"'flows' is the action word — the verb."},
+{prompt:"Which word is an adjective? 'The ancient castle stood on the hill.'",choices:['ancient','castle','stood','hill'],correct:'ancient',explanation:"'ancient' describes the castle — an adjective."},
+{prompt:"Which word is an adverb? 'She whispered softly during the movie.'",choices:['whispered','softly','movie','during'],correct:'softly',explanation:"'softly' describes how she whispered — an adverb."},
+{prompt:"What kind of sentence is this? 'Watch out for that puddle!'",choices:['Statement','Question','Command','Exclamation'],correct:'Exclamation',explanation:'It shows urgency and ends with an exclamation point.'},
+{prompt:"What kind of sentence is this? 'Turn left at the next light.'",choices:['Statement','Question','Command','Exclamation'],correct:'Command',explanation:'It tells someone to do something — a command.'},
+{prompt:'Choose the correct word: \'___ backpack is on the chair.\'',choices:['Your',"You're",'Yore','Ewer'],correct:'Your',explanation:"'Your' shows possession here; \"you're\" means 'you are'."},
+{prompt:"Choose the correct word: 'The two teams played ___.'",choices:['good','well','gooder','best of'],correct:'well',explanation:"'well' is the adverb that describes how they played."},
+{prompt:"Which word is a pronoun? 'They invited us to the party.'",choices:['They','invited','party','to'],correct:'They',explanation:"'They' stands in for a group of people — a pronoun."},
+{prompt:'Which sentence is a complete sentence?',choices:['Walking home from school.','The bell rang loudly.','Even though it was late.','Under the old oak tree.'],correct:'The bell rang loudly.',explanation:'It has a subject and a verb and expresses a complete thought.'},
+{prompt:"Find the subject: 'My little sister collects seashells.'",choices:['little','sister','collects','seashells'],correct:'sister',explanation:"'sister' is who the sentence is about — the subject."},
+{prompt:"Find the verb: 'The baker kneaded the soft dough.'",choices:['baker','kneaded','soft','dough'],correct:'kneaded',explanation:"'kneaded' is the action word — the verb."},
+{prompt:"Which word is a conjunction? 'We can walk or take the bus.'",choices:['walk','or','take','bus'],correct:'or',explanation:"'or' connects the two choices — a conjunction."},
+{prompt:"Which is the plural form of 'mouse' (the animal)?",choices:['mouses','mice',"mouse's",'mices'],correct:'mice',explanation:"'mice' is the irregular plural of 'mouse'."},
+{prompt:'Which sentence uses correct capitalization?',choices:['we visited grandma in ohio last june.','We visited Grandma in Ohio last June.','We Visited Grandma In Ohio Last June.','we Visited grandma in Ohio last june.'],correct:'We visited Grandma in Ohio last June.',explanation:'The first word, "Grandma" as a name, and proper nouns Ohio/June are capitalized.'},
+{prompt:"Which word is a preposition? 'The ball rolled between the chairs.'",choices:['ball','rolled','between','chairs'],correct:'between',explanation:"'between' shows where the ball rolled — a preposition."}
+];
+const GENERATOR_grammar4=makeBankGenerator(GRAMMAR4_BANK,(item)=>({prompt:item.prompt,mode:'mc',choices:shuffle(item.choices),correctAnswer:item.correct,explanation:item.explanation}));
+
+const ROOTWORDS4_BANK=[
+{prompt:"What does the prefix 'un-' mean in 'unhappy'?",choices:['again','not','before','full of'],correct:'not',explanation:"'un-' means 'not', so unhappy = not happy."},
+{prompt:"What does the prefix 're-' mean in 'rewrite'?",choices:['not','again','without','most'],correct:'again',explanation:"'re-' means 'again', so rewrite = write again."},
+{prompt:"What does the prefix 'pre-' mean in 'preview'?",choices:['after','before','not','many'],correct:'before',explanation:"'pre-' means 'before', so preview = view before."},
+{prompt:"What does the prefix 'dis-' mean in 'disagree'?",choices:['again','not / opposite','before','full of'],correct:'not / opposite',explanation:"'dis-' means 'not' or the opposite, so disagree = not agree."},
+{prompt:"What does the prefix 'mis-' mean in 'misspell'?",choices:['correctly','wrongly','again','before'],correct:'wrongly',explanation:"'mis-' means 'wrongly', so misspell = spell wrongly."},
+{prompt:"What does the suffix '-ful' mean in 'hopeful'?",choices:['without','full of','before','again'],correct:'full of',explanation:"'-ful' means 'full of', so hopeful = full of hope."},
+{prompt:"What does the suffix '-less' mean in 'fearless'?",choices:['full of','without','again','before'],correct:'without',explanation:"'-less' means 'without', so fearless = without fear."},
+{prompt:"What does the suffix '-able' mean in 'washable'?",choices:['able to be','without','again','before'],correct:'able to be',explanation:"'-able' means 'able to be', so washable = able to be washed."},
+{prompt:"What does the suffix '-ment' mean in 'enjoyment'?",choices:['the act or state of','without','before','again'],correct:'the act or state of',explanation:"'-ment' turns a verb into a noun meaning the act/state of."},
+{prompt:"What does the prefix 'tri-' mean in 'triangle'?",choices:['one','two','three','four'],correct:'three',explanation:"'tri-' means three, like a triangle's three sides."},
+{prompt:"What does the prefix 'bi-' mean in 'bicycle'?",choices:['one','two','three','many'],correct:'two',explanation:"'bi-' means two, like a bicycle's two wheels."},
+{prompt:"What does the prefix 'sub-' mean in 'submarine'?",choices:['above','below','beside','before'],correct:'below',explanation:"'sub-' means below, like a submarine travels below water."},
+{prompt:"What does the prefix 'auto-' mean in 'automobile'?",choices:['self','other','before','again'],correct:'self',explanation:"'auto-' means self, like a car that moves by itself."},
+{prompt:"What does the prefix 'trans-' mean in 'transport'?",choices:['across','under','before','again'],correct:'across',explanation:"'trans-' means across, like transporting something across a distance."},
+{prompt:"What does the suffix '-ist' mean in 'artist'?",choices:['a person who does','without','before','again'],correct:'a person who does',explanation:"'-ist' names a person who does something, like an artist makes art."},
+{prompt:"What does the suffix '-tion' mean in 'celebration'?",choices:['the act of','a person who','without','before'],correct:'the act of',explanation:"'-tion' turns a verb into a noun meaning the act of doing it."},
+{prompt:"What does the prefix 'over-' mean in 'overflow'?",choices:['under','too much / beyond','before','again'],correct:'too much / beyond',explanation:"'over-' means too much or beyond, like overflow = flow beyond the edge."},
+{prompt:"What does the prefix 'in-' mean in 'invisible'?",choices:['not','again','before','many'],correct:'not',explanation:"'in-' means 'not', so invisible = not visible."},
+{prompt:"What does the prefix 'non-' mean in 'nonfiction'?",choices:['not','again','before','many'],correct:'not',explanation:"'non-' means 'not', so nonfiction = not fiction."},
+{prompt:"What does the prefix 'semi-' mean in 'semicircle'?",choices:['double','half','many','none'],correct:'half',explanation:"'semi-' means 'half', so semicircle = half a circle."},
+{prompt:"What does the prefix 'inter-' mean in 'international'?",choices:['between/among','above','below','again'],correct:'between/among',explanation:"'inter-' means between or among, like nations."},
+{prompt:"What does the prefix 'de-' mean in 'defrost'?",choices:['remove/reverse','add','before','again'],correct:'remove/reverse',explanation:"'de-' means to remove or reverse, so defrost = remove frost."},
+{prompt:"What does the prefix 'ex-' mean in 'exit'?",choices:['into','out of','under','before'],correct:'out of',explanation:"'ex-' means 'out of', so exit = go out of."},
+{prompt:"What does the suffix '-ous' mean in 'dangerous'?",choices:['full of','without','before','again'],correct:'full of',explanation:"'-ous' means 'full of', so dangerous = full of danger."},
+{prompt:"What does the suffix '-ive' mean in 'creative'?",choices:['tending to','without','before','again'],correct:'tending to',explanation:"'-ive' means 'tending to', so creative = tending to create."},
+{prompt:"What does the suffix '-ology' mean in 'biology'?",choices:['the study of','the fear of','a person who','without'],correct:'the study of',explanation:"'-ology' means 'the study of', so biology = the study of life."},
+{prompt:"What does the suffix '-er' mean in 'teacher'?",choices:['a person who does','without','before','again'],correct:'a person who does',explanation:"'-er' names a person who does something, like a teacher teaches."},
+{prompt:"What does the suffix '-ward' mean in 'homeward'?",choices:['in the direction of','without','before','again'],correct:'in the direction of',explanation:"'-ward' means 'in the direction of', so homeward = toward home."},
+{prompt:"What does the prefix 'co-' mean in 'cooperate'?",choices:['together','apart','before','again'],correct:'together',explanation:"'co-' means 'together', so cooperate = work together."},
+{prompt:"What does the prefix 'super-' mean in 'superhero'?",choices:['above/beyond normal','below normal','before','again'],correct:'above/beyond normal',explanation:"'super-' means above or beyond normal, like a superhero's powers."},
+{prompt:"What does the prefix 'anti-' mean in 'antifreeze'?",choices:['against','for','before','again'],correct:'against',explanation:"'anti-' means 'against', so antifreeze works against freezing."}
+];
+const GENERATOR_rootwords4=makeBankGenerator(ROOTWORDS4_BANK,(item)=>({prompt:item.prompt,mode:'mc',choices:shuffle(item.choices),correctAnswer:item.correct,explanation:item.explanation}));
+
+/* ================= COMPREHENSION PASSAGES ================= */
+const PASSAGES2=[
+{title:"The Kite That Wouldn't Fly",
+text:"Ben built a bright red kite for the school fair. On the big day, he ran across the field, but the kite just dragged on the ground. Ben's friend Zoe noticed the kite's tail was too short. She tied on a longer piece of ribbon. Ben tried again. This time, the wind caught the kite, and it lifted high into the sky! Ben laughed and cheered as the kite danced above the trees. “Thanks for helping me fix it,” Ben said to Zoe. “That's what friends are for,” Zoe smiled.",
+questions:[
+{q:"What is this story mostly about?",choices:["A boy whose kite finally flies with a friend's help","A school fair with many games","A windy day at the beach","A red ribbon contest"],correct:"A boy whose kite finally flies with a friend's help"},
+{q:"What was wrong with Ben's kite at first?",choices:["It was too heavy","Its tail was too short","It had no string","It was the wrong color"],correct:"Its tail was too short"},
+{q:'In the story, what does "dragged" mean?',choices:["moved along the ground slowly","flew high in the sky","made a loud noise","turned a bright color"],correct:"moved along the ground slowly"},
+{q:"How did Ben probably feel when the kite finally flew?",choices:["Bored","Happy and excited","Angry","Confused"],correct:"Happy and excited"}
+]},
+{title:"How Ants Build Their Homes",
+text:"Ants are tiny, but they build amazing homes called colonies. Most ants dig tunnels deep under the ground. Worker ants carry away tiny bits of dirt, grain by grain, to make rooms and hallways. Some rooms store food. Other rooms are nurseries for baby ants. One anthill can have hundreds of tunnels! Ants work together as a team, and each ant has its own job. Because they cooperate so well, a whole colony can finish a giant tunnel system in just a few weeks.",
+questions:[
+{q:"What is this passage mostly about?",choices:["Where ants like to eat lunch","How ants build their underground homes","Why ants are afraid of rain","How to catch ants"],correct:"How ants build their underground homes"},
+{q:"What do worker ants carry away to build tunnels?",choices:["Leaves","Water","Tiny bits of dirt","Sticks"],correct:"Tiny bits of dirt"},
+{q:'What does "cooperate" mean in the passage?',choices:["work together","run fast","sleep a lot","argue"],correct:"work together"},
+{q:"Why can a colony finish a tunnel system so quickly?",choices:["One ant does all the work","Ants take long breaks","Many ants work together on different jobs","Ants use machines"],correct:"Many ants work together on different jobs"}
+]},
+{title:"The New Kid at School",
+text:"Maya's stomach felt full of butterflies. It was her first day at a new school, and she didn't know anyone. At lunch, she sat alone at the end of a long table. A girl named Jade walked over with her tray. “Is this seat taken?” Jade asked with a friendly smile. Maya shook her head, and Jade sat down. They talked about their favorite books and discovered they both loved dragon stories. By the end of lunch, Maya wasn't nervous anymore. She had made her very first friend at her new school.",
+questions:[
+{q:"What is this story mostly about?",choices:["A girl who makes a new friend on her first day","A lunch menu at a school","A book about dragons","A girl who gets lost at school"],correct:"A girl who makes a new friend on her first day"},
+{q:"What did Maya and Jade both like?",choices:["Soccer","Dragon stories","Math class","Drawing"],correct:"Dragon stories"},
+{q:'What does "butterflies" mean in this story?',choices:["real insects flying around","a nervous feeling in her stomach","a picture on her shirt","a kind of lunch food"],correct:"a nervous feeling in her stomach"},
+{q:"How did Maya likely feel at the end of lunch?",choices:["Still lonely","Angry","Less nervous and happy","Sleepy"],correct:"Less nervous and happy"}
+]},
+{title:"Why Leaves Change Color",
+text:"In summer, leaves look green because they are full of a substance called chlorophyll. Chlorophyll helps leaves catch sunlight to make food for the tree. When fall arrives, days get shorter and cooler. Trees slow down and stop making chlorophyll. As the green fades, other colors that were hiding in the leaf show up, like yellow and orange. Some leaves even turn red! Once the colorful show is over, the leaves dry out and fall to the ground, ready for the tree to grow fresh new leaves in spring.",
+questions:[
+{q:"What is this passage mostly about?",choices:["Why leaves change color in fall","How trees grow new branches","Why it rains in autumn","How to rake leaves"],correct:"Why leaves change color in fall"},
+{q:"What color are leaves in summer because of chlorophyll?",choices:["Red","Green","Orange","Brown"],correct:"Green"},
+{q:'What does "fades" mean in the passage?',choices:["grows brighter","becomes weaker or disappears slowly","turns to ice","grows bigger"],correct:"becomes weaker or disappears slowly"},
+{q:"What will most likely happen to the trees after all the leaves fall?",choices:["They will die forever","They will grow fresh new leaves in spring","They will turn to stone","They will float away"],correct:"They will grow fresh new leaves in spring"}
+]},
+{title:"The Missing Library Book",
+text:"Every Friday, Mr. Diaz's class returned their library books before picking new ones. But this Friday, Oliver couldn't find his book anywhere. He checked his backpack, his desk, and even his lunchbox. Just as he started to worry, his classmate Ruby remembered something. \"Didn't you read it on the bus yesterday?\" she asked. Oliver's eyes lit up. He had left it tucked in the seat pocket! At recess, Oliver asked the bus driver, Mr. Tam, if he could check the bus. Sure enough, the book was still there. Oliver thanked Ruby for helping him remember, and from then on, he always double-checked the bus before getting off.",
+questions:[
+{q:"What is this story mostly about?",choices:["A boy who finds his missing library book with a friend's help","A class trip on a bus","A librarian who loses a book","A boy who never returns his books"],correct:"A boy who finds his missing library book with a friend's help"},
+{q:"Where had Oliver actually left his book?",choices:["In his desk","In the seat pocket on the bus","In his lunchbox","At the library"],correct:"In the seat pocket on the bus"},
+{q:'What does "tucked" mean in the story?',choices:["thrown away","placed snugly somewhere","painted a color","torn into pieces"],correct:"placed snugly somewhere"},
+{q:"What will Oliver most likely do differently next time?",choices:["Stop reading on the bus","Check the bus before getting off","Buy a new book","Skip library day"],correct:"Check the bus before getting off"}
+]},
+{title:"How Bees Help Gardens Grow",
+text:"Bees do more than make honey — they help flowers and plants grow food. When a bee lands on a flower to drink its sweet nectar, tiny grains of pollen stick to its fuzzy legs. As the bee flies to the next flower, some of that pollen rubs off. This is called pollination, and it helps plants make seeds and fruit. Without bees, many fruits and vegetables, like apples, strawberries, and pumpkins, would be much harder to grow. That is why some farmers keep beehives near their fields. A healthy group of buzzing bees can visit thousands of flowers in a single day, quietly helping gardens and farms all over the world.",
+questions:[
+{q:"What is this passage mostly about?",choices:["How bees help plants grow by spreading pollen","How to keep a pet bee","Why honey tastes sweet","How farmers build beehives"],correct:"How bees help plants grow by spreading pollen"},
+{q:"What sticks to a bee's legs when it visits a flower?",choices:["Water","Pollen","Leaves","Seeds"],correct:"Pollen"},
+{q:'What does "pollination" mean in the passage?',choices:["a bee making honey","pollen moving from flower to flower to help make seeds","a farmer planting seeds","a flower closing at night"],correct:"pollen moving from flower to flower to help make seeds"},
+{q:"Why might a farmer keep beehives near their fields?",choices:["To sell the bees","To help their fruits and vegetables grow better","To keep other bugs away","To make the field louder"],correct:"To help their fruits and vegetables grow better"}
+]}
+];
+const PASSAGES4=[
+{title:"The Robot That Learned to Listen",
+text:"In a small workshop, an inventor named Priya built a robot to help her grandmother, who was slowly losing her hearing. At first, the robot only followed simple commands, like “turn on the light.” But Priya wanted it to do more. She spent months teaching the robot to recognize different sounds — a knock at the door, a boiling kettle, a ringing phone. Whenever one of these sounds happened, the robot would flash a colored light so her grandmother would notice. The first time the robot flashed blue for the doorbell, Priya's grandmother smiled and said, “Now I won't miss a single visitor.” Word spread around the neighborhood, and soon other families wanted a listening robot too. Priya realized her invention could help many people, not just her own family. She began writing down every step of how she built it so she could teach others. What started as a small project to help one grandmother slowly grew into something that could help an entire community stay connected to the sounds around them.",
+questions:[
+{q:"What is this passage mostly about?",choices:["An inventor who builds a robot to help people hear important sounds","A robot that can cook","A grandmother who invents a robot","A neighborhood contest"],correct:"An inventor who builds a robot to help people hear important sounds"},
+{q:"What did the robot do when it heard the doorbell?",choices:["It rang a bell","It flashed a colored light","It opened the door","It spoke out loud"],correct:"It flashed a colored light"},
+{q:'What does "recognize" mean in the passage?',choices:["to forget","to identify or notice","to build","to sell"],correct:"to identify or notice"},
+{q:"Why did Priya start writing down the steps of how she built the robot?",choices:["She forgot how she made it","She wanted to sell the workshop","She wanted to help other families build one too","She was bored"],correct:"She wanted to help other families build one too"}
+]},
+{title:"The Great Barrier Reef's Tiny Builders",
+text:"Stretching over 2,300 kilometers off the coast of Australia, the Great Barrier Reef is the largest living structure on Earth. Yet it wasn't built by anything large at all. Tiny animals called coral polyps, each barely bigger than a pinhead, are responsible for the entire reef. Each polyp builds a hard, cup-shaped skeleton around its soft body. When thousands of polyps grow together, their skeletons connect to form coral. Over thousands of years, layer after layer of coral built up, eventually forming reefs large enough to be seen from space. The reef is now home to thousands of species of fish, sea turtles, and other sea creatures that depend on it for food and shelter. Unfortunately, coral is sensitive to changes in ocean temperature. When water gets too warm, polyps become stressed and can lose the colorful algae living inside them, turning the coral white in a process called bleaching. Scientists around the world are studying ways to help coral reefs survive as ocean temperatures rise, because protecting these tiny builders means protecting an entire underwater world.",
+questions:[
+{q:"What is this passage mostly about?",choices:["How tiny coral polyps built the Great Barrier Reef and why it needs protection","How to go scuba diving","The history of Australia","Why fish swim in groups"],correct:"How tiny coral polyps built the Great Barrier Reef and why it needs protection"},
+{q:'What happens to coral during "bleaching"?',choices:["It grows faster","It turns white after losing algae","It becomes bigger","It turns into a fish"],correct:"It turns white after losing algae"},
+{q:'What does "structure" mean in the passage?',choices:["a lesson","something built or formed, often from many parts","a kind of fish","a weather pattern"],correct:"something built or formed, often from many parts"},
+{q:"Why did the author most likely write this passage?",choices:["To convince readers to visit Australia","To explain how the reef formed and why scientists want to protect it","To sell coral online","To describe a scuba diving trip"],correct:"To explain how the reef formed and why scientists want to protect it"}
+]},
+{title:"The Silent Vote",
+text:"The class was voting on which charity to support with the money they had raised from the bake sale. Two options were on the board: the animal shelter across town, and a fund to send books to a school overseas. Marcus really wanted the animal shelter to win — his own dog had been adopted from there. But as the votes were being counted, he noticed his best friend Dev had voted for the book fund instead. At recess, Marcus almost asked Dev to switch his vote to match his own. Then he stopped himself. He remembered what his teacher always said: a fair vote only works if everyone chooses freely, not because someone pressured them. Marcus decided not to say anything. When the final count came in, the book fund won by two votes. Marcus felt a small pinch of disappointment, but also something else — pride, in himself and in his class, for voting the way everyone truly believed was right. Later that week, he even helped pack the very first box of books to be shipped overseas, realizing that a good decision made fairly was worth more than getting his own way.",
+questions:[
+{q:"What is this passage mostly about?",choices:["A boy who learns to respect a fair vote even when he disagrees with the outcome","A class trip to an animal shelter","A boy who cheats to win a vote","A disagreement between two teachers"],correct:"A boy who learns to respect a fair vote even when he disagrees with the outcome"},
+{q:"What were the two charity choices?",choices:["A hospital and a park","An animal shelter and a book fund for a school overseas","A zoo and a library","A food bank and a museum"],correct:"An animal shelter and a book fund for a school overseas"},
+{q:'What does "pressured" mean in the passage?',choices:["praised","pushed or influenced unfairly","ignored","rewarded"],correct:"pushed or influenced unfairly"},
+{q:"Why did Marcus decide not to ask Dev to change his vote?",choices:["He forgot to","He wanted the vote to stay fair","He didn't care about the outcome","Dev refused to talk to him"],correct:"He wanted the vote to stay fair"}
+]},
+{title:"Racing the Clock: How Marathoners Fuel Their Run",
+text:"Running 26.2 miles takes more than strong legs — it takes careful planning of what to eat and drink before, during, and after the race. In the days before a marathon, many runners eat extra carbohydrates, like pasta and rice, so their muscles can store energy for the long run ahead. This is often called ‘carb-loading.’ During the race itself, runners need to replace the energy and fluids their bodies use up. Many grab small cups of water or sports drinks at aid stations set up every few miles, and some eat energy gels that provide a quick burst of sugar. Skipping this fuel can cause a runner to ‘hit the wall’ — a sudden, exhausted feeling that makes it hard to keep moving. After crossing the finish line, runners usually eat protein, like a banana with peanut butter or a recovery shake, to help their tired muscles repair. Marathon runners often say that finishing a race is as much about smart fueling as it is about training your legs.",
+questions:[
+{q:"What is this passage mostly about?",choices:["How marathon runners plan their eating and drinking to finish the race","The history of marathons","How to build a running track","Famous marathon winners"],correct:"How marathon runners plan their eating and drinking to finish the race"},
+{q:'What is "carb-loading"?',choices:["Eating extra carbohydrates before a race to store energy","Drinking only water during a race","Skipping breakfast before running","Eating protein after a race"],correct:"Eating extra carbohydrates before a race to store energy"},
+{q:'What does "hit the wall" mean in the passage?',choices:["run into an actual wall","suddenly feel exhausted and unable to keep going","finish the race early","trip over a hurdle"],correct:"suddenly feel exhausted and unable to keep going"},
+{q:"Why does the author most likely include the runners' quote at the end?",choices:["To argue that training doesn't matter","To emphasize that fueling is just as important as training","To advertise energy gels","To explain the history of marathons"],correct:"To emphasize that fueling is just as important as training"}
+]},
+{title:"The App That Almost Wasn't",
+text:"Jordan's science fair project was supposed to be simple: build an app that reminded users to water their plants. Two days before the deadline, the app crashed every time someone tapped the reminder button. Jordan stayed up late combing through lines of code, certain the mistake was buried somewhere obvious. It wasn't until a classmate, Theo, glanced at the screen and asked, \"Why does this button call two functions instead of one?\" that Jordan finally spotted the problem — a leftover piece of test code nobody had deleted. Fixing it took thirty seconds. Jordan felt equal parts relieved and embarrassed, having spent six hours searching for something a fresh pair of eyes caught almost instantly. At the fair, when a judge asked what Jordan had learned, the answer had nothing to do with code at all: sometimes the fastest way through a hard problem is admitting you need someone else to look.",
+questions:[
+{q:"What is this passage mostly about?",choices:["A student who learns the value of asking for help while debugging a project","A science fair with many awards","A teacher who fixes a broken app","A classmate who wins first place"],correct:"A student who learns the value of asking for help while debugging a project"},
+{q:"What was actually causing the app to crash?",choices:["A missing button","A leftover piece of test code","A dead battery","The wrong app name"],correct:"A leftover piece of test code"},
+{q:'What does "combing through" mean in the passage?',choices:["searching carefully","cutting apart","painting over","deleting quickly"],correct:"searching carefully"},
+{q:"What lesson did Jordan take from the experience?",choices:["Never use computers again","A fresh perspective from someone else can help solve a hard problem","Science fairs are not worth the effort","Coding is impossible to learn"],correct:"A fresh perspective from someone else can help solve a hard problem"}
+]},
+{title:"The Lighthouse That Never Went Dark",
+text:"For over a hundred years, the Cape Elden lighthouse warned ships away from a rocky, hidden shoreline. Long before electricity reached the coast, lighthouse keepers had one unbreakable rule: the light could never go out, not even for a single night. Keepers took turns climbing the tower every few hours to refill oil, trim the wick, and polish the glass so fog and salt spray wouldn't dim the beam. During storms, when the job was most dangerous, it was also most important — ships relied on that light exactly when conditions made it hardest to keep burning. When the lighthouse was automated in the 1960s, engineers studied decades of the keepers' logbooks to design a machine reliable enough to replace them. Today, the original lighthouse still stands, now preserved as a museum, and visitors can climb the same spiral stairs the keepers once climbed every night to keep their promise to passing ships.",
+questions:[
+{q:"What is this passage mostly about?",choices:["How lighthouse keepers worked hard to keep a light burning every night","How ships are built","Why oil lamps were invented","A museum's gift shop"],correct:"How lighthouse keepers worked hard to keep a light burning every night"},
+{q:"What was the lighthouse keepers' unbreakable rule?",choices:["The light could never go out","Ships had to pay a toll","No visitors were allowed","The tower had to be repainted yearly"],correct:"The light could never go out"},
+{q:'What does "automated" mean in the passage?',choices:["torn down","made to run by machine instead of people","painted a new color","sold to a new owner"],correct:"made to run by machine instead of people"},
+{q:"Why did storms make the keepers' job especially important?",choices:["Storms turned off the electricity","Ships needed the light most exactly when it was hardest to keep burning","Storms brought more visitors","Storms made the ocean calmer"],correct:"Ships needed the light most exactly when it was hardest to keep burning"}
+]}
+];
+
+/* ================= WORKSHOP (TRAIL TIME) DATA ================= */
+const WORKSHOP_AREAS=[
+{id:'team',label:'Team & Lead',icon:'team',blurb:'Working with others and taking the lead.'},
+{id:'story',label:'Story & Speak',icon:'story',blurb:'Telling stories and speaking with confidence.'},
+{id:'build',label:'Build & Earn',icon:'build',blurb:'Running small projects and handling money.'},
+{id:'connect',label:'Connect & Care',icon:'connect',blurb:'Building relationships and kindness.'},
+{id:'grit',label:'Grit Lab',icon:'grit',blurb:'Practicing persistence through a real challenge.'}
+];
+const PROJECT_IDEAS={
+team:{g2:[{t:'Backyard Olympics',d:'Design 3 mini-games and referee a family tournament.'},{t:'Chore Chart Company',d:'Build a fair rotating chore system and pitch it to the family.'}],
+      g4:[{t:'Neighborhood Cleanup Captain',d:'Organize a mini cleanup and assign everyone a role.'},{t:'Family Game Night League',d:'Create and run a tournament bracket for game night.'}]},
+story:{g2:[{t:'Bedtime Story Swap',d:'Write and perform an original bedtime story for the family.'},{t:'Show-and-Tell Studio',d:'Record a 2-minute video presenting a favorite object.'}],
+      g4:[{t:'Family Podcast Pilot',d:'Record a 5-minute podcast interviewing a family member.'},{t:'Mini TED Talk',d:'Prepare and deliver a 3-minute talk on something you love.'}]},
+build:{g2:[{t:'Lemonade Stand Ledger',d:'Run a small stand or sell drawings and track money in/out.'},{t:'Piggy Bank Planner',d:'Set a savings goal and track allowance toward it.'}],
+      g4:[{t:'Micro Business Launch',d:'Start a tiny venture — dog walking, crafts — and track profit.'},{t:'Budget the Trip',d:'Plan a mock family outing with a $50 budget, researching real costs.'}]},
+connect:{g2:[{t:'Kindness Mission',d:'Do one kind act daily for a week and log it.'},{t:'Pen Pal Letter',d:'Write a real letter to a grandparent or friend.'}],
+      g4:[{t:'Community Interview',d:"Interview a neighbor or relative about their life story."},{t:'Conflict Coach',d:'Practice role-playing how to resolve a disagreement calmly.'}]},
+grit:{g2:[{t:'10-Day Skill Streak',d:'Pick a hard skill (tying shoes, a puzzle) and practice daily.'},{t:'Chore Marathon',d:'Complete one big chore fully without giving up.'}],
+      g4:[{t:'Personal Challenge',d:'Train toward a physical goal (push-ups, a mile run) for 2 weeks.'},{t:'Fix-It Project',d:'Repair or build something that takes several attempts.'}]}
+};
+
+/* ================= BADGE DEFINITIONS ================= */
+const BADGE_DEFS=[
+{id:'first-steps',label:'First Steps',icon:'compass',desc:'Complete your very first practice session.',check:(l,ss)=>Object.values(ss).some(s=>s.totalAnswered>0)},
+{id:'century-club',label:'Century Club',icon:'star',desc:'Answer 100 questions correctly across all skills.',check:(l,ss)=>Object.values(ss).reduce((a,s)=>a+s.totalCorrect,0)>=100},
+{id:'streak-7',label:'7-Day Streak',icon:'flame',desc:'Practice 7 days in a row.',check:(l)=>l.streakDays>=7},
+{id:'streak-30',label:'30-Day Streak',icon:'flame',desc:'Practice 30 days in a row.',check:(l)=>l.streakDays>=30},
+{id:'elevation-master',label:'Elevation Master',icon:'mountain',desc:'Reach Elevation 5 in any skill.',check:(l,ss)=>Object.values(ss).some(s=>s.difficulty===5)},
+{id:'summit-reacher',label:'Summit Reacher',icon:'flag',desc:'Fully master any skill.',check:(l,ss)=>Object.values(ss).some(s=>s.mastered)},
+{id:'level-5',label:'Level 5 Explorer',icon:'badge',desc:'Reach Level 5.',check:(l)=>l.level>=5},
+{id:'level-10',label:'Level 10 Explorer',icon:'badge',desc:'Reach Level 10.',check:(l)=>l.level>=10},
+{id:'token-saver',label:'Token Saver',icon:'token',desc:'Save up 200 Trail Tokens at once.',check:(l)=>l.tokens>=200},
+{id:'bookworm',label:'Bookworm',icon:'book',desc:'Finish every Reading Comprehension passage at least once.',check:(l,ss,passageCount)=>{const c=ss.comprehension2||ss.comprehension4;return c&&c.passagesCompleted&&c.passagesCompleted.filter(Boolean).length>=passageCount;}}
+];
+
+/* ================= SKILL REGISTRY ================= */
+const GENERATORS={
+  add2:gAdd2, sub2:gSub2, placevalue2:gPlaceValue2, skipmult2:gSkipMult2, money2:gMoney2, time2:gTime2, wordproblems2:gWordProblems2,
+  mult4:gMult4, div4:gDiv4, fractions4:gFractions4, decimals4:gDecimals4, factors4:gFactors4, areaperim4:gAreaPerim4, wordproblems4:gWordProblems4,
+  sightwords2:GENERATOR_sightwords2, phonics2:GENERATOR_phonics2, vocab2:GENERATOR_vocab2,
+  vocab4:GENERATOR_vocab4, grammar4:GENERATOR_grammar4, rootwords4:GENERATOR_rootwords4
+};
+const GRADE2_SKILLS=[
+{id:'add2',subject:'math',label:'Addition',icon:'plus'},
+{id:'sub2',subject:'math',label:'Subtraction',icon:'minus'},
+{id:'placevalue2',subject:'math',label:'Place Value',icon:'grid'},
+{id:'skipmult2',subject:'math',label:'Skip Counting & x',icon:'multiply'},
+{id:'money2',subject:'math',label:'Money',icon:'token'},
+{id:'time2',subject:'math',label:'Telling Time',icon:'clockicon'},
+{id:'wordproblems2',subject:'math',label:'Word Problems',icon:'puzzle'},
+{id:'sightwords2',subject:'reading',label:'Sight Words',icon:'letters'},
+{id:'phonics2',subject:'reading',label:'Phonics & Rhymes',icon:'note'},
+{id:'vocab2',subject:'reading',label:'Vocabulary',icon:'speech'},
+{id:'comprehension2',subject:'reading',label:'Reading Comprehension',icon:'book',isComprehension:true}
+];
+const GRADE4_SKILLS=[
+{id:'mult4',subject:'math',label:'Multiplication',icon:'multiply'},
+{id:'div4',subject:'math',label:'Division',icon:'divide'},
+{id:'fractions4',subject:'math',label:'Fractions',icon:'fraction'},
+{id:'decimals4',subject:'math',label:'Decimals',icon:'grid'},
+{id:'factors4',subject:'math',label:'Factors & Multiples',icon:'puzzle'},
+{id:'areaperim4',subject:'math',label:'Area & Perimeter',icon:'ruler'},
+{id:'wordproblems4',subject:'math',label:'Word Problems',icon:'compass'},
+{id:'vocab4',subject:'reading',label:'Vocabulary',icon:'speech'},
+{id:'grammar4',subject:'reading',label:'Grammar',icon:'letters'},
+{id:'rootwords4',subject:'reading',label:'Prefixes & Suffixes',icon:'note'},
+{id:'comprehension4',subject:'reading',label:'Reading Comprehension',icon:'book',isComprehension:true}
+];
+const LEARNERS_META={
+  comet:{id:'comet',defaultName:'Osmand',ageLabel:'Age 7 · Grade 2',color:'accent',mascot:'comet',skills:GRADE2_SKILLS,passages:PASSAGES2,gradeKey:'g2'},
+  voyager:{id:'voyager',defaultName:'Oliver',ageLabel:'Age 9 · Grade 4',color:'teal',mascot:'rocket',skills:GRADE4_SKILLS,passages:PASSAGES4,gradeKey:'g4'}
+};
+/* Any student account beyond the two pre-seeded ones (osmand/oliver) gets a
+   fresh learner slot here at runtime, keyed by their own username, once approved. */
+function hashStr(s){let h=0;for(let i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return h;}
+const LEARNER_MASCOTS=['comet','rocket'];
+function tierForGrade(g){ return (g&&g>=4)?{skills:GRADE4_SKILLS,passages:PASSAGES4,gradeKey:'g4'}:{skills:GRADE2_SKILLS,passages:PASSAGES2,gradeKey:'g2'}; }
+function ensureDynamicLearnerMeta(user){
+  if(!user||user.role!=='student'||!user.learnerId)return;
+  const id=user.learnerId;
+  if(LEARNERS_META[id])return;
+  const tier=tierForGrade(user.grade);
+  const idx=Math.abs(hashStr(user.username))%2;
+  LEARNERS_META[id]={id,defaultName:user.username,ageLabel:`Grade ${user.grade||2}`,color:idx===0?'accent':'teal',mascot:LEARNER_MASCOTS[idx],skills:tier.skills,passages:tier.passages,gradeKey:tier.gradeKey};
+}
+function ensureLearnerRuntimeState(user){
+  if(!user||user.role!=='student'||!user.learnerId)return;
+  const id=user.learnerId;
+  ensureDynamicLearnerMeta(user);
+  if(!APP.learners[id]) APP.learners[id]=defaultLearner(id);
+  if(!APP.workshops[id]) APP.workshops[id]=defaultWorkshop();
+  if(!APP.skillStates[id]) APP.skillStates[id]={};
+  LEARNERS_META[id].skills.forEach(sk=>{ if(!APP.skillStates[id][sk.id]) APP.skillStates[id][sk.id]=makeSkillState(); });
+}
+
+/* ================= ADAPTIVE ENGINE ================= */
+function makeSkillState(){return{difficulty:1,streakCorrect:0,streakWrong:0,history:[],totalAnswered:0,totalCorrect:0,mastered:false,lastPracticed:null,passageIndex:0,passagesCompleted:[false,false,false,false,false,false]};}
+function applyAnswer(state,correct){
+  state.totalAnswered++; if(correct)state.totalCorrect++;
+  state.history.push(correct?1:0); if(state.history.length>20)state.history.shift();
+  if(correct){state.streakCorrect++;state.streakWrong=0; if(state.streakCorrect>=3&&state.difficulty<5){state.difficulty++;state.streakCorrect=0;}}
+  else{state.streakWrong++;state.streakCorrect=0; if(state.streakWrong>=2&&state.difficulty>1){state.difficulty--;state.streakWrong=0;}}
+  const last10=state.history.slice(-10); const acc=last10.reduce((a,v)=>a+v,0)/last10.length;
+  state.mastered=state.difficulty===5&&state.totalAnswered>=10&&acc>=0.85;
+  state.lastPracticed=todayStr();
+  return state;
+}
+
+/* ================= ICONS ================= */
+function icon(name,color,size){
+  size=size||20;
+  const s=`width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" style="stroke:${color}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"`;
+  if(name==='mountain')return `<svg ${s}><path d="M3 19L9 7l4 6 2-3 6 9H3z"/></svg>`;
+  if(name==='compass')return `<svg ${s}><circle cx="12" cy="12" r="9"/><path d="M15 9l-2 5-5 2 2-5 5-2z"/></svg>`;
+  if(name==='book')return `<svg ${s}><path d="M4 5a2 2 0 012-2h5v18H6a2 2 0 01-2-2V5z"/><path d="M20 5a2 2 0 00-2-2h-5v18h5a2 2 0 002-2V5z"/></svg>`;
+  if(name==='flag')return `<svg ${s}><path d="M6 21V3"/><path d="M6 4l11 3-11 3"/></svg>`;
+  if(name==='token')return `<svg ${s}><path d="M12 2l7 4v12l-7 4-7-4V6z"/><circle cx="12" cy="12" r="3.2"/></svg>`;
+  if(name==='speech')return `<svg ${s}><path d="M4 4h16v11H8l-4 4V4z"/></svg>`;
+  if(name==='team')return `<svg ${s}><circle cx="8" cy="9" r="3"/><circle cx="17" cy="9" r="3"/><path d="M2 20c0-3 2.5-5 6-5s6 2 6 5M12 20c0-3 2.5-5 6-5"/></svg>`;
+  if(name==='connect')return `<svg ${s}><path d="M12 21s-7-4.2-9.3-8.3C1.2 9.2 2.6 5.6 6 5.6c2 0 3.4 1.4 4 2.4.6-1 2-2.4 4-2.4 3.4 0 4.8 3.6 3.3 7.1C19 16.8 12 21 12 21z"/></svg>`;
+  if(name==='grit')return `<svg ${s}><path d="M4 21V5"/><path d="M4 6l14 2-4 4 4 4-14 2"/></svg>`;
+  if(name==='badge')return `<svg ${s}><path d="M12 2l7.5 4.3v8.4L12 19l-7.5-4.3V6.3z"/></svg>`;
+  if(name==='calendar')return `<svg ${s}><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>`;
+  if(name==='star')return `<svg ${s}><path d="M12 3l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z"/></svg>`;
+  if(name==='flame')return `<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M12 2c2 3-4 5-4 10a4 4 0 008 0c0-2-1-3-1-3s2 1 2 4a6 6 0 01-12 0c0-5 4-6 4-8 0-1.5-1-2.5 3-3z" fill="${color}"/></svg>`;
+  if(name==='plus')return `<svg ${s}><path d="M12 5v14M5 12h14"/></svg>`;
+  if(name==='minus')return `<svg ${s}><path d="M5 12h14"/></svg>`;
+  if(name==='multiply')return `<svg ${s}><path d="M6 6l12 12M18 6L6 18"/></svg>`;
+  if(name==='divide')return `<svg ${s}><circle cx="12" cy="6.5" r="1.6" fill="${color}"/><path d="M5 12h14"/><circle cx="12" cy="17.5" r="1.6" fill="${color}"/></svg>`;
+  if(name==='grid')return `<svg ${s}><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg>`;
+  if(name==='clockicon')return `<svg ${s}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg>`;
+  if(name==='puzzle')return `<svg ${s}><path d="M4 4h6v2.3a2 2 0 104 0V4h6v6h-2.3a2 2 0 100 4H20v6h-6v-2.3a2 2 0 10-4 0V20H4v-6h2.3a2 2 0 100-4H4z"/></svg>`;
+  if(name==='letters')return `<svg width="${size}" height="${size}" viewBox="0 0 24 24"><text x="12" y="17" text-anchor="middle" font-family="var(--font-display)" font-weight="700" font-size="13" fill="${color}">Aa</text></svg>`;
+  if(name==='note')return `<svg ${s}><circle cx="8" cy="17" r="2.4" fill="${color}"/><circle cx="17" cy="15" r="2.4" fill="${color}"/><path d="M10.4 17V5.5l7-1.8V13"/></svg>`;
+  if(name==='ruler')return `<svg ${s}><rect x="3" y="9" width="18" height="6" rx="1"/><path d="M6 9v2M9 9v3M12 9v2M15 9v3M18 9v2"/></svg>`;
+  if(name==='fraction')return `<svg ${s}><path d="M6 18L18 6"/><circle cx="8" cy="8" r="2" fill="${color}"/><circle cx="16" cy="16" r="2" fill="${color}"/></svg>`;
+  return `<svg ${s}></svg>`;
+}
+function svgClock(h,m){
+  const cx=60,cy=60,r=52;
+  const minuteAngle=(m/60)*360; const hourAngle=((h%12)/12)*360+(m/60)*30;
+  function pt(a,radius){const rad=(a-90)*Math.PI/180;return[cx+radius*Math.cos(rad),cy+radius*Math.sin(rad)];}
+  let ticks='';
+  for(let i=0;i<12;i++){const a=i*30;const[x1,y1]=pt(a,47);const[x2,y2]=pt(a,42);ticks+=`<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" style="stroke:var(--ink-faint)" stroke-width="2"/>`;}
+  const[hx,hy]=pt(hourAngle,26); const[mx,my]=pt(minuteAngle,40);
+  return `<svg viewBox="0 0 120 120" width="150" height="150"><circle cx="${cx}" cy="${cy}" r="${r}" style="fill:var(--surface);stroke:var(--border)" stroke-width="3"/>${ticks}<line x1="${cx}" y1="${cy}" x2="${hx.toFixed(1)}" y2="${hy.toFixed(1)}" style="stroke:var(--ink)" stroke-width="4.5" stroke-linecap="round"/><line x1="${cx}" y1="${cy}" x2="${mx.toFixed(1)}" y2="${my.toFixed(1)}" style="stroke:var(--ink)" stroke-width="3" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="3.5" style="fill:var(--accent)"/></svg>`;
+}
+function svgRect(l,w){
+  const W=200,H=130,pad=34;
+  const scale=Math.min((W-pad*2)/w,(H-pad*2)/l);
+  const rw=w*scale, rh=l*scale;
+  const x=(W-rw)/2, y=(H-rh)/2;
+  return `<svg viewBox="0 0 ${W} ${H}" width="220" height="145">
+    <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${rw.toFixed(1)}" height="${rh.toFixed(1)}" fill="none" style="stroke:var(--teal)" stroke-width="3"/>
+    <text x="${(W/2).toFixed(1)}" y="${(y-10).toFixed(1)}" text-anchor="middle" style="font-family:var(--font-mono);font-size:13px;fill:var(--ink-soft)">${w}</text>
+    <text x="${(x-12).toFixed(1)}" y="${(H/2).toFixed(1)}" text-anchor="end" dominant-baseline="middle" style="font-family:var(--font-mono);font-size:13px;fill:var(--ink-soft)">${l}</text>
+  </svg>`;
+}
+/* Friendly mascot per learner: 'comet' (Osmand) or 'rocket' (Oliver). mood: 'happy'|'excited' */
+function svgMascot(kind,color,mood){
+  mood=mood||'happy';
+  const bounce=mood==='excited';
+  const eyeY=40, mouthY=eyeY+9;
+  const face=`<circle cx="41" cy="${eyeY}" r="3.4" fill="var(--ink)"/><circle cx="59" cy="${eyeY}" r="3.4" fill="var(--ink)"/>
+    <path d="M39 ${mouthY} Q50 ${bounce?mouthY+11:mouthY+7} 61 ${mouthY}" fill="none" style="stroke:var(--ink)" stroke-width="2.6" stroke-linecap="round"/>
+    ${bounce?`<circle cx="33" cy="46" r="3" fill="#fff" opacity=".55"/><circle cx="67" cy="46" r="3" fill="#fff" opacity=".55"/>`:''}`;
+  if(kind==='comet'){
+    return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M46 34 L10 66 Q2 72 12 75 L44 62Z" fill="${color}" opacity=".32"/>
+      <path d="M50 30 L20 58 Q12 65 22 67 L48 56Z" fill="${color}" opacity=".5"/>
+      <circle cx="52" cy="50" r="27" fill="${color}"/>
+      ${face}
+      <circle cx="42" cy="40" r="4" fill="#fff" opacity=".28"/>
+    </svg>`;
+  }
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 12 Q70 32 68 62 L32 62 Q30 32 50 12Z" fill="${color}"/>
+    <path d="M32 60 L16 80 L33 71Z" fill="${color}"/>
+    <path d="M68 60 L84 80 L67 71Z" fill="${color}"/>
+    <path d="M40 62 L50 88 L60 62Z" fill="var(--warn)"/>
+    <circle cx="50" cy="42" r="10" fill="var(--surface)"/>
+    <circle cx="50" cy="42" r="10" fill="none" style="stroke:${color}" stroke-width="2"/>
+    ${face}
+  </svg>`;
+}
+/* Small mountain trail visual for elevation 1-5, with current-position marker. */
+function svgElevationPath(difficulty,mastered,color){
+  const W=200,H=54;
+  const pts=[[10,44],[52,33],[94,29],[136,17],[178,8]];
+  const activeIdx=Math.max(0,Math.min(4,difficulty-1));
+  const activeSeg=pts.slice(0,activeIdx+1).map((p,i)=>(i===0?'M':'L')+p[0]+' '+p[1]).join(' ');
+  const baseSeg=pts.map((p,i)=>(i===0?'M':'L')+p[0]+' '+p[1]).join(' ');
+  const dots=pts.map((p,i)=>{
+    const reached=i<=activeIdx; const cur=i===activeIdx;
+    return `<circle cx="${p[0]}" cy="${p[1]}" r="${cur?6.5:4}" fill="${reached?color:'var(--surface-3)'}" style="stroke:var(--surface);stroke-width:2"/>`;
+  }).join('');
+  const flag=mastered?`<path d="M178 8 V-6" style="stroke:${color}" stroke-width="2.4" stroke-linecap="round"/><path d="M178 -6 l12 5 l-12 5Z" fill="${color}"/>`:'';
+  return `<svg viewBox="-2 -14 204 70" width="100%" height="52" preserveAspectRatio="none">
+    <path d="${baseSeg}" fill="none" style="stroke:var(--surface-3)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="${activeSeg}" fill="none" style="stroke:${color}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${dots}${flag}
+  </svg>`;
+}
+function flameRow(n,color){
+  const shown=Math.min(n,5);
+  let out='';
+  for(let i=0;i<shown;i++) out+=icon('flame',color,15);
+  if(n>5) out+=`<span class="mono" style="font-size:.7rem;color:${color}">+${n-5}</span>`;
+  return `<span class="flame-row">${out}</span>`;
+}
+/* Celebration confetti burst for level-ups, mastery and badges. Skips animation if the viewer prefers reduced motion. */
+function burstConfettiBig(){
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const canvas=document.createElement('canvas');
+  canvas.style.position='fixed'; canvas.style.inset='0'; canvas.style.pointerEvents='none'; canvas.style.zIndex='999';
+  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+  document.body.appendChild(canvas);
+  const ctx=canvas.getContext('2d'); if(!ctx){canvas.remove();return;}
+  const colors=['#E8912E','#1F8A82','#3D8F5B','#C6435A','#F2C94C','#7EDDD4'];
+  const pieces=Array.from({length:90},()=>({
+    x:canvas.width/2+randInt(-120,120), y:canvas.height*0.3+randInt(-30,30),
+    vx:(Math.random()-0.5)*9, vy:Math.random()*-7-3,
+    size:randInt(5,9), color:pick(colors), rot:Math.random()*360, vrot:(Math.random()-0.5)*12
+  }));
+  let frame=0;
+  function tick(){
+    frame++;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{
+      p.vy+=0.22; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vrot;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.color; ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*0.6);
+      ctx.restore();
+    });
+    if(frame<75) requestAnimationFrame(tick); else canvas.remove();
+  }
+  tick();
+}
+
+/* ================= PERSISTENCE =================
+   Cloud sync uses Firebase Realtime Database (see firebaseConfig + the
+   firebase-*-compat.js <script> tags loaded in <head>), so this app can be
+   hosted anywhere (e.g. GitHub Pages) and shared with a public link while
+   still syncing the family roster + progress across devices. If the
+   Firebase SDK fails to load or init (offline, blocked script, etc.),
+   everything falls back to this browser's own localStorage. */
+const Store={
+  db:null,
+  async init(){
+    try{
+      if(window.firebase && window.firebase.initializeApp && typeof FIREBASE_CONFIG!=='undefined' && FIREBASE_CONFIG && FIREBASE_CONFIG.apiKey){
+        if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+        this.db=firebase.database();
+      }
+    }
+    catch(e){ console.warn('firebase init failed',e); this.db=null; }
+  },
+  _lsKey(path){return 'twopeaks:'+path;},
+  lsGet(path){ try{const raw=localStorage.getItem(this._lsKey(path)); return raw?JSON.parse(raw):null;}catch(e){return null;} },
+  lsSet(path,data){ try{localStorage.setItem(this._lsKey(path),JSON.stringify(data));}catch(e){} },
+  async dbGet(path){
+    if(!this.db)return null;
+    try{ const snap=await this.db.ref(path).once('value'); return snap.exists()?snap.val():null; }
+    catch(e){ console.warn('db get failed',path,e); return null; }
+  },
+  dbSet(path,data){
+    if(!this.db)return;
+    try{ this.db.ref(path).set(data).catch(e=>console.warn('db set failed',path,e)); }
+    catch(e){ console.warn('db set threw',path,e); }
+  },
+  save(path,data){ this.lsSet(path,data); this.dbSet(path,data); }
+};
+
+const DEFAULT_REWARDS=[
+{id:'r1',label:'30 extra minutes of screen time',cost:40,active:true},
+{id:'r2',label:'Pick tonight’s family movie',cost:30,active:true},
+{id:'r3',label:'Stay up 20 minutes past bedtime',cost:35,active:true},
+{id:'r4',label:'Ice cream after dinner',cost:25,active:true},
+{id:'r5',label:'Choose a weekend outing',cost:80,active:true},
+{id:'r6',label:'Skip one chore this week',cost:50,active:true}
+];
+
+/* ================= APP STATE ================= */
+const APP={
+  currentLearnerId:null,
+  activeTab:'today',
+  learners:{}, skillStates:{comet:{},voyager:{}}, workshops:{}, rewards:[],
+  booted:false,
+  auth:{users:{}, currentUser:null, screen:'login', error:'', notice:'', regRole:'student'}
+};
+/* ================= AUTH DATA / SEEDING ================= */
+const AUTH_STORE_KEY='auth/users';
+const SESSION_STORE_KEY='auth/session';
+function seedDefaultUsers(){
+  return {
+    osmand:{username:'osmand',password:'1234',role:'student',grade:2,learnerId:'comet',linkedParents:['steve','chenyi'],approved:true,isAdmin:false,createdAt:Date.now()},
+    oliver:{username:'oliver',password:'1234',role:'student',grade:4,learnerId:'voyager',linkedParents:['steve','chenyi'],approved:true,isAdmin:false,createdAt:Date.now()},
+    steve:{username:'steve',password:'1234',role:'parent',linkedStudents:['osmand','oliver'],approved:true,isAdmin:true,createdAt:Date.now()},
+    chenyi:{username:'chenyi',password:'1234',role:'parent',linkedStudents:['osmand','oliver'],approved:true,isAdmin:true,createdAt:Date.now()}
+  };
+}
+
+function defaultLearner(id){
+  const m=LEARNERS_META[id];
+  return{id,name:m.defaultName,ageLabel:m.ageLabel,xp:0,tokens:0,level:1,streakDays:0,lastActiveDate:null,badges:[],todayLog:null,guideNotes:''};
+}
+function defaultWorkshop(){
+  return{areaId:null,projectTitle:'',goalText:'',targetDate:'',checkins:{},journal:[]};
+}
+
+async function loadAllData(){
+  for(const id of Object.keys(LEARNERS_META)){
+    const cached=Store.lsGet(`learners/${id}`);
+    APP.learners[id]=cached||defaultLearner(id);
+    const cachedWs=Store.lsGet(`learners/${id}/workshop`);
+    APP.workshops[id]=cachedWs||defaultWorkshop();
+    APP.skillStates[id]={};
+    for(const sk of LEARNERS_META[id].skills){
+      const cachedSk=Store.lsGet(`learners/${id}/skills/${sk.id}`);
+      APP.skillStates[id][sk.id]=cachedSk||makeSkillState();
+    }
+  }
+  APP.rewards=Store.lsGet('rewards/list')||{items:DEFAULT_REWARDS.slice()};
+  render();
+  if(Store.db){
+    for(const id of Object.keys(LEARNERS_META)){
+      const remote=await Store.dbGet(`learners/${id}`);
+      if(remote){ APP.learners[id]=remote; Store.lsSet(`learners/${id}`,remote); }
+      else{ Store.dbSet(`learners/${id}`,APP.learners[id]); }
+      const remoteWs=await Store.dbGet(`learners/${id}/workshop`);
+      if(remoteWs){ APP.workshops[id]=remoteWs; Store.lsSet(`learners/${id}/workshop`,remoteWs); }
+      else{ Store.dbSet(`learners/${id}/workshop`,APP.workshops[id]); }
+      for(const sk of LEARNERS_META[id].skills){
+        const remoteSk=await Store.dbGet(`learners/${id}/skills/${sk.id}`);
+        if(remoteSk){ APP.skillStates[id][sk.id]=remoteSk; Store.lsSet(`learners/${id}/skills/${sk.id}`,remoteSk); }
+        else{ Store.dbSet(`learners/${id}/skills/${sk.id}`,APP.skillStates[id][sk.id]); }
+      }
+    }
+    const remoteRewards=await Store.dbGet('rewards/list');
+    if(remoteRewards){ APP.rewards=remoteRewards; Store.lsSet('rewards/list',remoteRewards); }
+    else{ Store.dbSet('rewards/list',APP.rewards); }
+    render();
+  }
+}
+function saveLearner(id){ Store.save(`learners/${id}`,APP.learners[id]); }
+function saveSkill(id,skillId){ Store.save(`learners/${id}/skills/${skillId}`,APP.skillStates[id][skillId]); }
+function saveWorkshop(id){ Store.save(`learners/${id}/workshop`,APP.workshops[id]); }
+function saveRewards(){ Store.save('rewards/list',APP.rewards); }
+
+/* ================= GAME LOGIC HELPERS ================= */
+function levelFromXp(xp){ return Math.floor(xp/150)+1; }
+function xpIntoLevel(xp){ return xp%150; }
+function touchStreak(learner){
+  const today=todayStr();
+  if(learner.lastActiveDate===today)return false;
+  const y=new Date(Date.now()-86400000).toISOString().slice(0,10);
+  learner.streakDays=(learner.lastActiveDate===y)?learner.streakDays+1:1;
+  learner.lastActiveDate=today;
+  return true;
+}
+function ensureTodayLog(learner){
+  const today=todayStr();
+  if(!learner.todayLog||learner.todayLog.date!==today) learner.todayLog={date:today,mathDone:false,readingDone:false,workshopDone:false,journalDone:false};
+}
+function markTodayLog(learner,key){ ensureTodayLog(learner); learner.todayLog[key]=true; }
+function checkBadges(learnerId){
+  const learner=APP.learners[learnerId]; const ss=APP.skillStates[learnerId];
+  const newly=[];
+  for(const b of BADGE_DEFS){
+    if(learner.badges.includes(b.id))continue;
+    if(b.check(learner,ss,LEARNERS_META[learnerId].passages.length)){ learner.badges.push(b.id); newly.push(b); }
+  }
+  return newly;
+}
+function skillLabelMap(learnerId){
+  const map={}; LEARNERS_META[learnerId].skills.forEach(s=>map[s.id]=s); return map;
+}
+
+/* ================= TOP CHROME ================= */
+function accentVars(color){ return color==='teal'?{c:'var(--teal)',cs:'var(--teal-strong)',soft:'var(--teal-soft)'}:{c:'var(--accent)',cs:'var(--accent-strong)',soft:'var(--accent-soft)'}; }
+
+function renderTopbar(){
+  const el=document.getElementById('topbar');
+  const u=APP.auth.currentUser;
+  el.innerHTML=`<div class="brand">${icon('mountain','var(--accent)',34)}<div><div class="brand-name">Two Peaks</div><div class="brand-sub">Home Basecamp</div></div></div>
+    <div class="row" style="align-items:center;gap:12px">
+      <span style="font-size:.82rem;color:var(--ink-soft)">Signed in as <b>${esc(u.username)}</b>${u.isAdmin?' · Admin':''}</span>
+      <button class="btn btn-secondary" onclick="logout()">Log Out</button>
+    </div>`;
+}
+function renderStatStrip(){
+  const el=document.getElementById('statstrip');
+  if(APP.auth.currentUser.role!=='student'){ el.innerHTML=''; return; }
+  const id=APP.currentLearnerId; const learner=APP.learners[id]; const av=accentVars(LEARNERS_META[id].color);
+  const into=xpIntoLevel(learner.xp); const pct=Math.round(into/150*100);
+  el.innerHTML=`
+    <div class="xpbar-wrap" style="--accent-color:${av.c};--accent-color-strong:${av.cs}">
+      <div class="xpbar-top"><span>Level ${learner.level} · Trail Miles</span><span class="mono">${into}/150 XP</span></div>
+      <div class="xpbar-track"><div class="xpbar-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="stat-chip">${icon('token',av.c,18)}<div><div class="num mono">${learner.tokens}</div><div class="cap">Trail Tokens</div></div></div>
+    <div class="stat-chip">${icon('flag',av.c,18)}<div><div class="num mono">${learner.streakDays}</div><div class="cap">Day Streak</div></div></div>
+    <div class="stat-chip">${icon('badge',av.c,18)}<div><div class="num mono">${learner.badges.length}</div><div class="cap">Trail Badges</div></div></div>
+  `;
+}
+const TABS=[{id:'today',label:"Today's Route",icon:'compass'},{id:'math',label:'Math Trail',icon:'mountain'},{id:'reading',label:'Reading Trail',icon:'book'},{id:'workshop',label:'Trail Time',icon:'flag'},{id:'camp',label:'Camp Log',icon:'badge'},{id:'admin',label:'Admin',icon:'grid'}];
+/* ================= AUTH / RBAC ================= */
+function allowedTabsFor(u){
+  if(!u)return[];
+  if(u.role==='student')return['today','math','reading','workshop'];
+  return u.isAdmin?['camp','admin']:['camp'];
+}
+function visibleLearnerIds(){
+  const u=APP.auth.currentUser; if(!u)return[];
+  if(u.role==='student')return u.learnerId?[u.learnerId]:[];
+  if(u.isAdmin)return Object.values(APP.auth.users).filter(x=>x.role==='student'&&x.approved).map(x=>x.learnerId).filter(Boolean);
+  return (u.linkedStudents||[]).map(sn=>{const su=APP.auth.users[sn]; return su&&su.approved?su.learnerId:null;}).filter(Boolean);
+}
+function renderTabbar(){
+  const el=document.getElementById('tabbar');
+  const allowed=allowedTabsFor(APP.auth.currentUser);
+  el.innerHTML=TABS.filter(t=>allowed.includes(t.id)).map(t=>`<button class="tab-btn" data-active="${APP.activeTab===t.id}" onclick="setTab('${t.id}')">${icon(t.icon,APP.activeTab===t.id?'var(--accent)':'var(--ink-faint)',16)}${t.label}</button>`).join('');
+}
+function setLearner(id){ if(!visibleLearnerIds().includes(id))return; APP.currentLearnerId=id; render(); }
+function setTab(id){ if(!allowedTabsFor(APP.auth.currentUser).includes(id))return; APP.activeTab=id; render(); }
+function render(){
+  if(!APP.auth.currentUser){
+    document.getElementById('topbar').innerHTML=`<div class="brand">${icon('mountain','var(--accent)',34)}<div><div class="brand-name">Two Peaks</div><div class="brand-sub">Home Basecamp</div></div></div>`;
+    document.getElementById('statstrip').innerHTML='';
+    document.getElementById('tabbar').innerHTML='';
+    document.getElementById('view').innerHTML=renderAuthScreen();
+    return;
+  }
+  const allowed=allowedTabsFor(APP.auth.currentUser);
+  if(!allowed.includes(APP.activeTab)) APP.activeTab=allowed[0];
+  renderTopbar(); renderStatStrip(); renderTabbar();
+  const view=document.getElementById('view');
+  if(APP.activeTab==='today') view.innerHTML=renderToday();
+  else if(APP.activeTab==='math') view.innerHTML=renderSkillTrail('math');
+  else if(APP.activeTab==='reading') view.innerHTML=renderSkillTrail('reading');
+  else if(APP.activeTab==='workshop') view.innerHTML=renderTrailTime();
+  else if(APP.activeTab==='camp') view.innerHTML=renderCampLog();
+  else if(APP.activeTab==='admin') view.innerHTML=renderAdmin();
+}
+
+/* ================= TODAY'S ROUTE ================= */
+function renderToday(){
+  const id=APP.currentLearnerId; const learner=APP.learners[id]; ensureTodayLog(learner);
+  const log=learner.todayLog;
+  const ws=APP.workshops[id];
+  const items=[
+    {key:'mathDone',title:'Math Trail focus block',sub:'~10 quick adaptive questions',tab:'math'},
+    {key:'readingDone',title:'Reading Trail focus block',sub:'Sight words, vocabulary or a passage',tab:'reading'},
+    {key:'workshopDone',title:'Trail Time project work',sub:ws.projectTitle?('Working on: '+ws.projectTitle):'Pick a project in Trail Time',tab:'workshop'},
+    {key:'journalDone',title:'Closing Circle reflection',sub:'Write one line about today’s win',tab:'workshop'}
+  ];
+  const rows=items.map(it=>`<div class="card route-item">
+      <div class="route-check" data-done="${!!log[it.key]}">${log[it.key]?'✓':''}</div>
+      <div class="route-body"><div class="route-title">${it.title}</div><div class="route-sub">${it.sub}</div></div>
+      <button class="btn btn-secondary" onclick="setTab('${it.tab}')">Go</button>
+    </div>`).join('');
+  const av=accentVars(LEARNERS_META[id].color);
+  const mascot=LEARNERS_META[id].mascot;
+  const doneCount=Object.values(log).filter(v=>v===true).length;
+  const greetings=doneCount===0?['Ready for today\'s adventure?','Let\'s hit the trail!','Time to explore!']:doneCount<3?['Great progress — keep climbing!','Nice! A couple more stops to go.','On a roll today!']:['Trail complete — amazing day!','Summit reached for today!','Wow, full route done!'];
+  const activeRewards=(APP.rewards.items||[]).filter(r=>r.active).slice(0,3);
+  const rewardRows=activeRewards.map(r=>`<div class="card reward-row"><span class="rlbl">${esc(r.label)}</span><span class="reward-cost mono">${r.cost} ⛁</span>
+      <button class="btn btn-primary" ${learner.tokens<r.cost?'disabled':''} onclick="redeemReward('${r.id}')">Redeem</button></div>`).join('');
+  return `
+  <div class="hero-card" style="--accent-color-soft:${av.soft}">
+    <div class="hero-mascot">${svgMascot(mascot,av.c,learner.streakDays>=3?'excited':'happy')}</div>
+    <div>
+      <div class="hero-greet">${esc(pick(greetings))} ${esc(learner.name)}</div>
+      <div class="hero-sub">Level ${learner.level} explorer · ${doneCount}/4 route stops done today</div>
+      ${learner.streakDays>0?`<div class="hero-streak">${flameRow(learner.streakDays,av.c)} ${learner.streakDays}-day streak</div>`:''}
+    </div>
+  </div>
+  <div class="section-title">Today's Route</div>
+  <div class="section-sub">A suggested rhythm inspired by focused morning academics + afternoon projects. Nothing here is locked to the clock — go at ${esc(learner.name)}'s pace.</div>
+  <div class="route-list">${rows}</div>
+  <div style="height:26px"></div>
+  <div class="section-title" style="font-size:1.1rem">Reward Store</div>
+  <div class="section-sub">Balance: <b class="mono">${learner.tokens} Trail Tokens</b></div>
+  <div class="grid" style="grid-template-columns:1fr">${rewardRows||'<div class="section-sub">No rewards set up yet — add some in Camp Log.</div>'}</div>
+  `;
+}
+function redeemReward(rid){
+  const id=APP.currentLearnerId; const learner=APP.learners[id];
+  const r=(APP.rewards.items||[]).find(x=>x.id===rid); if(!r||learner.tokens<r.cost)return;
+  learner.tokens-=r.cost;
+  learner.redemptions=learner.redemptions||[];
+  learner.redemptions.unshift({label:r.label,cost:r.cost,date:todayStr()});
+  learner.redemptions=learner.redemptions.slice(0,20);
+  saveLearner(id); toast(`Redeemed: ${r.label}!`); render();
+}
+function toast(msg){
+  const el=document.getElementById('toastRoot');
+  el.innerHTML=`<div class="toast">${esc(msg)}</div>`;
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer=setTimeout(()=>{el.innerHTML='';},2600);
+}
+
+/* ================= MATH / READING TRAIL (skill grids) ================= */
+function ascentBar(state){
+  const last10=state.history.slice(-10); const acc=last10.length?Math.round(last10.reduce((a,v)=>a+v,0)/last10.length*100):0;
+  return{pct:acc,label:state.mastered?'Summit!':`Elev. ${state.difficulty}`};
+}
+function renderSkillTrail(subject){
+  const id=APP.currentLearnerId; const meta=LEARNERS_META[id];
+  const skills=meta.skills.filter(s=>s.subject===subject);
+  const av=accentVars(meta.color);
+  const cards=skills.map(s=>{
+    const state=APP.skillStates[id][s.id];
+    const asc=ascentBar(state);
+    const masteredPill=state.mastered?`<span class="pill pill-good">${icon('star','var(--good)',12)} Mastered</span>`:'';
+    const extra=s.isComprehension?`<div class="skill-meta">Passages read: ${state.passagesCompleted.filter(Boolean).length}/${state.passagesCompleted.length}</div>`:`<div class="skill-meta">Last practiced: ${state.lastPracticed||'—'}</div>`;
+    return `<div class="card skill-card">
+      <div class="skill-top"><div class="skill-icon" style="background:${av.soft}">${icon(s.icon,av.c,20)}</div>
+        <span class="elev-badge">${asc.label}</span></div>
+      <div class="skill-name">${s.label}</div>
+      <div class="elev-path-wrap">${svgElevationPath(state.difficulty,state.mastered,av.c)}</div>
+      ${extra} ${masteredPill}
+      <button class="btn btn-primary btn-block" onclick="${s.isComprehension?`openComprehension('${s.id}')`:`startSession('${s.id}')`}">Start Session</button>
+    </div>`;
+  }).join('');
+  return `<div class="section-title">${subject==='math'?'Math Trail':'Reading Trail'}</div>
+  <div class="section-sub">${meta.ageLabel} · Adaptive practice — questions get harder as ${esc(APP.learners[id].name)} improves, and ease back after a rough patch.</div>
+  <div class="grid grid-skills">${cards}</div>`;
+}
+
+/* ================= SESSION ENGINE (practice quiz) ================= */
+let session=null;
+function openModal(html){ document.getElementById('modalRoot').innerHTML=`<div class="modal-overlay" id="modalOverlay">${html}</div>`; }
+function closeModal(){ document.getElementById('modalRoot').innerHTML=''; session=null; }
+function stopProp(ev){ ev.stopPropagation(); }
+
+const CORRECT_PHRASES=['Nice work!','Boom — got it!',"You're on fire!",'Excellent!','Way to go!','Superstar move!','Nailed it!','Awesome job!','Brilliant!','Crushed it!'];
+const WRONG_PHRASES=['Not quite.','So close!','Nice try.','Almost there.','Keep climbing.','Good effort.'];
+function startSession(skillId){
+  const learnerId=APP.currentLearnerId;
+  session={learnerId,skillId,qIndex:0,total:8,correctCount:0,xpEarned:0,tokensEarned:0,missedQueue:0,answered:false,numericInput:'',selected:null,currentIsReview:false,comboStreak:0};
+  nextQuestionInSession();
+  openModal(renderSessionModal());
+}
+function nextQuestionInSession(){
+  const state=APP.skillStates[session.learnerId][session.skillId];
+  const gen=GENERATORS[session.skillId];
+  let isReview=false;
+  if(session.qIndex>0&&session.qIndex%4===0&&session.missedQueue>0){ isReview=true; session.missedQueue--; }
+  session.currentQuestion=gen(state.difficulty);
+  session.currentIsReview=isReview; session.answered=false; session.numericInput=''; session.selected=null;
+}
+function renderSessionModal(){
+  const q=session.currentQuestion;
+  const meta=skillLabelMap(session.learnerId)[session.skillId];
+  const visual=q.visual?(q.visual.type==='clock'?svgClock(q.visual.h,q.visual.m):svgRect(q.visual.l,q.visual.w)):'';
+  let body='';
+  if(q.mode==='mc'){
+    body=`<div class="choices">${q.choices.map(c=>{
+      let state='';
+      if(session.answered){ if(c===q.correctAnswer) state='correct'; else if(c===session.selected) state='wrong'; }
+      return `<button class="choice-btn" data-state="${state}" ${session.answered?'disabled':''} onclick="answerMc(${JSON.stringify(c).replace(/"/g,'&quot;')})">${esc(c)}</button>`;
+    }).join('')}</div>`;
+  } else {
+    body=`<div class="answer-display mono">${session.numericInput||'&nbsp;'}</div>
+    <div class="keypad">
+      ${['7','8','9','4','5','6','1','2','3','.','0','⌫'].map(k=>`<button class="key-btn" ${session.answered?'disabled':''} onclick="keypadPress('${k}')">${k}</button>`).join('')}
+    </div>
+    <div style="height:10px"></div>
+    <button class="btn btn-primary btn-block" ${session.answered||session.numericInput===''?'disabled':''} onclick="answerNumeric()">Check</button>`;
+  }
+  const feedback=session.answered?`<div class="feedback-box ${session.lastCorrect?'feedback-good':'feedback-bad'}">${session.lastCorrect?'✓ '+esc(session.lastPhrase)+' ':esc(session.lastPhrase)+' '}${esc(q.explanation)}</div>
+    <button class="btn btn-primary btn-block" style="margin-top:12px" onclick="advanceSession()">${session.qIndex+1>=session.total?'See Results':'Next Question'}</button>`:'';
+  const av=accentVars(LEARNERS_META[session.learnerId].color);
+  return `<div class="modal-card" onclick="stopProp(event)">
+    <div class="qhead"><span>${meta.label}${session.currentIsReview?' · 🔁 Review':''}</span><span style="display:flex;align-items:center;gap:8px">${session.comboStreak>0?flameRow(session.comboStreak,av.c):''}Question ${session.qIndex+1} / ${session.total}</span></div>
+    ${visual?`<div class="center">${visual}</div>`:''}
+    <div class="qprompt">${renderPrompt(q.prompt)}</div>
+    ${body}
+    ${feedback}
+    <div style="height:6px"></div>
+    <button class="btn btn-secondary btn-block" onclick="quitSession()">Exit Session</button>
+  </div>`;
+}
+function keypadPress(k){
+  if(session.answered)return;
+  if(k==='⌫') session.numericInput=session.numericInput.slice(0,-1);
+  else if(k==='.'){ if(!session.numericInput.includes('.')) session.numericInput+='.'; }
+  else session.numericInput+=k;
+  openModal(renderSessionModal());
+}
+function answerNumeric(){ submitAnswer(session.numericInput); }
+function answerMc(value){ if(session.answered)return; session.selected=value; submitAnswer(value); }
+function submitAnswer(value){
+  if(session.answered)return;
+  const q=session.currentQuestion;
+  let correct;
+  if(q.mode==='numeric'){ const v=parseFloat(value); correct=!isNaN(v)&&Math.abs(v-q.correctAnswer)<1e-6; }
+  else{ correct=(value===q.correctAnswer); }
+  session.answered=true; session.lastCorrect=correct;
+  session.lastPhrase=correct?pick(CORRECT_PHRASES):pick(WRONG_PHRASES);
+  const state=APP.skillStates[session.learnerId][session.skillId];
+  applyAnswer(state,correct);
+  if(correct){
+    session.comboStreak++;
+    const mult=1+(state.difficulty-1)*0.15;
+    const xp=Math.round(10*mult)+(session.currentIsReview?5:0);
+    session.correctCount++; session.xpEarned+=xp; session.tokensEarned+=Math.round(xp/2);
+  } else { session.missedQueue++; session.comboStreak=0; }
+  saveSkill(session.learnerId,session.skillId);
+  openModal(renderSessionModal());
+}
+function advanceSession(){
+  session.qIndex++;
+  if(session.qIndex>=session.total){ finishPracticeSession(); return; }
+  nextQuestionInSession();
+  openModal(renderSessionModal());
+}
+function quitSession(){ closeModal(); render(); }
+function finalizeCommon(learnerId,subjectKey,xpEarned,tokensEarned){
+  const learner=APP.learners[learnerId];
+  touchStreak(learner);
+  learner.xp+=xpEarned; learner.tokens+=tokensEarned;
+  const newLevel=levelFromXp(learner.xp); const leveledUp=newLevel>learner.level; learner.level=newLevel;
+  markTodayLog(learner,subjectKey);
+  const newBadges=checkBadges(learnerId);
+  saveLearner(learnerId);
+  return{leveledUp,newBadges};
+}
+function finishPracticeSession(){
+  const meta=skillLabelMap(session.learnerId)[session.skillId];
+  const subjectKey=meta.subject==='math'?'mathDone':'readingDone';
+  const{leveledUp,newBadges}=finalizeCommon(session.learnerId,subjectKey,session.xpEarned,session.tokensEarned);
+  openModal(renderSummary(leveledUp,newBadges));
+}
+function renderSummary(leveledUp,newBadges){
+  const av=accentVars(LEARNERS_META[APP.currentLearnerId].color);
+  const mascot=LEARNERS_META[APP.currentLearnerId].mascot;
+  const pct=session.correctCount/session.total;
+  const bigWin=leveledUp||newBadges.length>0||pct>=0.85;
+  if(bigWin) burstConfettiBig();
+  const badgeHtml=newBadges.length?`<div class="badge-row" style="justify-content:center;margin-bottom:10px">${newBadges.map(b=>`<div class="badge-tile"><div class="badge-shape" style="background:${av.soft}">${icon(b.icon,av.c,28)}</div>${b.label}</div>`).join('')}</div>`:'';
+  const summitLine=leveledUp?`<div class="summit-banner">${icon('star',av.c,22)} Level Up! Now Level ${APP.learners[APP.currentLearnerId].level}</div>`:(pct>=0.85?`<div class="summit-banner">${icon('flame',av.c,20)} Amazing session!</div>`:'');
+  return `<div class="modal-card center" onclick="stopProp(event)">
+    <div class="hero-mascot" style="width:64px;height:64px;margin:0 auto 6px">${svgMascot(mascot,av.c,bigWin?'excited':'happy')}</div>
+    <div class="section-title">Session Complete!</div>
+    <div class="section-sub">${session.correctCount} / ${session.total} correct</div>
+    ${summitLine}
+    <div class="row" style="justify-content:center;margin:14px 0">
+      <div class="stat-chip">${icon('star','var(--accent)',16)}<div><div class="num mono">+${session.xpEarned}</div><div class="cap">XP</div></div></div>
+      <div class="stat-chip">${icon('token','var(--accent)',16)}<div><div class="num mono">+${session.tokensEarned}</div><div class="cap">Tokens</div></div></div>
+    </div>
+    ${badgeHtml}
+    <button class="btn btn-primary btn-block" onclick="closeModal();render();">Back to Trail</button>
+  </div>`;
+}
+
+/* ================= COMPREHENSION FLOW ================= */
+let comp=null;
+function openComprehension(skillId){
+  const learnerId=APP.currentLearnerId;
+  const meta=LEARNERS_META[learnerId];
+  const state=APP.skillStates[learnerId][skillId];
+  const passage=meta.passages[state.passageIndex%meta.passages.length];
+  comp={learnerId,skillId,passage,stage:'read',qIndex:0,correctCount:0,xpEarned:0,tokensEarned:0,answered:false,selected:null};
+  openModal(renderComprehensionModal());
+}
+function renderComprehensionModal(){
+  if(comp.stage==='read'){
+    return `<div class="modal-card" onclick="stopProp(event)">
+      <div class="qhead"><span>Reading Comprehension</span><span>Passage</span></div>
+      <div class="section-title" style="font-size:1.15rem">${esc(comp.passage.title)}</div>
+      <div class="passage-text">${esc(comp.passage.text)}</div>
+      <button class="btn btn-primary btn-block" onclick="startCompQuestions()">I'm Done Reading — Start Questions</button>
+      <div style="height:6px"></div>
+      <button class="btn btn-secondary btn-block" onclick="quitComp()">Exit</button>
+    </div>`;
+  }
+  const q=comp.passage.questions[comp.qIndex];
+  const choicesHtml=`<div class="choices">${q.choices.map(c=>{
+    let state=''; if(comp.answered){ if(c===q.correct) state='correct'; else if(c===comp.selected) state='wrong'; }
+    return `<button class="choice-btn" data-state="${state}" ${comp.answered?'disabled':''} onclick="answerComp(${JSON.stringify(c).replace(/"/g,'&quot;')})">${esc(c)}</button>`;
+  }).join('')}</div>`;
+  const feedback=comp.answered?`<div class="feedback-box ${comp.lastCorrect?'feedback-good':'feedback-bad'}">${comp.lastCorrect?'✓ '+esc(pick(CORRECT_PHRASES)):esc(pick(WRONG_PHRASES))+' Correct answer: '+esc(q.correct)}</div>
+    <button class="btn btn-primary btn-block" style="margin-top:12px" onclick="advanceComp()">${comp.qIndex+1>=comp.passage.questions.length?'See Results':'Next Question'}</button>`:'';
+  return `<div class="modal-card" onclick="stopProp(event)">
+    <div class="qhead"><span>${esc(comp.passage.title)}</span><span>Question ${comp.qIndex+1} / ${comp.passage.questions.length}</span></div>
+    <div class="qprompt">${esc(q.q)}</div>
+    ${choicesHtml}
+    ${feedback}
+    <div style="height:6px"></div>
+    <button class="btn btn-secondary btn-block" onclick="quitComp()">Exit</button>
+  </div>`;
+}
+function startCompQuestions(){ comp.stage='questions'; openModal(renderComprehensionModal()); }
+function answerComp(value){
+  if(comp.answered)return;
+  const q=comp.passage.questions[comp.qIndex];
+  const correct=(value===q.correct);
+  comp.answered=true; comp.selected=value; comp.lastCorrect=correct;
+  const state=APP.skillStates[comp.learnerId][comp.skillId];
+  applyAnswer(state,correct);
+  if(correct){ comp.correctCount++; comp.xpEarned+=15; comp.tokensEarned+=8; }
+  saveSkill(comp.learnerId,comp.skillId);
+  openModal(renderComprehensionModal());
+}
+function advanceComp(){
+  comp.qIndex++;
+  if(comp.qIndex>=comp.passage.questions.length){ finishComprehension(); return; }
+  comp.answered=false; comp.selected=null;
+  openModal(renderComprehensionModal());
+}
+function finishComprehension(){
+  const state=APP.skillStates[comp.learnerId][comp.skillId];
+  const meta=LEARNERS_META[comp.learnerId];
+  const idx=state.passageIndex%meta.passages.length;
+  state.passagesCompleted[idx]=true;
+  state.passageIndex=(state.passageIndex+1)%meta.passages.length;
+  saveSkill(comp.learnerId,comp.skillId);
+  const{leveledUp,newBadges}=finalizeCommon(comp.learnerId,'readingDone',comp.xpEarned,comp.tokensEarned);
+  session={correctCount:comp.correctCount,total:comp.passage.questions.length,xpEarned:comp.xpEarned,tokensEarned:comp.tokensEarned};
+  openModal(renderSummary(leveledUp,newBadges));
+}
+function quitComp(){ closeModal(); comp=null; render(); }
+
+/* ================= TRAIL TIME (afternoon workshop) ================= */
+function last14Days(){ const days=[]; for(let i=13;i>=0;i--){ days.push(new Date(Date.now()-i*86400000).toISOString().slice(0,10)); } return days; }
+function renderTrailTime(){
+  const id=APP.currentLearnerId; const meta=LEARNERS_META[id]; const ws=APP.workshops[id]; const av=accentVars(meta.color);
+  const areaCards=WORKSHOP_AREAS.map(a=>`<div class="card area-card" data-active="${ws.areaId===a.id}" onclick="pickArea('${a.id}')">
+      <div class="skill-icon" style="background:var(--teal-soft)">${icon(a.icon,'var(--teal)',18)}</div>
+      <b style="font-family:var(--font-display);font-size:1rem">${a.label}</b>
+      <span class="section-sub" style="margin:0">${a.blurb}</span>
+    </div>`).join('');
+  let ideasHtml='';
+  if(ws.areaId){
+    const ideas=PROJECT_IDEAS[ws.areaId][meta.gradeKey];
+    ideasHtml=`<div class="grid" style="grid-template-columns:1fr 1fr;margin-top:10px">${ideas.map(i=>`<div class="idea-card"><b>${i.t}</b>${i.d}<div style="height:8px"></div><button class="btn btn-secondary" onclick="chooseIdea(${JSON.stringify(i.t).replace(/"/g,'&quot;')})">Use this mission</button></div>`).join('')}</div>`;
+  }
+  const days=last14Days();
+  const strip=days.map(d=>`<button class="checkin-dot" data-on="${!!ws.checkins[d]}" title="${d}" onclick="toggleCheckin('${d}')"></button>`).join('');
+  const journalHtml=(ws.journal||[]).slice(0,6).map(j=>`<div class="journal-entry"><div class="journal-date mono">${j.date}</div>${esc(j.text)}</div>`).join('')||'<div class="section-sub">No reflections yet.</div>';
+  return `
+  <div class="section-title">Trail Time</div>
+  <div class="section-sub">${meta.ageLabel} · Afternoon life-skills project, inspired by real-world teamwork, storytelling, business, kindness, and grit challenges.</div>
+  <div class="grid area-grid">${areaCards}</div>
+  ${ideasHtml}
+  <div style="height:22px"></div>
+  <div class="card" style="padding:18px">
+    <label class="flabel">This week's mission</label>
+    <div class="field"><input type="text" id="projectTitleInput" placeholder="e.g. Neighborhood Cleanup Captain" value="${esc(ws.projectTitle)}"></div>
+    <label class="flabel">What does success look like?</label>
+    <div class="field"><textarea id="goalTextInput" rows="2" placeholder="e.g. Organize 3 friends and clean the park block on Saturday.">${esc(ws.goalText)}</textarea></div>
+    <button class="btn btn-primary" onclick="saveMission()">Save Mission</button>
+  </div>
+  <div style="height:22px"></div>
+  <div class="card" style="padding:18px">
+    <label class="flabel">Worked on it today?</label>
+    <div class="checkin-strip">${strip}</div>
+  </div>
+  <div style="height:22px"></div>
+  <div class="card" style="padding:18px">
+    <label class="flabel">Closing Circle — today's win</label>
+    <div class="field"><textarea id="journalInput" rows="2" placeholder="What are you proud of today?"></textarea></div>
+    <button class="btn btn-primary" onclick="addJournal()">Add Reflection</button>
+    <div style="height:14px"></div>
+    ${journalHtml}
+  </div>`;
+}
+function pickArea(areaId){ APP.workshops[APP.currentLearnerId].areaId=areaId; saveWorkshop(APP.currentLearnerId); render(); }
+function chooseIdea(title){ const ws=APP.workshops[APP.currentLearnerId]; ws.projectTitle=title; saveWorkshop(APP.currentLearnerId); render(); }
+function saveMission(){
+  const ws=APP.workshops[APP.currentLearnerId];
+  ws.projectTitle=document.getElementById('projectTitleInput').value;
+  ws.goalText=document.getElementById('goalTextInput').value;
+  saveWorkshop(APP.currentLearnerId); toast('Mission saved!'); render();
+}
+function toggleCheckin(date){
+  const ws=APP.workshops[APP.currentLearnerId]; ws.checkins[date]=!ws.checkins[date];
+  if(ws.checkins[date]&&date===todayStr()) markTodayLog(APP.learners[APP.currentLearnerId],'workshopDone');
+  saveWorkshop(APP.currentLearnerId); saveLearner(APP.currentLearnerId); render();
+}
+function addJournal(){
+  const text=document.getElementById('journalInput').value.trim(); if(!text)return;
+  const ws=APP.workshops[APP.currentLearnerId];
+  ws.journal=ws.journal||[]; ws.journal.unshift({date:todayStr(),text}); ws.journal=ws.journal.slice(0,20);
+  markTodayLog(APP.learners[APP.currentLearnerId],'journalDone');
+  saveWorkshop(APP.currentLearnerId); saveLearner(APP.currentLearnerId); toast('Reflection added!'); render();
+}
+
+/* ================= CAMP LOG (guide / parent dashboard) ================= */
+function renderCampLog(){
+  const ids=visibleLearnerIds();
+  if(ids.length===0){
+    return `<div class="section-title">Camp Log</div><div class="section-sub">No students are linked to your account yet. Ask an admin to link a student to see their Camp Log.</div>`;
+  }
+  if(!ids.includes(APP.currentLearnerId)) APP.currentLearnerId=ids[0];
+  const id=APP.currentLearnerId; const meta=LEARNERS_META[id]; const learner=APP.learners[id]; const av=accentVars(meta.color);
+  const switcherHtml=ids.length>1?`<div class="row" style="margin-bottom:18px">${ids.map(sid=>{
+    const m=LEARNERS_META[sid]; const l=APP.learners[sid]; const a2=accentVars(m.color); const active=sid===id;
+    return `<button class="learner-btn" data-active="${active}" style="--accent-color:${a2.c};--accent-color-strong:${a2.cs};--accent-color-soft:${a2.soft}" onclick="setLearner('${sid}')">
+      <span class="dot">${svgMascot(m.mascot,a2.c,l.streakDays>=3?'excited':'happy')}</span>
+      <span class="lbl"><b>${esc(l.name)}</b><span>${esc(m.ageLabel)}</span></span>
+    </button>`;
+  }).join('')}</div>`:'';
+  const overviewRows=ids.map(sid=>{
+    const m=LEARNERS_META[sid]; const l=APP.learners[sid]; const a2=accentVars(m.color);
+    return `<div class="card" style="padding:14px;display:flex;align-items:center;gap:14px">
+      <span class="dot" style="width:34px;height:34px;border-radius:50%;background:${a2.c};display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-display);font-weight:700">${l.name.charAt(0)}</span>
+      <div style="flex:1"><b>${esc(l.name)}</b> · Lvl ${l.level} · ${l.tokens} tokens · ${l.streakDays}-day streak</div>
+    </div>`;
+  }).join('');
+  const elevRows=meta.skills.map(s=>{
+    const state=APP.skillStates[id][s.id]; const asc=ascentBar(state);
+    const flag=(!state.mastered && state.totalAnswered>=6 && asc.pct<60)?`<span class="pill pill-warn">Needs attention</span>`:'';
+    return `<div class="card" style="padding:12px 16px;display:flex;align-items:center;gap:12px">
+      <div style="flex:1"><b style="font-size:.88rem">${s.label}</b><div class="skill-meta">Elevation ${state.difficulty}/5 · ${state.totalCorrect}/${state.totalAnswered} correct all-time</div></div>
+      <div style="width:110px" class="ascent"><div class="ascent-track"><div class="ascent-fill" style="width:${asc.pct}%;background:${av.c}"></div></div></div>
+      ${state.mastered?'<span class="pill pill-good">Mastered</span>':''} ${flag}
+    </div>`;
+  }).join('');
+  const badgeGallery=BADGE_DEFS.map(b=>{
+    const earned=learner.badges.includes(b.id);
+    return `<div class="badge-tile ${earned?'':'locked'}" title="${esc(b.desc)}"><div class="badge-shape" style="background:${earned?av.soft:'var(--surface-2)'}">${icon(b.icon,earned?av.c:'var(--ink-faint)',28)}</div>${b.label}</div>`;
+  }).join('');
+  const rewardsList=(APP.rewards.items||[]).map(r=>`<div class="card reward-row">
+      <span class="rlbl">${esc(r.label)}${r.active?'':' <span class="tag">inactive</span>'}</span>
+      <span class="reward-cost mono">${r.cost} ⛁</span>
+      <button class="btn btn-secondary" onclick="toggleReward('${r.id}')">${r.active?'Disable':'Enable'}</button>
+      <button class="btn btn-secondary" onclick="deleteReward('${r.id}')">Delete</button>
+    </div>`).join('');
+  const redemptions=(learner.redemptions||[]).slice(0,8).map(r=>`<div class="journal-entry"><div class="journal-date mono">${r.date}</div>${esc(r.label)} · ${r.cost} tokens</div>`).join('')||'<div class="section-sub">No redemptions yet.</div>';
+  return `
+  <div class="section-title">Camp Log</div>
+  <div class="section-sub">The Guide's view — mastery map, badges, and the reward store for ${esc(learner.name)}.</div>
+  ${switcherHtml}
+  <div class="grid" style="grid-template-columns:1fr 1fr;margin-bottom:22px">${overviewRows}</div>
+
+  <div class="section-title" style="font-size:1.1rem">Elevation Map</div>
+  <div class="grid" style="grid-template-columns:1fr;margin-bottom:22px">${elevRows}</div>
+
+  <div class="section-title" style="font-size:1.1rem">Trail Badges</div>
+  <div class="badge-row" style="margin-bottom:22px">${badgeGallery}</div>
+
+  <div class="section-title" style="font-size:1.1rem">Reward Store</div>
+  <div class="grid" style="grid-template-columns:1fr;margin-bottom:10px">${rewardsList}</div>
+  <div class="card" style="padding:16px;margin-bottom:22px">
+    <label class="flabel">Add a reward</label>
+    <div class="row">
+      <div class="field" style="flex:2"><input type="text" id="newRewardLabel" placeholder="Reward name"></div>
+      <div class="field" style="flex:1"><input type="text" id="newRewardCost" placeholder="Cost (tokens)"></div>
+    </div>
+    <button class="btn btn-primary" onclick="addReward()">Add Reward</button>
+  </div>
+  <div class="section-title" style="font-size:1.1rem">Redemption History</div>
+  <div style="margin-bottom:22px">${redemptions}</div>
+
+  <div class="section-title" style="font-size:1.1rem">Explorer Name</div>
+  <div class="card" style="padding:16px;margin-bottom:22px">
+    <label class="flabel">Display name for this explorer badge</label>
+    <div class="row">
+      <div class="field" style="flex:1"><input type="text" id="learnerNameInput" value="${esc(learner.name)}"></div>
+      <button class="btn btn-primary" onclick="saveLearnerName()">Save Name</button>
+    </div>
+  </div>
+
+  <div class="section-title" style="font-size:1.1rem">Guide Notes</div>
+  <div class="card" style="padding:16px">
+    <textarea id="guideNotesInput" rows="3" placeholder="Quick observations for ${esc(learner.name)}...">${esc(learner.guideNotes||'')}</textarea>
+    <div style="height:10px"></div>
+    <button class="btn btn-secondary" onclick="saveGuideNotes()">Save Notes</button>
+  </div>
+  `;
+}
+function toggleReward(rid){ const r=(APP.rewards.items||[]).find(x=>x.id===rid); if(r){r.active=!r.active; saveRewards(); render();} }
+function deleteReward(rid){ APP.rewards.items=(APP.rewards.items||[]).filter(x=>x.id!==rid); saveRewards(); render(); }
+function addReward(){
+  const label=document.getElementById('newRewardLabel').value.trim();
+  const cost=parseInt(document.getElementById('newRewardCost').value,10);
+  if(!label||isNaN(cost)||cost<=0)return;
+  APP.rewards.items=APP.rewards.items||[];
+  APP.rewards.items.push({id:'r'+Date.now(),label,cost,active:true});
+  saveRewards(); render();
+}
+function saveGuideNotes(){ APP.learners[APP.currentLearnerId].guideNotes=document.getElementById('guideNotesInput').value; saveLearner(APP.currentLearnerId); toast('Notes saved.'); }
+function saveLearnerName(){
+  const val=document.getElementById('learnerNameInput').value.trim();
+  if(!val)return;
+  APP.learners[APP.currentLearnerId].name=val;
+  saveLearner(APP.currentLearnerId); toast('Name updated!'); render();
+}
+
+/* ================= AUTH SCREENS ================= */
+function renderAuthScreen(){
+  const s=APP.auth.screen||'login';
+  const err=APP.auth.error?`<div class="feedback-box feedback-bad" style="margin-bottom:14px">${esc(APP.auth.error)}</div>`:'';
+  const notice=APP.auth.notice?`<div class="feedback-box feedback-good" style="margin-bottom:14px">${esc(APP.auth.notice)}</div>`:'';
+  if(s==='register')return renderRegisterScreen(err,notice);
+  return `
+  <div class="center" style="max-width:380px;margin:40px auto">
+    <div style="margin-bottom:14px">${icon('mountain','var(--accent)',54)}</div>
+    <div class="section-title">Two Peaks — Family Login</div>
+    <div class="section-sub">A private login for your household. This is a lightweight family gate, not secure authentication — it just keeps everyone's own trail separate.</div>
+    ${err}${notice}
+    <div class="card" style="padding:22px;text-align:left">
+      <div class="field"><label class="flabel">Username</label><input type="text" id="loginUsername" placeholder="e.g. osmand"></div>
+      <div class="field"><label class="flabel">Password</label><input type="text" id="loginPassword" placeholder="••••"></div>
+      <button class="btn btn-primary btn-block" onclick="doLogin()">Log In</button>
+    </div>
+    <div style="margin-top:14px;font-size:.85rem">New here? <a href="javascript:void(0)" onclick="APP.auth.screen='register';APP.auth.error='';APP.auth.notice='';render();">Create an account</a></div>
+  </div>`;
+}
+function setRegRole(v){ APP.auth.regRole=v; const box=document.getElementById('regRoleFields'); if(box)box.innerHTML=renderRegisterRoleFields(); }
+function renderRegisterRoleFields(){
+  const role=APP.auth.regRole||'student';
+  if(role==='student'){
+    const parents=Object.values(APP.auth.users).filter(u=>u.role==='parent'&&u.approved);
+    return `<div class="field"><label class="flabel">Grade</label><input type="text" id="regGrade" placeholder="e.g. 3"></div>
+      <div class="field"><label class="flabel">Link to parent account(s) <span style="color:var(--ink-faint)">(optional — admin can adjust)</span></label>
+      ${parents.map(p=>`<label style="display:inline-flex;gap:4px;align-items:center;margin-right:12px;font-size:.85rem"><input type="checkbox" class="reg-link" value="${esc(p.username)}"> ${esc(p.username)}</label>`).join('')||'<div class="section-sub">No parent accounts yet.</div>'}</div>`;
+  }
+  const students=Object.values(APP.auth.users).filter(u=>u.role==='student'&&u.approved);
+  return `<div class="field"><label class="flabel">Link to student account(s) <span style="color:var(--ink-faint)">(optional — admin can adjust)</span></label>
+    ${students.map(s=>`<label style="display:inline-flex;gap:4px;align-items:center;margin-right:12px;font-size:.85rem"><input type="checkbox" class="reg-link" value="${esc(s.username)}"> ${esc(s.username)}</label>`).join('')||'<div class="section-sub">No student accounts yet.</div>'}</div>`;
+}
+function renderRegisterScreen(err,notice){
+  return `
+  <div class="center" style="max-width:420px;margin:30px auto">
+    <div class="section-title">Create an Account</div>
+    <div class="section-sub">New accounts need admin approval before they can log in.</div>
+    ${err}${notice}
+    <div class="card" style="padding:22px;text-align:left">
+      <div class="field"><label class="flabel">Username</label><input type="text" id="regUsername" placeholder="letters, numbers, underscore"></div>
+      <div class="field"><label class="flabel">Password</label><input type="text" id="regPassword"></div>
+      <div class="field"><label class="flabel">Confirm Password</label><input type="text" id="regPassword2"></div>
+      <div class="field"><label class="flabel">Account Type</label>
+        <select id="regRole" onchange="setRegRole(this.value)" style="width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--ink)">
+          <option value="student" ${APP.auth.regRole!=='parent'?'selected':''}>Student</option>
+          <option value="parent" ${APP.auth.regRole==='parent'?'selected':''}>Parent</option>
+        </select>
+      </div>
+      <div id="regRoleFields">${renderRegisterRoleFields()}</div>
+      <button class="btn btn-primary btn-block" onclick="doRegister()">Submit for Approval</button>
+    </div>
+    <div style="margin-top:14px;font-size:.85rem">Already have an account? <a href="javascript:void(0)" onclick="APP.auth.screen='login';APP.auth.error='';APP.auth.notice='';render();">Log in</a></div>
+  </div>`;
+}
+function doLogin(){
+  const uEl=document.getElementById('loginUsername'), pEl=document.getElementById('loginPassword');
+  loginWithCredentials((uEl&&uEl.value)||'', (pEl&&pEl.value)||'');
+}
+function loginWithCredentials(uname,pw){
+  uname=(uname||'').trim().toLowerCase();
+  APP.auth.notice='';
+  const u=APP.auth.users[uname];
+  if(!u){ APP.auth.error='No account found with that username.'; render(); return; }
+  if(u.password!==pw){ APP.auth.error='Incorrect password.'; render(); return; }
+  if(!u.approved){ APP.auth.error='This account is still waiting for admin approval.'; render(); return; }
+  loginSuccess(uname);
+}
+function loginSuccess(username){
+  const u=APP.auth.users[username];
+  APP.auth.currentUser=u; APP.auth.error=''; APP.auth.notice='';
+  Store.lsSet(SESSION_STORE_KEY,{username}); // session is per-device on purpose: not synced to the shared cloud store
+  if(u.role==='student'){ ensureLearnerRuntimeState(u); APP.currentLearnerId=u.learnerId; APP.activeTab='today'; }
+  else{ APP.currentLearnerId=visibleLearnerIds()[0]||null; APP.activeTab='camp'; }
+  render();
+}
+function logout(){
+  APP.auth.currentUser=null; APP.auth.screen='login'; APP.auth.error=''; APP.auth.notice='';
+  Store.lsSet(SESSION_STORE_KEY,null);
+  render();
+}
+function doRegister(){
+  const uEl=document.getElementById('regUsername'), pEl=document.getElementById('regPassword'), p2El=document.getElementById('regPassword2');
+  const links=[...document.querySelectorAll('.reg-link:checked')].map(b=>b.value);
+  const gEl=document.getElementById('regGrade');
+  registerAccount({
+    username:(uEl&&uEl.value)||'', password:(pEl&&pEl.value)||'', password2:(p2El&&p2El.value)||'',
+    role:APP.auth.regRole||'student', grade:gEl&&gEl.value, links
+  });
+}
+function registerAccount(opts){
+  const username=opts.username,password=opts.password,password2=opts.password2,role=opts.role||'student',grade=opts.grade,links=opts.links||[];
+  const uname=(username||'').trim().toLowerCase();
+  APP.auth.error='';
+  if(!uname||!/^[a-z0-9_]{3,20}$/.test(uname)){ APP.auth.error='Choose a username of 3-20 letters, numbers or underscores.'; render(); return false; }
+  if(APP.auth.users[uname]){ APP.auth.error='That username is already taken.'; render(); return false; }
+  if(!password||password.length<4){ APP.auth.error='Password must be at least 4 characters.'; render(); return false; }
+  if(password!==password2){ APP.auth.error='Passwords do not match.'; render(); return false; }
+  const rec={username:uname,password,role,approved:false,isAdmin:false,createdAt:Date.now()};
+  if(role==='student'){
+    const g=parseInt(grade,10);
+    rec.grade=isNaN(g)?2:Math.max(1,Math.min(8,g));
+    rec.learnerId=uname;
+    rec.linkedParents=links;
+  } else {
+    rec.linkedStudents=links;
+  }
+  APP.auth.users[uname]=rec;
+  Store.save(AUTH_STORE_KEY,APP.auth.users);
+  APP.auth.screen='login';
+  APP.auth.notice='Account created! It now needs admin approval before you can log in.';
+  render();
+  return true;
+}
+/* ================= ADMIN ================= */
+function renderAdmin(){
+  const users=APP.auth.users;
+  const pending=Object.values(users).filter(u=>!u.approved);
+  const approved=Object.values(users).filter(u=>u.approved);
+  const pendingRows=pending.map(u=>{
+    const parentOpts=Object.values(users).filter(x=>x.role==='parent'&&x.approved);
+    const studentOpts=Object.values(users).filter(x=>x.role==='student'&&x.approved);
+    const linkBoxes=u.role==='student'
+      ? parentOpts.map(p=>`<label style="display:inline-flex;gap:4px;align-items:center;margin-right:12px;font-size:.8rem"><input type="checkbox" class="approve-link" data-user="${esc(u.username)}" value="${esc(p.username)}" ${(u.linkedParents||[]).includes(p.username)?'checked':''}> ${esc(p.username)}</label>`).join('')
+      : studentOpts.map(s=>`<label style="display:inline-flex;gap:4px;align-items:center;margin-right:12px;font-size:.8rem"><input type="checkbox" class="approve-link" data-user="${esc(u.username)}" value="${esc(s.username)}" ${(u.linkedStudents||[]).includes(s.username)?'checked':''}> ${esc(s.username)}</label>`).join('');
+    return `<div class="card" style="padding:14px 16px;margin-bottom:10px">
+      <div style="margin-bottom:6px"><b>${esc(u.username)}</b> <span class="tag">${u.role==='student'?'Student':'Parent'}</span>${u.role==='student'?` · Grade ${u.grade||'?'}`:''}</div>
+      <div style="margin-bottom:8px;font-size:.8rem;color:var(--ink-soft)">${u.role==='student'?'Link to parent(s):':'Link to student(s):'}</div>
+      <div style="margin-bottom:10px">${linkBoxes||'<span class="section-sub">No approved accounts yet to link to.</span>'}</div>
+      <div class="row">
+        <button class="btn btn-primary" onclick="approveUser('${esc(u.username)}')">Approve</button>
+        <button class="btn btn-secondary" onclick="rejectUser('${esc(u.username)}')">Reject</button>
+      </div>
+    </div>`;
+  }).join('')||'<div class="section-sub">No pending registrations.</div>';
+  const rosterRows=approved.map(u=>{
+    const links=u.role==='student'?(u.linkedParents||[]).join(', ')||'—':(u.linkedStudents||[]).join(', ')||'—';
+    return `<div class="card" style="padding:10px 14px;margin-bottom:8px;font-size:.85rem"><b>${esc(u.username)}</b> · ${u.role==='student'?'Student · Grade '+(u.grade||'?'):'Parent'}${u.isAdmin?' · Admin':''} · Linked: ${esc(links)}</div>`;
+  }).join('');
+  return `<div class="section-title">Admin</div>
+    <div class="section-sub">Approve new registrations and review the family roster. This is a lightweight household gate, not secure authentication.</div>
+    <div class="section-title" style="font-size:1.1rem">Pending Approval</div>
+    <div style="margin-bottom:22px">${pendingRows}</div>
+    <div class="section-title" style="font-size:1.1rem">All Accounts</div>
+    <div>${rosterRows}</div>`;
+}
+function approveUser(username){
+  const boxes=[...document.querySelectorAll(`.approve-link[data-user="${username}"]`)];
+  const checked=boxes.filter(b=>b.checked).map(b=>b.value);
+  approveUserWithLinks(username,checked);
+}
+function approveUserWithLinks(username,checked){
+  const u=APP.auth.users[username]; if(!u)return;
+  checked=checked||[];
+  if(u.role==='student'){
+    u.linkedParents=checked;
+    checked.forEach(p=>{ const pu=APP.auth.users[p]; if(pu){ pu.linkedStudents=pu.linkedStudents||[]; if(!pu.linkedStudents.includes(username))pu.linkedStudents.push(username); } });
+  } else {
+    u.linkedStudents=checked;
+    checked.forEach(s=>{ const su=APP.auth.users[s]; if(su){ su.linkedParents=su.linkedParents||[]; if(!su.linkedParents.includes(username))su.linkedParents.push(username); } });
+  }
+  u.approved=true;
+  if(u.role==='student')ensureLearnerRuntimeState(u);
+  Store.save(AUTH_STORE_KEY,APP.auth.users);
+  toast('Account approved.');
+  render();
+}
+function rejectUser(username){
+  delete APP.auth.users[username];
+  Store.save(AUTH_STORE_KEY,APP.auth.users);
+  toast('Registration removed.');
+  render();
+}
+
+/* ================= BOOT ================= */
+async function boot(){
+  await Store.init();
+  APP.auth.users=Store.lsGet(AUTH_STORE_KEY);
+  if(!APP.auth.users){ APP.auth.users=seedDefaultUsers(); Store.lsSet(AUTH_STORE_KEY,APP.auth.users); }
+  if(Store.db){
+    // The family's account directory is shared cloud state (same for every signed-in
+    // viewer), unlike the session above which stays local to this device/browser.
+    const remoteUsers=await Store.dbGet(AUTH_STORE_KEY);
+    if(remoteUsers&&Object.keys(remoteUsers).length){ APP.auth.users=remoteUsers; Store.lsSet(AUTH_STORE_KEY,remoteUsers); }
+    else{ Store.dbSet(AUTH_STORE_KEY,APP.auth.users); }
+  }
+  Object.values(APP.auth.users).forEach(u=>{ if(u.role==='student'&&u.approved)ensureDynamicLearnerMeta(u); });
+  await loadAllData();
+  const sess=Store.lsGet(SESSION_STORE_KEY);
+  if(sess&&sess.username){
+    const u=APP.auth.users[sess.username];
+    if(u&&u.approved)loginSuccess(sess.username);
+  }
+}
+boot();
+</script>
+</body>
+</html>
