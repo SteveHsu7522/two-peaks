@@ -115,6 +115,11 @@ button{font-family:inherit;cursor:pointer;}
 .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:240px;margin:0 auto;}
 .key-btn{padding:14px 0;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);font-family:var(--font-mono);font-size:1.05rem;font-weight:600;}
 .answer-display{text-align:center;font-family:var(--font-mono);font-size:1.6rem;font-weight:600;padding:10px;border:1.5px dashed var(--border);border-radius:10px;margin-bottom:12px;min-height:46px;}
+.field-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px;}
+.field-box{width:74px;text-align:center;font-family:var(--font-mono);font-size:1.5rem;font-weight:600;padding:10px 4px;border:1.5px dashed var(--border);border-radius:10px;min-height:46px;cursor:pointer;}
+.field-box[data-active="true"]{border-style:solid;border-color:var(--accent-color,var(--accent));background:var(--accent-color-soft,var(--accent-soft));}
+.field-sep{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--ink-faint);}
+.field-labels{display:flex;justify-content:center;gap:30px;font-size:.68rem;color:var(--ink-faint);margin:4px 0 12px;}
 .feedback-box{margin-top:16px;padding:14px;border-radius:12px;font-size:.9rem;}
 .feedback-good{background:var(--good-soft);color:var(--good);}
 .feedback-bad{background:var(--bad-soft);color:var(--bad);}
@@ -229,7 +234,8 @@ function gAdd2(level){let a,b;
   else if(level===4){a=randInt(20,80);b=randInt(15,79);}
   else{a=randInt(100,400);b=randInt(20,99);}
   const sum=a+b;
-  return{prompt:`${a} + ${b} = ?`,mode:'numeric',correctAnswer:sum,explanation:`${a} + ${b} = ${sum}`};}
+  const visual=level===1?{type:'sumpiles',a,b}:undefined;
+  return{prompt:`${a} + ${b} = ?`,mode:'numeric',correctAnswer:sum,visual,explanation:`${a} + ${b} = ${sum}`};}
 function gSub2(level){let a,b;
   if(level===1){a=randInt(5,18);b=randInt(1,a);}
   else if(level===2){a=randInt(20,60);b=randInt(2,9);}
@@ -238,7 +244,8 @@ function gSub2(level){let a,b;
   else{a=randInt(200,500);b=randInt(20,99);}
   if(b>a)[a,b]=[b,a];
   const diff=a-b;
-  return{prompt:`${a} - ${b} = ?`,mode:'numeric',correctAnswer:diff,explanation:`${a} - ${b} = ${diff}`};}
+  const visual=level===1?{type:'takeaway',total:a,removed:b}:undefined;
+  return{prompt:`${a} - ${b} = ?`,mode:'numeric',correctAnswer:diff,visual,explanation:`${a} - ${b} = ${diff}`};}
 function gPlaceValue2(level){
   if(level===1){const tens=randInt(1,9),ones=randInt(0,9);const n=tens*10+ones;const askTens=Math.random()<0.5;const correct=askTens?tens:ones;
     const choices=[...new Set([correct,askTens?ones:tens,randInt(0,9),randInt(0,9)])].slice(0,4);
@@ -258,20 +265,20 @@ function gSkipMult2(level){
   if(level===1){const step=pick([2,5,10]);const start=step*randInt(1,5);const seq=[start,start+step,start+step*2];const next=start+step*3;
     return{prompt:`${seq.join(', ')}, __?`,mode:'numeric',correctAnswer:next,explanation:`Counting by ${step}s: ${seq.join(', ')}, ${next}.`};}
   if(level===2){const groups=randInt(2,5),each=pick([2,3,5]);const repeated=Array(groups).fill(each).join(' + ');const total=groups*each;
-    return{prompt:`${repeated} = ${groups} groups of ${each} = ?`,mode:'numeric',correctAnswer:total,explanation:`${groups} x ${each} = ${total}.`};}
+    return{prompt:`${repeated} = ${groups} groups of ${each} = ?`,mode:'numeric',correctAnswer:total,visual:{type:'array',rows:groups,cols:each},explanation:`${groups} x ${each} = ${total}.`};}
   if(level===3){const a=pick([2,5,10]),b=randInt(1,10);
-    return{prompt:`${a} x ${b} = ?`,mode:'numeric',correctAnswer:a*b,explanation:`${a} x ${b} = ${a*b}.`};}
+    return{prompt:`${a} x ${b} = ?`,mode:'numeric',correctAnswer:a*b,visual:a*b<=40?{type:'array',rows:a,cols:b}:undefined,explanation:`${a} x ${b} = ${a*b}.`};}
   if(level===4){const rows=randInt(2,6),cols=randInt(2,6);
-    return{prompt:`There are ${rows} rows of ${cols} apples. How many apples in all?`,mode:'numeric',correctAnswer:rows*cols,explanation:`${rows} x ${cols} = ${rows*cols}.`};}
+    return{prompt:`There are ${rows} rows of ${cols} apples. How many apples in all?`,mode:'numeric',correctAnswer:rows*cols,visual:{type:'array',rows,cols},explanation:`${rows} x ${cols} = ${rows*cols}.`};}
   const a=randInt(2,10),b=randInt(2,10);
-  return{prompt:`${a} x ${b} = ?`,mode:'numeric',correctAnswer:a*b,explanation:`${a} x ${b} = ${a*b}.`};}
-function gMoney2(level){const coinVals={penny:1,nickel:5,dime:10,quarter:25};
+  return{prompt:`${a} x ${b} = ?`,mode:'numeric',correctAnswer:a*b,visual:a*b<=40?{type:'array',rows:a,cols:b}:undefined,explanation:`${a} x ${b} = ${a*b}.`};}
+function gMoney2(level){const coinVals={penny:1,nickel:5,dime:10,quarter:25};const coinLetter={penny:'P',nickel:'N',dime:'D',quarter:'Q'};
   if(level===1){const coin=pick(Object.keys(coinVals));
-    return{prompt:`A ${coin} is worth how many cents?`,mode:'numeric',correctAnswer:coinVals[coin],explanation:`A ${coin} = ${coinVals[coin]} cents.`};}
+    return{prompt:`A ${coin} is worth how many cents?`,mode:'numeric',correctAnswer:coinVals[coin],visual:{type:'coins',coins:[{label:coinLetter[coin],count:1}]},explanation:`A ${coin} = ${coinVals[coin]} cents.`};}
   if(level===2){const n1=randInt(1,4),n2=randInt(1,4);const total=n1*10+n2*5;
-    return{prompt:`${n1} dimes and ${n2} nickels = how many cents?`,mode:'numeric',correctAnswer:total,explanation:`${n1} x 10 + ${n2} x 5 = ${total} cents.`};}
+    return{prompt:`${n1} dimes and ${n2} nickels = how many cents?`,mode:'numeric',correctAnswer:total,visual:{type:'coins',coins:[{label:'D',count:n1},{label:'N',count:n2}]},explanation:`${n1} x 10 + ${n2} x 5 = ${total} cents.`};}
   if(level===3){const q=randInt(1,3),d=randInt(0,3),n=randInt(0,3);const total=q*25+d*10+n*5;
-    return{prompt:`${q} quarters, ${d} dimes, ${n} nickels = how many cents?`,mode:'numeric',correctAnswer:total,explanation:`${q} x 25 + ${d} x 10 + ${n} x 5 = ${total} cents.`};}
+    return{prompt:`${q} quarters, ${d} dimes, ${n} nickels = how many cents?`,mode:'numeric',correctAnswer:total,visual:{type:'coins',coins:[{label:'Q',count:q},{label:'D',count:d},{label:'N',count:n}]},explanation:`${q} x 25 + ${d} x 10 + ${n} x 5 = ${total} cents.`};}
   if(level===4){const priceCents=randInt(20,90);const paidCents=Math.ceil((priceCents+randInt(5,50))/25)*25;const change=paidCents-priceCents;
     return{prompt:`An item costs ${fmtMoney(priceCents)}. You pay ${fmtMoney(paidCents)}. How much change (in cents)?`,mode:'numeric',correctAnswer:change,explanation:`${fmtMoney(paidCents)} - ${fmtMoney(priceCents)} = ${change} cents.`};}
   const p1=randInt(50,300),p2=randInt(50,300);
@@ -285,8 +292,8 @@ function gTime2(level){let h=randInt(1,12),m;
   return{prompt:'What time does the clock show?',visual:{type:'clock',h,m},mode:'mc',choices,correctAnswer:correctLabel,explanation:`The clock shows ${correctLabel}.`};}
 function gWordProblems2(level){const names=['Mia','Leo','Ana','Sam','Priya','Noah'];const n1=pick(names);let n2=pick(names);while(n2===n1)n2=pick(names);
   if(level===1){const a=randInt(4,12),b=randInt(2,8);const isAdd=Math.random()<0.5;
-    return isAdd?{prompt:`${n1} has ${a} stickers. ${n1} gets ${b} more. How many stickers now?`,mode:'numeric',correctAnswer:a+b,explanation:`${a} + ${b} = ${a+b}.`}
-      :{prompt:`${n1} has ${a+b} stickers and gives away ${b}. How many are left?`,mode:'numeric',correctAnswer:a,explanation:`${a+b} - ${b} = ${a}.`};}
+    return isAdd?{prompt:`${n1} has ${a} stickers. ${n1} gets ${b} more. How many stickers now?`,mode:'numeric',correctAnswer:a+b,visual:{type:'sumpiles',a,b},explanation:`${a} + ${b} = ${a+b}.`}
+      :{prompt:`${n1} has ${a+b} stickers and gives away ${b}. How many are left?`,mode:'numeric',correctAnswer:a,visual:{type:'takeaway',total:a+b,removed:b},explanation:`${a+b} - ${b} = ${a}.`};}
   if(level===2){const a=randInt(20,70),b=randInt(10,40);
     return{prompt:`${n1} read ${a} pages on Monday and ${b} pages on Tuesday. How many pages in all?`,mode:'numeric',correctAnswer:a+b,explanation:`${a} + ${b} = ${a+b}.`};}
   if(level===3){const a=randInt(10,40),b=randInt(5,20),c=randInt(5,15);
@@ -310,22 +317,23 @@ function gDiv4(level){let divisor,quotient,dividend,rem=0;
   else if(level===3){divisor=randInt(3,9);quotient=randInt(10,25);rem=randInt(1,divisor-1);dividend=divisor*quotient+rem;}
   else if(level===4){divisor=randInt(2,9);quotient=randInt(100,300);dividend=divisor*quotient;}
   else{divisor=randInt(3,9);quotient=randInt(100,300);rem=randInt(1,divisor-1);dividend=divisor*quotient+rem;}
-  if(rem===0)return{prompt:`${dividend} ÷ ${divisor} = ?`,mode:'numeric',correctAnswer:quotient,explanation:`${dividend} ÷ ${divisor} = ${quotient}.`};
-  return{prompt:`${dividend} ÷ ${divisor} = ? (write the whole number quotient)`,mode:'numeric',correctAnswer:quotient,explanation:`${dividend} ÷ ${divisor} = ${quotient} remainder ${rem}. Quotient = ${quotient}.`};}
+  const visual={type:'groups',total:dividend,groups:divisor};
+  if(rem===0)return{prompt:`${dividend} ÷ ${divisor} = ?`,mode:'numeric',correctAnswer:quotient,visual,explanation:`${dividend} ÷ ${divisor} = ${quotient}.`};
+  return{prompt:`${dividend} ÷ ${divisor} = ? (quotient and remainder)`,mode:'divmod',correctAnswer:{q:quotient,r:rem},visual,explanation:`${dividend} ÷ ${divisor} = ${quotient} remainder ${rem}.`};}
 function gFractions4(level){
   if(level===1){const den=pick([4,6,8,10]);const num=randInt(1,den-1);
-    return{prompt:`A bar is split into ${den} equal parts. ${num} parts are shaded. What fraction is shaded? (numerator only, over ${den})`,mode:'numeric',correctAnswer:num,explanation:`${num} of ${den} parts shaded = ${num}/${den}.`};}
+    return{prompt:`A bar is split into ${den} equal parts. ${num} parts are shaded. What fraction is shaded?`,mode:'fraction',correctAnswer:{n:num,d:den},visual:{type:'fractionbar',num,den},explanation:`${num} of ${den} parts shaded = ${num}/${den}.`};}
   if(level===2){const den=pick([2,3,4,5]);const num=randInt(1,den-1);const mult=randInt(2,4);
-    return{prompt:`${num}/${den} = __/${den*mult}`,mode:'numeric',correctAnswer:num*mult,explanation:`Multiply top and bottom by ${mult}: ${num}/${den} = ${num*mult}/${den*mult}.`};}
+    return{prompt:`${num}/${den} = __/${den*mult}`,mode:'numeric',correctAnswer:num*mult,visual:{type:'fractionbar',num,den},explanation:`Multiply top and bottom by ${mult}: ${num}/${den} = ${num*mult}/${den*mult}.`};}
   if(level===3){const den=pick([3,4,5,6,8]);let n1=randInt(1,den-1),n2=randInt(1,den-1);while(n1===n2)n2=randInt(1,den-1);const symbol=n1>n2?'>':'<';
-    return{prompt:`Compare: ${n1}/${den} ___ ${n2}/${den}`,mode:'mc',choices:['<','>','='],correctAnswer:symbol,explanation:`${n1}/${den} ${symbol} ${n2}/${den} because ${n1} ${symbol} ${n2}.`};}
+    return{prompt:`Compare: ${n1}/${den} ___ ${n2}/${den}`,mode:'mc',choices:['<','>','='],correctAnswer:symbol,visual:{type:'fractionpair',n1,d1:den,n2,d2:den},explanation:`${n1}/${den} ${symbol} ${n2}/${den} because ${n1} ${symbol} ${n2}.`};}
   if(level===4){const den=pick([4,5,6,8,10]);const n1=randInt(1,den-2);const n2=randInt(1,den-n1-1)||1;
-    return{prompt:`${n1}/${den} + ${n2}/${den} = __/${den}`,mode:'numeric',correctAnswer:n1+n2,explanation:`${n1}/${den} + ${n2}/${den} = ${n1+n2}/${den}.`};}
+    return{prompt:`${n1}/${den} + ${n2}/${den} = __/${den}`,mode:'numeric',correctAnswer:n1+n2,visual:{type:'fractionpair',n1,d1:den,n2,d2:den},explanation:`${n1}/${den} + ${n2}/${den} = ${n1+n2}/${den}.`};}
   const pairs=[[1,2,1,4],[1,2,3,4],[1,4,1,2]];const[n1,d1,n2,d2]=pick(pairs);const v1=n1/d1,v2=n2/d2;const symbol=v1>v2?'>':(v1<v2?'<':'=');
-  return{prompt:`Compare: ${n1}/${d1} ___ ${n2}/${d2}`,mode:'mc',choices:['<','>','='],correctAnswer:symbol,explanation:`${n1}/${d1} = ${v1}, ${n2}/${d2} = ${v2}, so ${n1}/${d1} ${symbol} ${n2}/${d2}.`};}
+  return{prompt:`Compare: ${n1}/${d1} ___ ${n2}/${d2}`,mode:'mc',choices:['<','>','='],correctAnswer:symbol,visual:{type:'fractionpair',n1,d1,n2,d2},explanation:`${n1}/${d1} = ${v1}, ${n2}/${d2} = ${v2}, so ${n1}/${d1} ${symbol} ${n2}/${d2}.`};}
 function gDecimals4(level){
   if(level===1){const tenths=randInt(1,9);
-    return{prompt:`${tenths} out of 10 squares are shaded. Write this as a decimal.`,mode:'numeric',correctAnswer:parseFloat((tenths/10).toFixed(1)),explanation:`${tenths}/10 = 0.${tenths}.`};}
+    return{prompt:`${tenths} out of 10 squares are shaded. Write this as a decimal.`,mode:'numeric',correctAnswer:parseFloat((tenths/10).toFixed(1)),visual:{type:'fractionbar',num:tenths,den:10},explanation:`${tenths}/10 = 0.${tenths}.`};}
   if(level===2){let a=randInt(1,9)/10,b=randInt(1,9)/10;while(Math.abs(a-b)<0.0001)b=randInt(1,9)/10;const symbol=a>b?'>':'<';
     return{prompt:`Compare: ${a.toFixed(1)} ___ ${b.toFixed(1)}`,mode:'mc',choices:['<','>','='],correctAnswer:symbol,explanation:`${a.toFixed(1)} ${symbol} ${b.toFixed(1)}.`};}
   if(level===3){const a=randInt(1,8)/10,b=randInt(1,8)/10;const sum=parseFloat((a+b).toFixed(1));
@@ -360,15 +368,17 @@ function gAreaPerim4(level){
   return{prompt:`You want to build a fence around a garden ${l} m by ${w} m. How many meters of fence do you need?`,visual:{type:'rect',l,w},mode:'numeric',correctAnswer:2*(l+w),explanation:`Fence = perimeter = 2 x (${l} + ${w}) = ${2*(l+w)} m.`};}
 function gWordProblems4(level){const names=['Mia','Leo','Ana','Sam','Priya','Noah'];const n1=pick(names);
   if(level===1){const boxes=randInt(4,9),each=randInt(6,12);
-    return{prompt:`${n1} packs ${boxes} boxes with ${each} pencils each. How many pencils in all?`,mode:'numeric',correctAnswer:boxes*each,explanation:`${boxes} x ${each} = ${boxes*each}.`};}
+    return{prompt:`${n1} packs ${boxes} boxes with ${each} pencils each. How many pencils in all?`,mode:'numeric',correctAnswer:boxes*each,visual:boxes*each<=40?{type:'array',rows:boxes,cols:each}:undefined,explanation:`${boxes} x ${each} = ${boxes*each}.`};}
   if(level===2){const packs=randInt(3,6),each=randInt(8,15),extra=randInt(5,20);
-    return{prompt:`${n1} buys ${packs} packs of ${each} stickers, then gets ${extra} more free. How many stickers total?`,mode:'numeric',correctAnswer:packs*each+extra,explanation:`${packs} x ${each} + ${extra} = ${packs*each+extra}.`};}
+    return{prompt:`${n1} buys ${packs} packs of ${each} stickers, then gets ${extra} more free. How many stickers total?`,mode:'numeric',correctAnswer:packs*each+extra,visual:packs*each<=40?{type:'array',rows:packs,cols:each}:undefined,explanation:`${packs} x ${each} + ${extra} = ${packs*each+extra}.`};}
   if(level===3){const total=randInt(60,200),groups=randInt(4,8);const perGroup=Math.floor(total/groups);const leftover=total-perGroup*groups;
-    return{prompt:`${total} apples are shared equally among ${groups} baskets. How many apples in each basket (whole number)?`,mode:'numeric',correctAnswer:perGroup,explanation:leftover===0?`${total} ÷ ${groups} = ${perGroup}.`:`${total} ÷ ${groups} = ${perGroup} remainder ${leftover}.`};}
+    const visual={type:'groups',total,groups};
+    if(leftover===0)return{prompt:`${total} apples are shared equally among ${groups} baskets. How many apples in each basket?`,mode:'numeric',correctAnswer:perGroup,visual,explanation:`${total} ÷ ${groups} = ${perGroup}.`};
+    return{prompt:`${total} apples are shared equally among ${groups} baskets. How many apples in each basket, and how many are left over?`,mode:'divmod',correctAnswer:{q:perGroup,r:leftover},visual,explanation:`${total} ÷ ${groups} = ${perGroup} remainder ${leftover}.`};}
   if(level===4){const priceCents=randInt(150,600),qty=randInt(2,5),paidDollars=randInt(10,30);const totalCents=priceCents*qty;const change=paidDollars*100-totalCents;
     return{prompt:`${n1} buys ${qty} notebooks at ${fmtMoney(priceCents)} each, paying with $${paidDollars}. How much change (in cents)?`,mode:'numeric',correctAnswer:change,explanation:`${qty} x ${priceCents} = ${totalCents} cents. $${paidDollars} = ${paidDollars*100} cents. Change = ${change} cents.`};}
   const den=pick([4,5,8]);const num=randInt(1,den-1);const total=randInt(2,6)*den;
-  return{prompt:`${n1} read ${num}/${den} of a ${total}-page book. How many pages did ${n1} read?`,mode:'numeric',correctAnswer:total*num/den,explanation:`${total} x ${num}/${den} = ${total*num/den} pages.`};}
+  return{prompt:`${n1} read ${num}/${den} of a ${total}-page book. How many pages did ${n1} read?`,mode:'numeric',correctAnswer:total*num/den,visual:{type:'fractionbar',num,den},explanation:`${total} x ${num}/${den} = ${total*num/den} pages.`};}
 
 /* ================= READING DATA BANKS ================= */
 function makeBankGenerator(bank,buildQuestion){let queue=[];return function(){if(queue.length===0)queue=shuffle(bank.map((_,i)=>i));const idx=queue.pop();return buildQuestion(bank[idx],bank);};}
@@ -863,6 +873,156 @@ function svgRect(l,w){
     <text x="${(W/2).toFixed(1)}" y="${(y-10).toFixed(1)}" text-anchor="middle" style="font-family:var(--font-mono);font-size:13px;fill:var(--ink-soft)">${w}</text>
     <text x="${(x-12).toFixed(1)}" y="${(H/2).toFixed(1)}" text-anchor="end" dominant-baseline="middle" style="font-family:var(--font-mono);font-size:13px;fill:var(--ink-soft)">${l}</text>
   </svg>`;
+}
+/* ================= QUESTION VISUAL AIDS ================= */
+/* Small SVG manipulatives shown above a question, to help a child picture the
+   numbers involved (request: "在每個math中的題目添加圖形來協助孩子更容易理解題目").
+   These deliberately draw only what the question already GIVES -- e.g. the
+   division "groups" visual shows the total and how many baskets there are,
+   never how many items land in each one -- so they're a manipulative, not an
+   answer key. */
+function svgDotsPile(n,color,x0,y0,w0,h0){
+  // Raw <circle> elements (no wrapping <svg>) so this can be embedded either
+  // standalone or as a building block inside another visual's own <svg>.
+  const cols=Math.max(1,Math.min(10,Math.ceil(Math.sqrt(n*w0/h0))));
+  const rows=Math.ceil(n/cols);
+  const padX=Math.min(14,w0*0.08), padY=Math.min(14,h0*0.12);
+  const cellW=(w0-padX*2)/cols, cellH=(h0-padY*2)/Math.max(rows,1);
+  const r=Math.max(3,Math.min(cellW,cellH)/2-2);
+  let out='';
+  for(let i=0;i<n;i++){
+    const col=i%cols, row=Math.floor(i/cols);
+    const cx=x0+padX+cellW*col+cellW/2, cy=y0+padY+cellH*row+cellH/2;
+    out+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" fill="${color}"/>`;
+  }
+  return out;
+}
+function svgAbstractCount(n,color,caption){
+  return `<svg viewBox="0 0 200 74" width="200" height="74">
+    <circle cx="100" cy="34" r="30" fill="none" style="stroke:${color}" stroke-width="3"/>
+    <text x="100" y="41" text-anchor="middle" style="font-family:var(--font-mono);font-size:20px;font-weight:700;fill:${color}">${n}</text>
+    ${caption?`<text x="100" y="68" text-anchor="middle" style="font-family:var(--font-display);font-size:11px;fill:var(--ink-soft)">${esc(caption)}</text>`:''}
+  </svg>`;
+}
+function svgDotsPileStandalone(n,color){
+  if(n>40) return svgAbstractCount(n,color);
+  return `<svg viewBox="0 0 200 100" width="200" height="100">${svgDotsPile(n,color,0,0,200,100)}</svg>`;
+}
+function svgArrayGrid(rows,cols,color){
+  const W=200,H=120,padX=16,padY=16;
+  const cellW=(W-padX*2)/cols, cellH=(H-padY*2)/rows;
+  const r=Math.max(3,Math.min(cellW,cellH)/2-3);
+  let out='';
+  for(let row=0;row<rows;row++){
+    for(let col=0;col<cols;col++){
+      const cx=padX+cellW*col+cellW/2, cy=padY+cellH*row+cellH/2;
+      out+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" fill="${color}"/>`;
+    }
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" width="200" height="120">${out}</svg>`;
+}
+function svgGroupsVisual(total,groups,color){
+  if(total>40){
+    // Too many to draw as individual dots -- show the total as a number plus
+    // one basket icon per group, so the CONCEPT (this many groups) still
+    // comes through without a wall of dots.
+    const W=220,H=112,shown=Math.min(groups,10);
+    let baskets='';
+    for(let i=0;i<shown;i++){
+      const cx=20+i*((W-40)/Math.max(shown-1,1));
+      baskets+=`<path d="M${(cx-11).toFixed(1)} 66 L${(cx-13).toFixed(1)} 88 Q${cx.toFixed(1)} 94 ${(cx+13).toFixed(1)} 88 L${(cx+11).toFixed(1)} 66Z" fill="none" style="stroke:${color}" stroke-width="2.5"/>`;
+    }
+    return `<svg viewBox="0 0 ${W} ${H}" width="220" height="112">
+      <text x="${W/2}" y="28" text-anchor="middle" style="font-family:var(--font-mono);font-size:21px;font-weight:700;fill:${color}">${total} in all</text>
+      ${baskets}
+      <text x="${W/2}" y="108" text-anchor="middle" style="font-family:var(--font-display);font-size:11px;fill:var(--ink-soft)">${groups} baskets</text>
+    </svg>`;
+  }
+  // Small enough to draw as real dots above basket outlines -- shows the
+  // total count and how many baskets, but NOT how the dots divide up.
+  const W=220,H=142,padX=16;
+  const basketW=(W-padX*2)/groups;
+  let baskets='';
+  for(let i=0;i<groups;i++){
+    const cx=padX+basketW*i+basketW/2;
+    baskets+=`<path d="M${(cx-basketW*0.36).toFixed(1)} 96 L${(cx-basketW*0.42).toFixed(1)} 122 Q${cx.toFixed(1)} 130 ${(cx+basketW*0.42).toFixed(1)} 122 L${(cx+basketW*0.36).toFixed(1)} 96Z" fill="none" style="stroke:${color}" stroke-width="2.5"/>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" width="220" height="142">
+    ${svgDotsPile(total,color,10,0,W-20,86)}
+    ${baskets}
+    <text x="${W/2}" y="140" text-anchor="middle" style="font-family:var(--font-display);font-size:11px;fill:var(--ink-soft)">${groups} baskets</text>
+  </svg>`;
+}
+function svgFractionBar(num,den,color){
+  const W=200,H=42,padX=6;
+  const segW=(W-padX*2)/den;
+  let segs='';
+  for(let i=0;i<den;i++){
+    const x=padX+i*segW;
+    segs+=`<rect x="${x.toFixed(1)}" y="0" width="${Math.max(segW-2,1).toFixed(1)}" height="${H}" fill="${i<num?color:'none'}" opacity="${i<num?0.85:1}" style="stroke:${color}" stroke-width="2"/>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" width="200" height="42">${segs}</svg>`;
+}
+function svgFractionPair(n1,d1,n2,d2,color){
+  return `<div style="display:flex;flex-direction:column;gap:8px;align-items:center">${svgFractionBar(n1,d1,color)}${svgFractionBar(n2,d2,color)}</div>`;
+}
+function svgCoinsRow(coins,color){
+  // coins: [{label:'Q'|'D'|'N'|'P', count}] -- draws one ring per coin, given
+  // counts (never the total, which is the answer being asked for).
+  const sizeMap={Q:22,D:16,N:19,P:14};
+  let x=16; const items=[];
+  (coins||[]).forEach(c=>{
+    for(let i=0;i<c.count;i++){
+      const r=sizeMap[c.label]||18;
+      items.push(`<circle cx="${(x+r).toFixed(1)}" cy="42" r="${r}" fill="none" style="stroke:${color}" stroke-width="2.5"/><text x="${(x+r).toFixed(1)}" y="47" text-anchor="middle" style="font-family:var(--font-mono);font-size:13px;fill:${color}">${c.label}</text>`);
+      x+=r*2+8;
+    }
+  });
+  const W=Math.max(x+8,160);
+  return `<svg viewBox="0 0 ${W} 84" width="${W}" height="84">${items.join('')}</svg>`;
+}
+function svgTwoPiles(a,b,color){
+  const W=220,H=100;
+  return `<svg viewBox="0 0 ${W} ${H}" width="220" height="100">
+    ${svgDotsPile(a,color,0,0,W/2-6,H)}
+    <line x1="${W/2}" y1="6" x2="${W/2}" y2="${H-6}" style="stroke:var(--border)" stroke-width="2" stroke-dasharray="4 4"/>
+    ${svgDotsPile(b,color,W/2+6,0,W/2-6,H)}
+  </svg>`;
+}
+function svgTakeaway(total,removed,color){
+  const W=220,H=114;
+  const cols=Math.max(1,Math.min(10,Math.ceil(Math.sqrt(total*W/H))));
+  const rows=Math.ceil(total/cols);
+  const padX=14,padY=14;
+  const cellW=(W-padX*2)/cols, cellH=(H-padY*2)/Math.max(rows,1);
+  const r=Math.max(3,Math.min(cellW,cellH)/2-2);
+  let out='';
+  for(let i=0;i<total;i++){
+    const col=i%cols, row=Math.floor(i/cols);
+    const cx=padX+cellW*col+cellW/2, cy=padY+cellH*row+cellH/2;
+    const isRemoved=i>=total-removed; // cross out the LAST `removed` dots
+    out+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" fill="${isRemoved?'none':color}" opacity="${isRemoved?0.4:1}" style="stroke:${color}" stroke-width="${isRemoved?1.5:0}"/>`;
+    if(isRemoved){
+      out+=`<line x1="${(cx-r).toFixed(1)}" y1="${(cy-r).toFixed(1)}" x2="${(cx+r).toFixed(1)}" y2="${(cy+r).toFixed(1)}" style="stroke:${color}" stroke-width="1.5"/>
+            <line x1="${(cx-r).toFixed(1)}" y1="${(cy+r).toFixed(1)}" x2="${(cx+r).toFixed(1)}" y2="${(cy-r).toFixed(1)}" style="stroke:${color}" stroke-width="1.5"/>`;
+    }
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" width="220" height="114">${out}</svg>`;
+}
+/* Central dispatcher: turns a generator's declarative q.visual into markup. */
+function renderQuestionVisual(v,color){
+  if(!v)return '';
+  if(v.type==='clock')return svgClock(v.h,v.m);
+  if(v.type==='rect')return svgRect(v.l,v.w);
+  if(v.type==='dots')return svgDotsPileStandalone(v.n,color);
+  if(v.type==='array')return svgArrayGrid(v.rows,v.cols,color);
+  if(v.type==='groups')return svgGroupsVisual(v.total,v.groups,color);
+  if(v.type==='fractionbar')return svgFractionBar(v.num,v.den,color);
+  if(v.type==='fractionpair')return svgFractionPair(v.n1,v.d1,v.n2,v.d2,color);
+  if(v.type==='coins')return svgCoinsRow(v.coins,color);
+  if(v.type==='sumpiles')return svgTwoPiles(v.a,v.b,color);
+  if(v.type==='takeaway')return svgTakeaway(v.total,v.removed,color);
+  return '';
 }
 /* Friendly mascot per learner: 'comet' (Osmand) or 'rocket' (Oliver). mood: 'happy'|'excited' */
 function svgMascot(kind,color,mood){
@@ -1399,9 +1559,20 @@ function stopProp(ev){ ev.stopPropagation(); }
 
 const CORRECT_PHRASES=['Nice work!','Boom — got it!',"You're on fire!",'Excellent!','Way to go!','Superstar move!','Nailed it!','Awesome job!','Brilliant!','Crushed it!'];
 const WRONG_PHRASES=['Not quite.','So close!','Nice try.','Almost there.','Keep climbing.','Good effort.'];
+/* mode 'divmod' (quotient+remainder) and 'fraction' (numerator+denominator)
+   answer with two typed fields instead of one -- this is what lets a division
+   question be answered as "22 remainder 2" instead of forcing a single
+   number, and a fraction question be answered as a real n/d instead of just
+   a numerator. fieldDefsFor() returns the ordered field keys for a mode, or
+   null for the plain single-value modes ('numeric'/'mc'). */
+function fieldDefsFor(mode){
+  if(mode==='divmod')return['q','r'];
+  if(mode==='fraction')return['n','d'];
+  return null;
+}
 function startSession(skillId){
   const learnerId=APP.currentLearnerId;
-  session={learnerId,skillId,qIndex:0,total:8,correctCount:0,xpEarned:0,missedQueue:0,answered:false,numericInput:'',selected:null,currentIsReview:false,comboStreak:0};
+  session={learnerId,skillId,qIndex:0,total:8,correctCount:0,xpEarned:0,missedQueue:0,answered:false,numericInput:'',fields:{},activeField:null,selected:null,currentIsReview:false,comboStreak:0};
   nextQuestionInSession();
   openModal(renderSessionModal());
 }
@@ -1412,11 +1583,36 @@ function nextQuestionInSession(){
   if(session.qIndex>0&&session.qIndex%4===0&&session.missedQueue>0){ isReview=true; session.missedQueue--; }
   session.currentQuestion=gen(state.difficulty);
   session.currentIsReview=isReview; session.answered=false; session.numericInput=''; session.selected=null;
+  const fields=fieldDefsFor(session.currentQuestion.mode);
+  session.fields=fields?Object.fromEntries(fields.map(f=>[f,''])):{};
+  session.activeField=fields?fields[0]:null;
+}
+function fieldLabelsFor(mode){
+  return mode==='divmod'?[{key:'q',label:'Quotient'},{key:'r',label:'Remainder'}]:[{key:'n',label:'Numerator'},{key:'d',label:'Denominator'}];
+}
+function renderCompoundAnswerUI(q,av){
+  const defs=fieldLabelsFor(q.mode);
+  const sep=q.mode==='divmod'?'R':'/';
+  const boxes=defs.map((d,i)=>{
+    const active=session.activeField===d.key;
+    const box=`<div class="field-box mono" data-active="${active}" onclick="setActiveField('${d.key}')">${esc(session.fields[d.key]||'')||'&nbsp;'}</div>`;
+    return i<defs.length-1?box+`<div class="field-sep">${sep}</div>`:box;
+  }).join('');
+  const labels=`<div class="field-labels">${defs.map(d=>`<span>${d.label}</span>`).join('')}</div>`;
+  const filled=defs.every(d=>session.fields[d.key]!==''&&session.fields[d.key]!=null);
+  return `<div class="field-row" style="--accent-color:${av.c};--accent-color-soft:${av.soft}">${boxes}</div>
+    ${labels}
+    <div class="keypad">
+      ${['7','8','9','4','5','6','1','2','3','→','0','⌫'].map(k=>`<button class="key-btn" ${session.answered?'disabled':''} onclick="keypadPress('${k}')">${k}</button>`).join('')}
+    </div>
+    <div style="height:10px"></div>
+    <button class="btn btn-primary btn-block" ${session.answered||!filled?'disabled':''} onclick="answerFields()">Check</button>`;
 }
 function renderSessionModal(){
   const q=session.currentQuestion;
   const meta=skillLabelMap(session.learnerId)[session.skillId];
-  const visual=q.visual?(q.visual.type==='clock'?svgClock(q.visual.h,q.visual.m):svgRect(q.visual.l,q.visual.w)):'';
+  const av=accentVars(LEARNERS_META[session.learnerId].color);
+  const visual=renderQuestionVisual(q.visual,av.c);
   let body='';
   if(q.mode==='mc'){
     body=`<div class="choices">${q.choices.map(c=>{
@@ -1424,6 +1620,8 @@ function renderSessionModal(){
       if(session.answered){ if(c===q.correctAnswer) state='correct'; else if(c===session.selected) state='wrong'; }
       return `<button class="choice-btn" data-state="${state}" ${session.answered?'disabled':''} onclick="answerMc(${JSON.stringify(c).replace(/"/g,'&quot;')})">${esc(c)}</button>`;
     }).join('')}</div>`;
+  } else if(q.mode==='divmod'||q.mode==='fraction'){
+    body=renderCompoundAnswerUI(q,av);
   } else {
     body=`<div class="answer-display mono">${session.numericInput||'&nbsp;'}</div>
     <div class="keypad">
@@ -1434,7 +1632,6 @@ function renderSessionModal(){
   }
   const feedback=session.answered?`<div class="feedback-box ${session.lastCorrect?'feedback-good':'feedback-bad'}">${session.lastCorrect?'✓ '+esc(session.lastPhrase)+' ':esc(session.lastPhrase)+' '}${esc(q.explanation)}</div>
     <button class="btn btn-primary btn-block" style="margin-top:12px" onclick="advanceSession()">${session.qIndex+1>=session.total?'See Results':'Next Question'}</button>`:'';
-  const av=accentVars(LEARNERS_META[session.learnerId].color);
   return `<div class="modal-card" onclick="stopProp(event)">
     <div class="qhead"><span>${meta.label}${session.currentIsReview?' · 🔁 Review':''}</span><span style="display:flex;align-items:center;gap:8px">${session.comboStreak>0?flameRow(session.comboStreak,av.c):''}Question ${session.qIndex+1} / ${session.total}</span></div>
     ${visual?`<div class="center">${visual}</div>`:''}
@@ -1445,20 +1642,39 @@ function renderSessionModal(){
     <button class="btn btn-secondary btn-block" onclick="quitSession()">Exit Session</button>
   </div>`;
 }
+function setActiveField(key){
+  if(session.answered)return;
+  session.activeField=key;
+  openModal(renderSessionModal());
+}
 function keypadPress(k){
   if(session.answered)return;
-  if(k==='⌫') session.numericInput=session.numericInput.slice(0,-1);
-  else if(k==='.'){ if(!session.numericInput.includes('.')) session.numericInput+='.'; }
-  else session.numericInput+=k;
+  const fields=fieldDefsFor(session.currentQuestion.mode);
+  if(fields){
+    if(k==='→'){ const i=fields.indexOf(session.activeField); session.activeField=fields[(i+1)%fields.length]; }
+    else if(k==='⌫'){ session.fields[session.activeField]=(session.fields[session.activeField]||'').slice(0,-1); }
+    else{ session.fields[session.activeField]=(session.fields[session.activeField]||'')+k; }
+  } else {
+    if(k==='⌫') session.numericInput=session.numericInput.slice(0,-1);
+    else if(k==='.'){ if(!session.numericInput.includes('.')) session.numericInput+='.'; }
+    else session.numericInput+=k;
+  }
   openModal(renderSessionModal());
 }
 function answerNumeric(){ submitAnswer(session.numericInput); }
+function answerFields(){
+  const fields=fieldDefsFor(session.currentQuestion.mode);
+  if(!fields.every(f=>session.fields[f]!==''&&session.fields[f]!=null))return;
+  submitAnswer(Object.assign({},session.fields));
+}
 function answerMc(value){ if(session.answered)return; session.selected=value; submitAnswer(value); }
 function submitAnswer(value){
   if(session.answered)return;
   const q=session.currentQuestion;
   let correct;
   if(q.mode==='numeric'){ const v=parseFloat(value); correct=!isNaN(v)&&Math.abs(v-q.correctAnswer)<1e-6; }
+  else if(q.mode==='divmod'){ correct=(parseInt(value.q,10)===q.correctAnswer.q)&&(parseInt(value.r,10)===q.correctAnswer.r); }
+  else if(q.mode==='fraction'){ correct=(parseInt(value.n,10)===q.correctAnswer.n)&&(parseInt(value.d,10)===q.correctAnswer.d); }
   else{ correct=(value===q.correctAnswer); }
   session.answered=true; session.lastCorrect=correct;
   session.lastPhrase=correct?pick(CORRECT_PHRASES):pick(WRONG_PHRASES);
