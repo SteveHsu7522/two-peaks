@@ -120,6 +120,8 @@ button{font-family:inherit;cursor:pointer;}
 .field-box[data-active="true"]{border-style:solid;border-color:var(--accent-color,var(--accent));background:var(--accent-color-soft,var(--accent-soft));}
 .field-sep{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--ink-faint);}
 .field-labels{display:flex;justify-content:center;gap:30px;font-size:.68rem;color:var(--ink-faint);margin:4px 0 12px;}
+.session-list{display:flex;flex-direction:column;gap:4px;padding-left:10px;border-left:2px solid var(--border);}
+.session-row{display:flex;justify-content:space-between;gap:10px;font-size:.78rem;color:var(--ink-soft);}
 .feedback-box{margin-top:16px;padding:14px;border-radius:12px;font-size:.9rem;}
 .feedback-good{background:var(--good-soft);color:var(--good);}
 .feedback-bad{background:var(--bad-soft);color:var(--bad);}
@@ -1201,7 +1203,8 @@ function defaultLearner(id){
   return{id,name:m.defaultName,ageLabel:m.ageLabel,xp:0,tokens:0,level:1,streakDays:0,lastActiveDate:null,badges:[],todayLog:null,guideNotes:'',
     tokenLog:null,   // per-day record of which session types already earned their token today (caps 1 token/session/day)
     history:[],      // archived daily snapshots {date,routeDone,answeredCount,correctCount} for the parent dashboard
-    tokenHistory:[]  // every token actually awarded, {date,source} — source is a skillId or 'workshop'/'journal', for the parent's "where did tokens come from" view
+    tokenHistory:[], // every token actually awarded, {date,source} — source is a skillId or 'workshop'/'journal', for the parent's "where did tokens come from" view
+    sessionLog:[]    // every completed practice session / passage, {date,time,skillId,correct,total} — per-session accuracy for the parent dashboard
   };
 }
 function defaultWorkshop(){
@@ -1365,6 +1368,14 @@ function logTokenAward(learner,source){
   learner.tokenHistory.push({date:todayStr(),source});
   learner.tokenHistory=learner.tokenHistory.slice(-200);
 }
+/* Records every completed practice session / comprehension passage with its
+   own score, so Camp Log can show per-session accuracy (request: "家長帳戶中的
+   Daily Progress 要展開到每個session 正確率"), not just one rolled-up daily number. */
+function logSessionResult(learner,skillId,correct,total){
+  if(!learner.sessionLog)learner.sessionLog=[]; // guards Firebase's empty-array-drop quirk
+  learner.sessionLog.push({date:todayStr(),time:Date.now(),skillId,correct,total});
+  learner.sessionLog=learner.sessionLog.slice(-200);
+}
 function checkBadges(learnerId){
   const learner=APP.learners[learnerId]; const ss=APP.skillStates[learnerId];
   const newly=[];
@@ -1425,7 +1436,24 @@ function renderTabbar(){
   el.innerHTML=TABS.filter(t=>allowed.includes(t.id)).map(t=>`<button class="tab-btn" data-active="${APP.activeTab===t.id}" onclick="setTab('${t.id}')">${icon(t.icon,APP.activeTab===t.id?'var(--accent)':'var(--ink-faint)',16)}${t.label}</button>`).join('');
 }
 function setLearner(id){ if(!visibleLearnerIds().includes(id))return; APP.currentLearnerId=id; render(); }
-function setTab(id,focus){ if(!allowedTabsFor(APP.auth.currentUser).includes(id))return; APP.activeTab=id; APP.workshopFocus=focus||null; render(); }
+function setTab(id,focus){
+  if(!allowedTabsFor(APP.auth.currentUser).includes(id))return;
+  APP.activeTab=id; APP.workshopFocus=focus||null;
+  render();
+  // Re-sync from the cloud on every tab switch (except Camp Log, which already
+  // has its own arrival-refresh + periodic poll via ensureCampPolling). This
+  // is the same staleness bug as Camp Log going stale: the app otherwise only
+  // ever fetched cloud data once at boot, so e.g. a session finished on
+  // ANOTHER device (or in an older still-open tab) would leave "Last
+  // practiced" stuck showing "-" here until a full page reload. Skipped
+  // while a quiz/passage is actually in progress so a background fetch can
+  // never clobber live in-progress answers with slightly-older cloud data.
+  if(id!=='camp' && !session && !comp){
+    refreshCloudData().then(changed=>{
+      if(changed && APP.activeTab===id && !session && !comp) render();
+    });
+  }
+}
 function render(){
   ensureCampPolling();
   if(!APP.auth.currentUser){
@@ -1710,12 +1738,14 @@ function quitSession(){ closeModal(); render(); }
    again the same day does not). Miss more than 2, or already earned today's
    token for this exact skill, and the session still counts for XP/streak/
    "done for today", just no extra token. */
-function finalizeCommon(learnerId,subjectKey,xpEarned,wrongCount,skillId){
+function finalizeCommon(learnerId,subjectKey,xpEarned,correctCount,total,skillId){
   const learner=APP.learners[learnerId];
+  const wrongCount=total-correctCount;
   touchStreak(learner);
   learner.xp+=xpEarned;
   const newLevel=levelFromXp(learner.xp); const leveledUp=newLevel>learner.level; learner.level=newLevel;
   markTodayLog(learner,subjectKey); // marks today's route checklist done; tokens are decided below, independently
+  logSessionResult(learner,skillId,correctCount,total); // per-session accuracy, for Camp Log's Daily Progress breakdown
   ensureTokenLog(learner);
   const alreadyEarnedToday=!!learner.tokenLog.awarded[skillId];
   const tokenAwarded=wrongCount<=2 && !alreadyEarnedToday;
@@ -1731,8 +1761,7 @@ function finalizeCommon(learnerId,subjectKey,xpEarned,wrongCount,skillId){
 function finishPracticeSession(){
   const meta=skillLabelMap(session.learnerId)[session.skillId];
   const subjectKey=meta.subject==='math'?'mathDone':'readingDone';
-  const wrongCount=session.total-session.correctCount;
-  const{leveledUp,newBadges,tokenAwarded,alreadyEarnedToday}=finalizeCommon(session.learnerId,subjectKey,session.xpEarned,wrongCount,session.skillId);
+  const{leveledUp,newBadges,tokenAwarded,alreadyEarnedToday}=finalizeCommon(session.learnerId,subjectKey,session.xpEarned,session.correctCount,session.total,session.skillId);
   openModal(renderSummary(leveledUp,newBadges,tokenAwarded,alreadyEarnedToday));
 }
 function renderSummary(leveledUp,newBadges,tokenAwarded,alreadyEarnedToday){
@@ -1826,8 +1855,7 @@ function finishComprehension(){
   state.passageIndex=(state.passageIndex+1)%meta.passages.length;
   saveSkill(comp.learnerId,comp.skillId);
   const compTotal=comp.passage.questions.length;
-  const compWrong=compTotal-comp.correctCount;
-  const{leveledUp,newBadges,tokenAwarded,alreadyEarnedToday}=finalizeCommon(comp.learnerId,'readingDone',comp.xpEarned,compWrong,comp.skillId);
+  const{leveledUp,newBadges,tokenAwarded,alreadyEarnedToday}=finalizeCommon(comp.learnerId,'readingDone',comp.xpEarned,comp.correctCount,compTotal,comp.skillId);
   session={correctCount:comp.correctCount,total:compTotal,xpEarned:comp.xpEarned};
   openModal(renderSummary(leveledUp,newBadges,tokenAwarded,alreadyEarnedToday));
 }
@@ -1940,25 +1968,71 @@ function addJournal(){
 /* ================= CAMP LOG (guide / parent dashboard) ================= */
 /* Daily Progress: today's route-completion + accuracy, plus recent history
    (request: "家長帳戶的sessio追縱要改成可以追蹤每天達成率跟答對率" -- per-day
-   route-completion rate and accuracy rate). */
-function dailyStatsRows(learner){
+   route-completion rate and accuracy rate), further broken out to each
+   individual session's own score (request: "家長帳戶中的Daily Progress 要展開到
+   每個session 正確率"), plus a weekly roll-up (request: "每一週要做一個周統計"). */
+function allStatsRows(learner){
   const t=learner.todayLog;
   const todayRow=t?{date:t.date,routeDone:[t.mathDone,t.readingDone,t.workshopDone,t.journalDone].filter(Boolean).length,answeredCount:t.answeredCount||0,correctCount:t.correctCount||0,isToday:true}:null;
   const past=(learner.history||[]).slice().reverse(); // most recent first
-  return (todayRow?[todayRow]:[]).concat(past).slice(0,14);
+  return (todayRow?[todayRow]:[]).concat(past);
 }
+function dailyStatsRows(learner){ return allStatsRows(learner).slice(0,14); }
+function sessionsForDate(learner,date){ return (learner.sessionLog||[]).filter(s=>s.date===date); }
 function renderDailyProgress(learner){
   const rows=dailyStatsRows(learner);
   if(!rows.length) return `<div class="section-sub">No sessions logged yet.</div>`;
+  const labels=skillLabelMap(learner.id);
   const rowsHtml=rows.map(r=>{
     const acc=r.answeredCount>0?Math.round(r.correctCount/r.answeredCount*100):null;
-    return `<div class="card" style="padding:10px 16px;display:flex;align-items:center;gap:14px">
-      <div style="flex:1"><b class="mono">${esc(r.date)}</b>${r.isToday?' <span class="tag">Today</span>':''}</div>
-      <div style="width:110px">Route ${r.routeDone}/4</div>
-      <div style="width:140px">${acc===null?'No questions yet':`Accuracy ${acc}%`}</div>
+    const sessions=sessionsForDate(learner,r.date);
+    const sessionRows=sessions.map(s=>{
+      const pct=s.total>0?Math.round(s.correct/s.total*100):0;
+      const label=(labels[s.skillId]||{}).label||s.skillId;
+      return `<div class="session-row"><span>${esc(label)}</span><span class="mono">${s.correct}/${s.total} (${pct}%)</span></div>`;
+    }).join('');
+    return `<div class="card" style="padding:10px 16px">
+      <div style="display:flex;align-items:center;gap:14px${sessions.length?';margin-bottom:8px':''}">
+        <div style="flex:1"><b class="mono">${esc(r.date)}</b>${r.isToday?' <span class="tag">Today</span>':''}</div>
+        <div style="width:110px">Route ${r.routeDone}/4</div>
+        <div style="width:140px">${acc===null?'No questions yet':`Accuracy ${acc}%`}</div>
+      </div>
+      ${sessions.length?`<div class="session-list">${sessionRows}</div>`:''}
     </div>`;
   }).join('');
   return `<div style="display:flex;flex-direction:column;gap:6px">${rowsHtml}</div>`;
+}
+/* Groups the days into Monday-starting weeks and totals up answered/correct
+   questions and average route-completion for each of the last few weeks. */
+function weekStartStr(dateStr){
+  const d=new Date(dateStr+'T00:00:00');
+  const dow=(d.getDay()+6)%7; // 0=Mon .. 6=Sun
+  d.setDate(d.getDate()-dow);
+  return d.toISOString().slice(0,10);
+}
+function renderWeeklySummary(learner){
+  const rows=allStatsRows(learner);
+  if(!rows.length) return `<div class="section-sub">No sessions logged yet.</div>`;
+  const buckets={};
+  rows.forEach(r=>{
+    const wk=weekStartStr(r.date);
+    if(!buckets[wk])buckets[wk]={answered:0,correct:0,routeSum:0,days:0};
+    const b=buckets[wk];
+    b.answered+=r.answeredCount; b.correct+=r.correctCount; b.routeSum+=r.routeDone; b.days++;
+  });
+  const weeks=Object.keys(buckets).sort((a,b)=>b.localeCompare(a)).slice(0,4); // most recent 4 weeks
+  const weekRows=weeks.map(wk=>{
+    const b=buckets[wk];
+    const acc=b.answered>0?Math.round(b.correct/b.answered*100):null;
+    const avgRoute=(b.routeSum/b.days).toFixed(1);
+    return `<div class="card" style="padding:10px 16px;display:flex;align-items:center;gap:14px">
+      <div style="flex:1"><b class="mono">Week of ${esc(wk)}</b></div>
+      <div style="width:120px">Avg route ${avgRoute}/4</div>
+      <div style="width:140px">${acc===null?'No questions':`Accuracy ${acc}%`}</div>
+      <div class="mono" style="width:100px;text-align:right">${b.answered} answered</div>
+    </div>`;
+  }).join('');
+  return `<div style="display:flex;flex-direction:column;gap:6px">${weekRows}</div>`;
 }
 /* Token Sources: where a child's tokens came from (request: "家長帳戶能統計小孩
    token從哪個session獲得的分布"). */
@@ -2037,8 +2111,12 @@ function renderCampLog(){
   <div class="grid" style="grid-template-columns:1fr 1fr;margin-bottom:22px">${overviewRows}</div>
 
   <div class="section-title" style="font-size:1.1rem">Daily Progress</div>
-  <div class="section-sub">Route completion (out of Today's 4 stops) and answer accuracy, by day.</div>
+  <div class="section-sub">Route completion (out of Today's 4 stops) and answer accuracy, by day — expand each day to see every individual session's own score.</div>
   <div style="margin-bottom:22px">${renderDailyProgress(learner)}</div>
+
+  <div class="section-title" style="font-size:1.1rem">Weekly Summary</div>
+  <div class="section-sub">The last few weeks, rolled up (weeks start Monday).</div>
+  <div style="margin-bottom:22px">${renderWeeklySummary(learner)}</div>
 
   <div class="section-title" style="font-size:1.1rem">Elevation Map</div>
   <div class="grid" style="grid-template-columns:1fr;margin-bottom:22px">${elevRows}</div>
