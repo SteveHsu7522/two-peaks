@@ -1019,6 +1019,7 @@ const APP={
   activeTab:'today',
   workshopFocus:null,
   rewardsExpanded:false,
+  lastCloudSyncAt:null,
   learners:{}, skillStates:{comet:{},voyager:{}}, workshops:{}, rewards:[],
   booted:false,
   auth:{users:{}, currentUser:null, screen:'login', error:'', notice:'', regRole:'student'}
@@ -1037,7 +1038,11 @@ function seedDefaultUsers(){
 
 function defaultLearner(id){
   const m=LEARNERS_META[id];
-  return{id,name:m.defaultName,ageLabel:m.ageLabel,xp:0,tokens:0,level:1,streakDays:0,lastActiveDate:null,badges:[],todayLog:null,guideNotes:''};
+  return{id,name:m.defaultName,ageLabel:m.ageLabel,xp:0,tokens:0,level:1,streakDays:0,lastActiveDate:null,badges:[],todayLog:null,guideNotes:'',
+    tokenLog:null,   // per-day record of which session types already earned their token today (caps 1 token/session/day)
+    history:[],      // archived daily snapshots {date,routeDone,answeredCount,correctCount} for the parent dashboard
+    tokenHistory:[]  // every token actually awarded, {date,source} — source is a skillId or 'workshop'/'journal', for the parent's "where did tokens come from" view
+  };
 }
 function defaultWorkshop(){
   return{areaId:null,projectTitle:'',goalText:'',targetDate:'',checkins:{},journal:[]};
@@ -1058,30 +1063,83 @@ async function loadAllData(){
   APP.rewards=Store.lsGet('rewards/list')||{items:DEFAULT_REWARDS.slice()};
   migrateRewardsIfLegacy();
   render();
-  if(Store.db){
-    // Firebase Realtime Database silently drops keys whose value is an empty
-    // array/object (e.g. badges:[] or checkins:{}) instead of storing them —
-    // merging onto a freshly-built default object restores those keys so the
-    // UI never sees `undefined` where it expects an array/object.
-    for(const id of Object.keys(LEARNERS_META)){
-      const remote=await Store.dbGet(`learners/${id}`);
-      if(remote){ const merged=Object.assign(defaultLearner(id),remote); APP.learners[id]=merged; Store.lsSet(`learners/${id}`,merged); }
-      else{ Store.dbSet(`learners/${id}`,APP.learners[id]); }
-      const remoteWs=await Store.dbGet(`learners/${id}/workshop`);
-      if(remoteWs){ const mergedWs=Object.assign(defaultWorkshop(),remoteWs); APP.workshops[id]=mergedWs; Store.lsSet(`learners/${id}/workshop`,mergedWs); }
-      else{ Store.dbSet(`learners/${id}/workshop`,APP.workshops[id]); }
-      for(const sk of LEARNERS_META[id].skills){
-        const remoteSk=await Store.dbGet(`learners/${id}/skills/${sk.id}`);
-        if(remoteSk){ const mergedSk=Object.assign(makeSkillState(),remoteSk); APP.skillStates[id][sk.id]=mergedSk; Store.lsSet(`learners/${id}/skills/${sk.id}`,mergedSk); }
-        else{ Store.dbSet(`learners/${id}/skills/${sk.id}`,APP.skillStates[id][sk.id]); }
-      }
+  if(await refreshCloudData()) render();
+}
+/* Pulls the latest learners/workshops/skills/rewards from the shared cloud
+   store and merges them into APP in place. Used both by loadAllData() at boot
+   AND, repeatedly, by the Camp Log auto-refresh below -- this is what lets a
+   parent's already-open Camp Log notice a child's progress on ANOTHER device
+   without the parent having to reload the page (the app only ever fetched
+   once at boot before this). Returns true if it actually touched the cloud
+   (false when running fully offline/local-only, e.g. in tests). */
+async function refreshCloudData(){
+  if(!Store.db)return false;
+  // Firebase Realtime Database silently drops keys whose value is an empty
+  // array/object (e.g. badges:[] or checkins:{}) instead of storing them —
+  // merging onto a freshly-built default object restores those keys so the
+  // UI never sees `undefined` where it expects an array/object.
+  for(const id of Object.keys(LEARNERS_META)){
+    const remote=await Store.dbGet(`learners/${id}`);
+    if(remote){ const merged=Object.assign(defaultLearner(id),remote); APP.learners[id]=merged; Store.lsSet(`learners/${id}`,merged); }
+    else{ Store.dbSet(`learners/${id}`,APP.learners[id]); }
+    const remoteWs=await Store.dbGet(`learners/${id}/workshop`);
+    if(remoteWs){ const mergedWs=Object.assign(defaultWorkshop(),remoteWs); APP.workshops[id]=mergedWs; Store.lsSet(`learners/${id}/workshop`,mergedWs); }
+    else{ Store.dbSet(`learners/${id}/workshop`,APP.workshops[id]); }
+    for(const sk of LEARNERS_META[id].skills){
+      const remoteSk=await Store.dbGet(`learners/${id}/skills/${sk.id}`);
+      if(remoteSk){ const mergedSk=Object.assign(makeSkillState(),remoteSk); APP.skillStates[id][sk.id]=mergedSk; Store.lsSet(`learners/${id}/skills/${sk.id}`,mergedSk); }
+      else{ Store.dbSet(`learners/${id}/skills/${sk.id}`,APP.skillStates[id][sk.id]); }
     }
-    const remoteRewards=await Store.dbGet('rewards/list');
-    if(remoteRewards){ const mergedRewards=Object.assign({items:DEFAULT_REWARDS.slice()},remoteRewards); APP.rewards=mergedRewards; Store.lsSet('rewards/list',mergedRewards); }
-    else{ Store.dbSet('rewards/list',APP.rewards); }
-    migrateRewardsIfLegacy();
-    render();
   }
+  const remoteRewards=await Store.dbGet('rewards/list');
+  if(remoteRewards){ const mergedRewards=Object.assign({items:DEFAULT_REWARDS.slice()},remoteRewards); APP.rewards=mergedRewards; Store.lsSet('rewards/list',mergedRewards); }
+  else{ Store.dbSet('rewards/list',APP.rewards); }
+  migrateRewardsIfLegacy();
+  APP.lastCloudSyncAt=Date.now();
+  return true;
+}
+/* Camp Log auto-refresh: while a parent/admin is sitting on the Camp Log tab,
+   poll the cloud every 15s so a child's just-completed session (on a
+   different device/browser) shows up without a manual page reload. Guarded
+   so it only ever runs one interval at a time and stops the moment the
+   viewer leaves Camp Log or logs out (see ensureCampPolling(), called from
+   render()). */
+let campPollTimer=null;
+let campPollActive=false; // tracks "polling is arranged", independent of whether setInterval
+                           // even exists in this JS environment (it doesn't in some test sandboxes) --
+                           // this is what stops render() from re-firing a fetch on every single call
+                           // while the viewer sits on Camp Log.
+async function pollCampLogOnce(){
+  if(!APP.auth.currentUser||APP.activeTab!=='camp'){ stopCampPolling(); return; }
+  const changed=await refreshCloudData();
+  if(changed && APP.auth.currentUser && APP.activeTab==='camp') render();
+}
+function startCampPolling(){
+  if(campPollActive)return;
+  campPollActive=true;
+  pollCampLogOnce(); // refresh immediately on arrival, don't wait for the first tick
+  if(typeof setInterval==='function'){
+    campPollTimer=setInterval(pollCampLogOnce,15000);
+    if(campPollTimer&&typeof campPollTimer.unref==='function')campPollTimer.unref(); // don't keep a Node test process alive
+  }
+}
+function stopCampPolling(){
+  campPollActive=false;
+  if(campPollTimer){ if(typeof clearInterval==='function')clearInterval(campPollTimer); campPollTimer=null; }
+}
+function ensureCampPolling(){
+  const onCampLog=APP.auth.currentUser && APP.auth.currentUser.role!=='student' && APP.activeTab==='camp';
+  if(onCampLog){ if(!campPollActive) startCampPolling(); }
+  else stopCampPolling();
+}
+/* Manual "Refresh" button in Camp Log, for a parent who doesn't want to wait
+   for the 15s auto-poll. */
+async function refreshCampLogNow(){
+  if(!Store.db){ toast('目前是本機模式（尚未連接雲端同步）。'); return; }
+  toast('正在更新最新進度...');
+  await refreshCloudData();
+  if(APP.activeTab==='camp') render();
+  toast('Camp Log 已更新！');
 }
 function saveLearner(id){ Store.save(`learners/${id}`,APP.learners[id]); }
 function saveSkill(id,skillId){ Store.save(`learners/${id}/skills/${skillId}`,APP.skillStates[id][skillId]); }
@@ -1089,8 +1147,9 @@ function saveWorkshop(id){ Store.save(`learners/${id}/workshop`,APP.workshops[id
 function saveRewards(){ Store.save('rewards/list',APP.rewards); }
 
 /* ================= GAME LOGIC HELPERS ================= */
-function levelFromXp(xp){ return Math.floor(xp/150)+1; }
-function xpIntoLevel(xp){ return xp%150; }
+const LEVEL_XP_STEP=150, MAX_LEVEL=10;
+function levelFromXp(xp){ return Math.min(MAX_LEVEL,Math.floor(xp/LEVEL_XP_STEP)+1); }
+function xpIntoLevel(xp){ return levelFromXp(xp)>=MAX_LEVEL?LEVEL_XP_STEP:xp%LEVEL_XP_STEP; }
 function touchStreak(learner){
   const today=todayStr();
   if(learner.lastActiveDate===today)return false;
@@ -1101,7 +1160,22 @@ function touchStreak(learner){
 }
 function ensureTodayLog(learner){
   const today=todayStr();
-  if(!learner.todayLog||learner.todayLog.date!==today) learner.todayLog={date:today,mathDone:false,readingDone:false,workshopDone:false,journalDone:false};
+  if(!learner.todayLog||learner.todayLog.date!==today){
+    // Day rollover: archive yesterday's snapshot before resetting, so Camp Log can
+    // show a short daily-progress history (route-completion rate + accuracy rate).
+    if(learner.todayLog){
+      if(!learner.history)learner.history=[]; // guards Firebase's empty-array-drop quirk
+      const prev=learner.todayLog;
+      const routeDone=[prev.mathDone,prev.readingDone,prev.workshopDone,prev.journalDone].filter(Boolean).length;
+      learner.history.push({date:prev.date,routeDone,answeredCount:prev.answeredCount||0,correctCount:prev.correctCount||0});
+      learner.history=learner.history.slice(-30);
+    }
+    learner.todayLog={date:today,mathDone:false,readingDone:false,workshopDone:false,journalDone:false,answeredCount:0,correctCount:0};
+  }
+  // Defensive: a todayLog for TODAY created before these two counters existed
+  // (an in-progress day carried over from an older build) won't have them yet.
+  if(learner.todayLog.answeredCount==null)learner.todayLog.answeredCount=0;
+  if(learner.todayLog.correctCount==null)learner.todayLog.correctCount=0;
 }
 /* Marks one of today's 4 route stops (math, reading, workshop check-in,
    closing circle) as done for today's route checklist — this only controls
@@ -1114,6 +1188,22 @@ function markTodayLog(learner,key){
   if(learner.todayLog[key])return false;
   learner.todayLog[key]=true;
   return true;
+}
+/* Per-skill daily token cap (request: "每個session一天最多只能得到1個token" --
+   each individual skill, e.g. addition vs subtraction, can earn at most 1
+   token per day, even if the child does several good sessions of the SAME
+   skill). A different skill that same day still earns its own token. */
+function ensureTokenLog(learner){
+  const today=todayStr();
+  if(!learner.tokenLog||learner.tokenLog.date!==today) learner.tokenLog={date:today,awarded:{}};
+  if(!learner.tokenLog.awarded)learner.tokenLog.awarded={}; // guards Firebase's empty-object-drop quirk
+}
+/* Records every token actually awarded, so Camp Log can show a parent where a
+   child's tokens came from (request: "家長帳戶能統計小孩token從哪個session獲得的分布"). */
+function logTokenAward(learner,source){
+  if(!learner.tokenHistory)learner.tokenHistory=[]; // guards Firebase's empty-array-drop quirk
+  learner.tokenHistory.push({date:todayStr(),source});
+  learner.tokenHistory=learner.tokenHistory.slice(-200);
 }
 function checkBadges(learnerId){
   const learner=APP.learners[learnerId]; const ss=APP.skillStates[learnerId];
@@ -1144,10 +1234,11 @@ function renderStatStrip(){
   const el=document.getElementById('statstrip');
   if(APP.auth.currentUser.role!=='student'){ el.innerHTML=''; return; }
   const id=APP.currentLearnerId; const learner=APP.learners[id]; const av=accentVars(LEARNERS_META[id].color);
-  const into=xpIntoLevel(learner.xp); const pct=Math.round(into/150*100);
+  const atMax=learner.level>=MAX_LEVEL;
+  const into=xpIntoLevel(learner.xp); const pct=atMax?100:Math.round(into/LEVEL_XP_STEP*100);
   el.innerHTML=`
     <div class="xpbar-wrap" style="--accent-color:${av.c};--accent-color-strong:${av.cs}">
-      <div class="xpbar-top"><span>Level ${learner.level} · Trail Miles</span><span class="mono">${into}/150 XP</span></div>
+      <div class="xpbar-top"><span>Level ${learner.level}${atMax?' · Summit!':' · Trail Miles'}</span><span class="mono">${atMax?'MAX':`${into}/${LEVEL_XP_STEP} XP`}</span></div>
       <div class="xpbar-track"><div class="xpbar-fill" style="width:${pct}%"></div></div>
     </div>
     <div class="stat-chip">${icon('token',av.c,18)}<div><div class="num mono">${learner.tokens}</div><div class="cap">Trail Tokens</div></div></div>
@@ -1176,6 +1267,7 @@ function renderTabbar(){
 function setLearner(id){ if(!visibleLearnerIds().includes(id))return; APP.currentLearnerId=id; render(); }
 function setTab(id,focus){ if(!allowedTabsFor(APP.auth.currentUser).includes(id))return; APP.activeTab=id; APP.workshopFocus=focus||null; render(); }
 function render(){
+  ensureCampPolling();
   if(!APP.auth.currentUser){
     document.getElementById('topbar').innerHTML=`<div class="brand">${icon('mountain','var(--accent)',34)}<div><div class="brand-name">Two Peaks</div><div class="brand-sub">Home Basecamp</div></div></div>`;
     document.getElementById('statstrip').innerHTML='';
@@ -1372,6 +1464,10 @@ function submitAnswer(value){
   session.lastPhrase=correct?pick(CORRECT_PHRASES):pick(WRONG_PHRASES);
   const state=APP.skillStates[session.learnerId][session.skillId];
   applyAnswer(state,correct);
+  const learner=APP.learners[session.learnerId];
+  ensureTodayLog(learner);
+  learner.todayLog.answeredCount++;
+  if(correct) learner.todayLog.correctCount++;
   if(correct){
     session.comboStreak++;
     const mult=1+(state.difficulty-1)*0.15;
@@ -1392,30 +1488,38 @@ function advanceSession(){
 }
 function quitSession(){ closeModal(); render(); }
 /* A completed session (math/reading practice, or a reading comprehension
-   passage) earns a flat +1 Trail Token, every time it's completed — no daily
-   limit — as long as the child got no more than 2 questions wrong in it.
-   Miss more than that and the session still counts for XP/streak/"done for
-   today", just no token. */
-function finalizeCommon(learnerId,subjectKey,xpEarned,wrongCount){
+   passage) earns a flat +1 Trail Token, as long as the child got no more than
+   2 questions wrong in it -- but capped at 1 token per SKILL per day (a
+   different skill that same day still earns its own token; the same skill
+   again the same day does not). Miss more than 2, or already earned today's
+   token for this exact skill, and the session still counts for XP/streak/
+   "done for today", just no extra token. */
+function finalizeCommon(learnerId,subjectKey,xpEarned,wrongCount,skillId){
   const learner=APP.learners[learnerId];
   touchStreak(learner);
   learner.xp+=xpEarned;
   const newLevel=levelFromXp(learner.xp); const leveledUp=newLevel>learner.level; learner.level=newLevel;
   markTodayLog(learner,subjectKey); // marks today's route checklist done; tokens are decided below, independently
-  const tokenAwarded=wrongCount<=2;
-  if(tokenAwarded) learner.tokens=(learner.tokens||0)+1;
+  ensureTokenLog(learner);
+  const alreadyEarnedToday=!!learner.tokenLog.awarded[skillId];
+  const tokenAwarded=wrongCount<=2 && !alreadyEarnedToday;
+  if(tokenAwarded){
+    learner.tokens=(learner.tokens||0)+1;
+    learner.tokenLog.awarded[skillId]=true;
+    logTokenAward(learner,skillId);
+  }
   const newBadges=checkBadges(learnerId);
   saveLearner(learnerId);
-  return{leveledUp,newBadges,tokenAwarded};
+  return{leveledUp,newBadges,tokenAwarded,alreadyEarnedToday};
 }
 function finishPracticeSession(){
   const meta=skillLabelMap(session.learnerId)[session.skillId];
   const subjectKey=meta.subject==='math'?'mathDone':'readingDone';
   const wrongCount=session.total-session.correctCount;
-  const{leveledUp,newBadges,tokenAwarded}=finalizeCommon(session.learnerId,subjectKey,session.xpEarned,wrongCount);
-  openModal(renderSummary(leveledUp,newBadges,tokenAwarded));
+  const{leveledUp,newBadges,tokenAwarded,alreadyEarnedToday}=finalizeCommon(session.learnerId,subjectKey,session.xpEarned,wrongCount,session.skillId);
+  openModal(renderSummary(leveledUp,newBadges,tokenAwarded,alreadyEarnedToday));
 }
-function renderSummary(leveledUp,newBadges,tokenAwarded){
+function renderSummary(leveledUp,newBadges,tokenAwarded,alreadyEarnedToday){
   const av=accentVars(LEARNERS_META[APP.currentLearnerId].color);
   const mascot=LEARNERS_META[APP.currentLearnerId].mascot;
   const pct=session.correctCount/session.total;
@@ -1423,7 +1527,8 @@ function renderSummary(leveledUp,newBadges,tokenAwarded){
   if(bigWin) burstConfettiBig();
   const badgeHtml=newBadges.length?`<div class="badge-row" style="justify-content:center;margin-bottom:10px">${newBadges.map(b=>`<div class="badge-tile"><div class="badge-shape" style="background:${av.soft}">${icon(b.icon,av.c,28)}</div>${b.label}</div>`).join('')}</div>`:'';
   const summitLine=leveledUp?`<div class="summit-banner">${icon('star',av.c,22)} Level Up! Now Level ${APP.learners[APP.currentLearnerId].level}</div>`:(pct>=0.85?`<div class="summit-banner">${icon('flame',av.c,20)} Amazing session!</div>`:'');
-  const tokenChip=tokenAwarded?`<div class="stat-chip">${icon('token','var(--accent)',16)}<div><div class="num mono">+1</div><div class="cap">Token</div></div></div>`:`<div class="stat-chip"><div><div class="cap" style="text-transform:none">No token this time — missed more than 2</div></div></div>`;
+  const noTokenReason=alreadyEarnedToday?'Already earned a token for this skill today':'No token this time — missed more than 2';
+  const tokenChip=tokenAwarded?`<div class="stat-chip">${icon('token','var(--accent)',16)}<div><div class="num mono">+1</div><div class="cap">Token</div></div></div>`:`<div class="stat-chip"><div><div class="cap" style="text-transform:none">${noTokenReason}</div></div></div>`;
   return `<div class="modal-card center" onclick="stopProp(event)">
     <div class="hero-mascot" style="width:64px;height:64px;margin:0 auto 6px">${svgMascot(mascot,av.c,bigWin?'excited':'happy')}</div>
     <div class="section-title">Session Complete!</div>
@@ -1483,6 +1588,10 @@ function answerComp(value){
   comp.answered=true; comp.selected=value; comp.lastCorrect=correct;
   const state=APP.skillStates[comp.learnerId][comp.skillId];
   applyAnswer(state,correct);
+  const compLearner=APP.learners[comp.learnerId];
+  ensureTodayLog(compLearner);
+  compLearner.todayLog.answeredCount++;
+  if(correct) compLearner.todayLog.correctCount++;
   if(correct){ comp.correctCount++; comp.xpEarned+=15; } // tokens: see markTodayLog, no longer per-question here
   saveSkill(comp.learnerId,comp.skillId);
   openModal(renderComprehensionModal());
@@ -1502,9 +1611,9 @@ function finishComprehension(){
   saveSkill(comp.learnerId,comp.skillId);
   const compTotal=comp.passage.questions.length;
   const compWrong=compTotal-comp.correctCount;
-  const{leveledUp,newBadges,tokenAwarded}=finalizeCommon(comp.learnerId,'readingDone',comp.xpEarned,compWrong);
+  const{leveledUp,newBadges,tokenAwarded,alreadyEarnedToday}=finalizeCommon(comp.learnerId,'readingDone',comp.xpEarned,compWrong,comp.skillId);
   session={correctCount:comp.correctCount,total:compTotal,xpEarned:comp.xpEarned};
-  openModal(renderSummary(leveledUp,newBadges,tokenAwarded));
+  openModal(renderSummary(leveledUp,newBadges,tokenAwarded,alreadyEarnedToday));
 }
 function quitComp(){ closeModal(); comp=null; render(); }
 
@@ -1594,7 +1703,7 @@ function toggleCheckin(date){
   if(ws.checkins[date]&&date===todayStr()){
     const learner=APP.learners[APP.currentLearnerId];
     tokenAwarded=markTodayLog(learner,'workshopDone'); // this check-in box only exists once per day, so "first time today" = "completed"
-    if(tokenAwarded) learner.tokens=(learner.tokens||0)+1;
+    if(tokenAwarded){ learner.tokens=(learner.tokens||0)+1; logTokenAward(learner,'workshop'); }
   }
   saveWorkshop(APP.currentLearnerId); saveLearner(APP.currentLearnerId);
   if(tokenAwarded) toast('Nice! +1 Trail Token for working on your mission today.');
@@ -1606,13 +1715,57 @@ function addJournal(){
   ws.journal=ws.journal||[]; ws.journal.unshift({date:todayStr(),text}); ws.journal=ws.journal.slice(0,20);
   const learner=APP.learners[APP.currentLearnerId];
   const tokenAwarded=markTodayLog(learner,'journalDone'); // first reflection of the day only — keeps the daily route checklist meaning "done"
-  if(tokenAwarded) learner.tokens=(learner.tokens||0)+1;
+  if(tokenAwarded){ learner.tokens=(learner.tokens||0)+1; logTokenAward(learner,'journal'); }
   saveWorkshop(APP.currentLearnerId); saveLearner(APP.currentLearnerId);
   toast(tokenAwarded?'Reflection added! +1 Trail Token':'Reflection added!');
   render();
 }
 
 /* ================= CAMP LOG (guide / parent dashboard) ================= */
+/* Daily Progress: today's route-completion + accuracy, plus recent history
+   (request: "家長帳戶的sessio追縱要改成可以追蹤每天達成率跟答對率" -- per-day
+   route-completion rate and accuracy rate). */
+function dailyStatsRows(learner){
+  const t=learner.todayLog;
+  const todayRow=t?{date:t.date,routeDone:[t.mathDone,t.readingDone,t.workshopDone,t.journalDone].filter(Boolean).length,answeredCount:t.answeredCount||0,correctCount:t.correctCount||0,isToday:true}:null;
+  const past=(learner.history||[]).slice().reverse(); // most recent first
+  return (todayRow?[todayRow]:[]).concat(past).slice(0,14);
+}
+function renderDailyProgress(learner){
+  const rows=dailyStatsRows(learner);
+  if(!rows.length) return `<div class="section-sub">No sessions logged yet.</div>`;
+  const rowsHtml=rows.map(r=>{
+    const acc=r.answeredCount>0?Math.round(r.correctCount/r.answeredCount*100):null;
+    return `<div class="card" style="padding:10px 16px;display:flex;align-items:center;gap:14px">
+      <div style="flex:1"><b class="mono">${esc(r.date)}</b>${r.isToday?' <span class="tag">Today</span>':''}</div>
+      <div style="width:110px">Route ${r.routeDone}/4</div>
+      <div style="width:140px">${acc===null?'No questions yet':`Accuracy ${acc}%`}</div>
+    </div>`;
+  }).join('');
+  return `<div style="display:flex;flex-direction:column;gap:6px">${rowsHtml}</div>`;
+}
+/* Token Sources: where a child's tokens came from (request: "家長帳戶能統計小孩
+   token從哪個session獲得的分布"). */
+function renderTokenSources(learnerId){
+  const learner=APP.learners[learnerId];
+  const hist=learner.tokenHistory||[];
+  if(!hist.length) return `<div class="section-sub">No tokens earned yet.</div>`;
+  const labels=skillLabelMap(learnerId);
+  const counts={};
+  hist.forEach(h=>{ counts[h.source]=(counts[h.source]||0)+1; });
+  const labelFor=(src)=>src==='workshop'?'Trail Time Check-in':(src==='journal'?'Closing Circle Reflection':(labels[src]?labels[src].label:src));
+  const max=Math.max(...Object.values(counts));
+  const av=accentVars(LEARNERS_META[learnerId].color);
+  const rows=Object.keys(counts).sort((a,b)=>counts[b]-counts[a]).map(src=>{
+    const pct=max>0?Math.round(counts[src]/max*100):0;
+    return `<div class="card" style="padding:10px 16px;display:flex;align-items:center;gap:12px">
+      <div style="flex:1;font-size:.85rem">${esc(labelFor(src))}</div>
+      <div style="width:110px" class="ascent"><div class="ascent-track"><div class="ascent-fill" style="width:${pct}%;background:${av.c}"></div></div></div>
+      <div class="mono" style="width:30px;text-align:right">${counts[src]}</div>
+    </div>`;
+  }).join('');
+  return `<div style="display:flex;flex-direction:column;gap:6px">${rows}</div>`;
+}
 function renderCampLog(){
   const ids=visibleLearnerIds();
   if(ids.length===0){
@@ -1654,17 +1807,32 @@ function renderCampLog(){
       <button class="btn btn-secondary" onclick="deleteReward('${r.id}')">Delete</button>
     </div>`).join('');
   const redemptions=(learner.redemptions||[]).slice(0,8).map(r=>`<div class="journal-entry"><div class="journal-date mono">${r.date}</div>${esc(r.label)} · ${r.cost} tokens</div>`).join('')||'<div class="section-sub">No redemptions yet.</div>';
+  const syncLabel=Store.db?(APP.lastCloudSyncAt?('Last synced '+new Date(APP.lastCloudSyncAt).toLocaleTimeString()):'Syncing…'):'Local mode (no cloud sync)';
   return `
-  <div class="section-title">Camp Log</div>
-  <div class="section-sub">The Guide's view — mastery map, badges, and the reward store for ${esc(learner.name)}.</div>
+  <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+    <span>Camp Log</span>
+    <span style="display:flex;align-items:center;gap:8px;font-size:.7rem;font-weight:400">
+      <span class="section-sub" style="margin:0">${esc(syncLabel)}</span>
+      <button class="btn btn-secondary" onclick="refreshCampLogNow()">🔄 Refresh</button>
+    </span>
+  </div>
+  <div class="section-sub">The Guide's view — mastery map, badges, and the reward store for ${esc(learner.name)}. Auto-refreshes every 15s while you're here, so a just-finished session shows up without reloading.</div>
   ${switcherHtml}
   <div class="grid" style="grid-template-columns:1fr 1fr;margin-bottom:22px">${overviewRows}</div>
+
+  <div class="section-title" style="font-size:1.1rem">Daily Progress</div>
+  <div class="section-sub">Route completion (out of Today's 4 stops) and answer accuracy, by day.</div>
+  <div style="margin-bottom:22px">${renderDailyProgress(learner)}</div>
 
   <div class="section-title" style="font-size:1.1rem">Elevation Map</div>
   <div class="grid" style="grid-template-columns:1fr;margin-bottom:22px">${elevRows}</div>
 
   <div class="section-title" style="font-size:1.1rem">Trail Badges</div>
   <div class="badge-row" style="margin-bottom:22px">${badgeGallery}</div>
+
+  <div class="section-title" style="font-size:1.1rem">Token Sources</div>
+  <div class="section-sub">Where ${esc(learner.name)}'s Trail Tokens have come from.</div>
+  <div style="margin-bottom:22px">${renderTokenSources(id)}</div>
 
   <div class="section-title" style="font-size:1.1rem">Reward Store</div>
   <div class="grid" style="grid-template-columns:1fr;margin-bottom:10px">${rewardsList}</div>
