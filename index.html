@@ -181,6 +181,22 @@ label.flabel{font-size:.76rem;color:var(--ink-soft);font-weight:600;display:bloc
 .choice-btn[data-state="correct"]{animation:pop-in .32s cubic-bezier(.2,1.4,.4,1);}
 .summit-banner{display:flex;align-items:center;gap:10px;justify-content:center;padding:14px;border-radius:14px;background:linear-gradient(135deg,var(--accent-soft),var(--teal-soft));margin-bottom:14px;font-family:var(--font-display);font-weight:700;font-size:1.1rem;}
 @media (prefers-reduced-motion: reduce){.choice-btn[data-state="correct"]{animation:none;}}
+
+/* ================= CREATURE COMPANION (original creature-collector theme) ================= */
+.companion-card{display:flex;align-items:center;gap:16px;padding:14px 18px;margin-bottom:22px;}
+.companion-art{width:72px;height:72px;flex:none;filter:drop-shadow(0 4px 8px rgba(0,0,0,.14));}
+.companion-art svg{animation:companion-bob 2.6s ease-in-out infinite;}
+.companion-name{font-weight:700;font-size:.95rem;margin-bottom:2px;}
+.companion-note{font-size:.78rem;color:var(--ink-soft);}
+.companion-aura{transform-origin:50px 58px;animation:aura-spin 7s linear infinite;}
+@keyframes companion-bob{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-4px) rotate(-2deg)}}
+@keyframes aura-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.companion-art svg,.companion-aura{animation:none;}}
+.element-chip{display:inline-flex;align-self:flex-start;font-size:.64rem;font-weight:700;padding:2px 7px;border-radius:999px;white-space:nowrap;}
+.ascent-fill,.xpbar-fill{position:relative;overflow:hidden;}
+.ascent-fill::after,.xpbar-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:bar-shimmer 2.2s ease-in-out infinite;}
+@keyframes bar-shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+@media (prefers-reduced-motion: reduce){.ascent-fill::after,.xpbar-fill::after{animation:none;}}
 </style>
 </head>
 <body>
@@ -655,6 +671,86 @@ questions:[
 {q:"What sticks to a bee's legs when it visits a flower?",choices:["Water","Pollen","Leaves","Seeds"],correct:"Pollen"},
 {q:'What does "pollination" mean in the passage?',choices:["a bee making honey","pollen moving from flower to flower to help make seeds","a farmer planting seeds","a flower closing at night"],correct:"pollen moving from flower to flower to help make seeds"},
 {q:"Why might a farmer keep beehives near their fields?",choices:["To sell the bees","To help their fruits and vegetables grow better","To keep other bugs away","To make the field louder"],correct:"To help their fruits and vegetables grow better"}
+]},
+{title:"The Tiny Seed That Grew and Grew",
+text:"Mia planted a tiny brown seed in a paper cup and set it on the windowsill. Every morning she gave it a little water and checked for changes. For a whole week, nothing happened, and Mia worried the seed was broken. Then one morning, a tiny green sprout poked out of the soil. Mia cheered and told everyone at breakfast. She kept watering the sprout every day, and soon it grew into a tall sunflower taller than Mia herself. When the big yellow flower finally bloomed, Mia felt proud that her patience had paid off.",
+questions:[
+{q:"What is this story mostly about?",choices:["A girl who patiently grows a sunflower from a seed","A recipe for breakfast","A trip to a garden store","A cup that changes color"],correct:"A girl who patiently grows a sunflower from a seed"},
+{q:"Where did Mia plant her seed?",choices:["In a paper cup on the windowsill","In the backyard","In a flower pot on the porch","In a jar of water"],correct:"In a paper cup on the windowsill"},
+{q:"What does ‘sprout’ mean in the story?",choices:["a new, small growth from a seed","a kind of flower pot","a type of soil","a loud noise"],correct:"a new, small growth from a seed"},
+{q:"How did Mia probably feel during the week when nothing happened?",choices:["Worried","Excited","Bored","Angry"],correct:"Worried"}
+]},
+{title:"Buddy Comes Home",
+text:"When the Chen family's dog Buddy slipped out through the gate, the whole neighborhood came together to help. Mr. Alvarez printed flyers with Buddy's picture. The twins next door walked up and down every street calling his name. Even the mail carrier kept an eye out during her route. Two days later, a woman three blocks away recognized Buddy from a flyer taped to a lamppost. She called the number right away. When the Chen family arrived, Buddy wagged his tail so hard his whole body wiggled. “Thank you for taking care of him,” Mrs. Chen said, hugging the woman. The neighborhood celebrated with a small block party that weekend.",
+questions:[
+{q:"What is this story mostly about?",choices:["A missing dog who is found with help from neighbors","A block party with games","A woman who dislikes dogs","A mail carrier's daily route"],correct:"A missing dog who is found with help from neighbors"},
+{q:"How did the woman recognize Buddy?",choices:["From a flyer taped to a lamppost","From a photo in the newspaper","She had met Buddy before","From a bark she heard"],correct:"From a flyer taped to a lamppost"},
+{q:"What does ‘recognized’ mean in the story?",choices:["knew who or what something was","forgot completely","yelled loudly","ran away from"],correct:"knew who or what something was"},
+{q:"How did the Chen family probably feel when they found Buddy?",choices:["Relieved and happy","Bored","Confused","Annoyed"],correct:"Relieved and happy"}
+]},
+{title:"Why the Sky Turns Gray Before Rain",
+text:"Have you ever noticed the sky turning gray right before it rains? Clouds are made of tiny drops of water floating in the air. When a cloud is thin, sunlight passes right through it, so it looks white or light. But when more and more water drops gather together, the cloud gets thick and tall. Thick clouds block most of the sunlight from passing through, which makes the cloud look dark gray from below. Once the water drops inside get too heavy to float, they fall to the ground as rain. So the next time you see a gray sky, you'll know a raincloud is getting ready to burst.",
+questions:[
+{q:"What is this passage mostly about?",choices:["Why clouds turn gray before it rains","How to build a cloud","Why the sun is bright","How lightning forms"],correct:"Why clouds turn gray before it rains"},
+{q:"What are clouds made of?",choices:["Tiny drops of water","Smoke","Sand","Cotton"],correct:"Tiny drops of water"},
+{q:"What does ‘burst’ mean in the passage?",choices:["to open suddenly and release something","to freeze solid","to disappear slowly","to shine brightly"],correct:"to open suddenly and release something"},
+{q:"What will most likely happen after a thick gray cloud gets too heavy?",choices:["It will rain","It will turn back to blue sky","It will float higher","It will disappear"],correct:"It will rain"}
+]},
+{title:"The Cardboard Rocket",
+text:"Sam wanted to be an astronaut, so he decided to build his own rocket ship out of cardboard boxes. He taped three boxes together and cut a round window for looking out at “space.” His little sister Ava painted silver stripes down the side. When it was finished, Sam climbed inside and counted down, “Three, two, one, blast off!” He imagined flying past the moon and waving at stars. Their dad took a picture of the two of them sitting proudly next to their creation. That night, Sam told his family all about the faraway planets he had visited, and Ava said she wanted to build a moon buggy next.",
+questions:[
+{q:"What is this story mostly about?",choices:["Two kids who build a pretend rocket ship out of cardboard","A real trip to space","A family that buys a toy rocket","A school science lesson"],correct:"Two kids who build a pretend rocket ship out of cardboard"},
+{q:"Who painted silver stripes on the rocket?",choices:["Ava","Sam","Their dad","A neighbor"],correct:"Ava"},
+{q:"What does ‘creation’ mean in the story?",choices:["something that was made","a kind of food","a type of window","a loud sound"],correct:"something that was made"},
+{q:"What will Ava probably want to do next?",choices:["Build a moon buggy","Stop playing pretend","Paint the walls","Go to school"],correct:"Build a moon buggy"}
+]},
+{title:"Learning to Ride Without Training Wheels",
+text:"Leo had used training wheels since he first learned to ride a bike, but today his dad said it was time to try without them. Leo's stomach felt nervous as his dad held the back of the seat and jogged alongside him. He wobbled left, then right, and nearly tipped over twice. “I can't do it!” Leo shouted after his third fall. His dad knelt down and said, “Falling is part of learning — let's try one more time.” On the fourth try, Leo felt his dad's hand let go, and he didn't even notice at first. He was riding all by himself! Leo pedaled in proud circles around the driveway, grinning the whole time.",
+questions:[
+{q:"What is this story mostly about?",choices:["A boy who learns to ride a bike without training wheels","A boy who buys a new bike","A race between friends","A trip to the bike shop"],correct:"A boy who learns to ride a bike without training wheels"},
+{q:"What did Leo's dad say after Leo fell?",choices:["Falling is part of learning, let's try again","Maybe biking isn't for you","Let's put the training wheels back on","We should stop for today"],correct:"Falling is part of learning, let's try again"},
+{q:"What does ‘wobbled’ mean in the story?",choices:["moved unsteadily from side to side","rode very fast","stopped completely","fell asleep"],correct:"moved unsteadily from side to side"},
+{q:"How did Leo feel once he realized he was riding alone?",choices:["Proud and excited","Scared","Sleepy","Bored"],correct:"Proud and excited"}
+]},
+{title:"The Class Recycling Challenge",
+text:"Ms. Patterson's class started a contest to see which reading group could collect the most recyclable bottles and cans in one month. At first, only a few students remembered to bring items from home. But when the Blue Group's poster board showed they were winning by a mile, the other groups got motivated. Soon, students were reminding their families every night, and some even collected cans from neighbors. By the end of the month, the whole class had gathered enough recycling to fill twelve huge bins. Ms. Patterson was so proud that she took the whole class on a special trip to see how the recycling center turns cans into new metal.",
+questions:[
+{q:"What is this passage mostly about?",choices:["A class recycling contest that gets everyone involved","A trip to a metal factory","A poster-making contest","A group that loses a race"],correct:"A class recycling contest that gets everyone involved"},
+{q:"How many bins of recycling did the class collect?",choices:["Twelve","Two","One hundred","Six"],correct:"Twelve"},
+{q:"What does ‘motivated’ mean in the passage?",choices:["feeling encouraged to try harder","feeling sleepy","feeling confused","feeling angry"],correct:"feeling encouraged to try harder"},
+{q:"Why did the other groups start trying harder?",choices:["They saw the Blue Group winning and wanted to catch up","They were told to stop reading","They didn't like recycling","Ms. Patterson gave them candy"],correct:"They saw the Blue Group winning and wanted to catch up"}
+]},
+{title:"Luna's Puppet Show",
+text:"Luna loved making puppets out of old socks, but she was too shy to ever perform in front of anyone. For the school talent show, she almost signed up for something else instead. Her older brother reminded her, “You don't have to look at the crowd — just look at your puppet.” On the night of the show, Luna's hands shook as she stepped behind the small cardboard stage. But once she started the story, moving her sock puppet and using a silly voice, she forgot to be nervous. The audience laughed at all the funny parts and clapped loudly at the end. Luna walked off stage smiling, already planning her next puppet show.",
+questions:[
+{q:"What is this story mostly about?",choices:["A shy girl who overcomes fear to perform a puppet show","A brother who builds a stage","A class that studies puppets","A talent show that gets canceled"],correct:"A shy girl who overcomes fear to perform a puppet show"},
+{q:"What advice did Luna's brother give her?",choices:["Look at your puppet instead of the crowd","Practice every day for a month","Skip the talent show","Use a bigger puppet"],correct:"Look at your puppet instead of the crowd"},
+{q:"What does ‘nervous’ mean in the story?",choices:["worried or uneasy about something","excited to eat","very tired","extremely happy"],correct:"worried or uneasy about something"},
+{q:"How did Luna probably feel after the show ended?",choices:["Proud and happy","Embarrassed","Angry","Confused"],correct:"Proud and happy"}
+]},
+{title:"The Octopus That Disappeared",
+text:"At the aquarium, Ben pressed his face close to the glass, searching for the octopus everyone talked about. At first, all he saw was a rock and some sand. Suddenly, the “rock” changed color and unfolded eight long arms — it was the octopus the whole time! Ben learned that octopuses can change the color and texture of their skin in seconds to match their surroundings. This helps them hide from bigger fish that might want to eat them. A worker at the aquarium explained that octopuses can even squeeze through gaps barely bigger than their own eyeball, since they have no bones inside their soft bodies. Ben decided the octopus was his new favorite animal at the aquarium.",
+questions:[
+{q:"What is this passage mostly about?",choices:["How octopuses hide by changing color and squeezing through small spaces","A boy who visits an aquarium gift shop","Why fish live in tanks","How to build an aquarium"],correct:"How octopuses hide by changing color and squeezing through small spaces"},
+{q:"What did Ben think the octopus was at first?",choices:["A rock","A fish","A plant","A diver"],correct:"A rock"},
+{q:"What does ‘surroundings’ mean in the passage?",choices:["the things and area around something","a type of ocean fish","a kind of glass tank","a loud sound"],correct:"the things and area around something"},
+{q:"Why can octopuses squeeze through such tiny gaps?",choices:["They have no bones inside their bodies","They are very small animals","They have flat bodies like paper","They shrink themselves on purpose"],correct:"They have no bones inside their bodies"}
+]},
+{title:"A Mountain Made of Fire",
+text:"Deep under the ground, in a hot layer of melted rock called magma, pressure slowly builds up. When the pressure grows too strong, the magma pushes upward through cracks in the earth until it bursts out of a volcano. Once magma reaches the surface, it is called lava, and it can glow bright orange as it flows down the mountainside. Some volcanoes erupt quietly, letting lava ooze out slowly for weeks. Others explode suddenly, shooting ash and rock high into the sky. Over hundreds of years, cooled lava can stack up layer after layer, building the volcano into an even taller mountain. Scientists watch volcanoes closely, using special tools to warn nearby towns before a big eruption happens.",
+questions:[
+{q:"What is this passage mostly about?",choices:["How volcanoes form and erupt","How mountains are climbed","Why the ground shakes during earthquakes","How scientists study weather"],correct:"How volcanoes form and erupt"},
+{q:"What is magma called once it reaches the surface?",choices:["Lava","Ash","Steam","Rock salt"],correct:"Lava"},
+{q:"What does ‘erupt’ mean in the passage?",choices:["to burst out suddenly","to freeze completely","to grow slowly","to disappear"],correct:"to burst out suddenly"},
+{q:"Why do scientists watch volcanoes closely?",choices:["To warn nearby towns before a big eruption","To collect lava for cooking","To make the volcano taller","To stop earthquakes"],correct:"To warn nearby towns before a big eruption"}
+]},
+{title:"The Moon's Changing Shapes",
+text:"Every night, the moon looks a little different in the sky. Sometimes it's a thin sliver, sometimes a half circle, and sometimes a full glowing circle. But the moon isn't actually changing shape at all — it's always a round ball of rock. What changes is how much of the sunlit side we can see from Earth as the moon travels around us. When we see none of the lit side, it's called a new moon. When we see all of it, it's a full moon. This whole cycle, from new moon to full moon and back again, takes about one month to complete, which is where the word “month” comes from.",
+questions:[
+{q:"What is this passage mostly about?",choices:["Why the moon appears to change shape in the sky","How rockets fly to the moon","Why the sun is hot","How stars are formed"],correct:"Why the moon appears to change shape in the sky"},
+{q:"What is it called when we see none of the moon's lit side?",choices:["A new moon","A full moon","A half moon","A blue moon"],correct:"A new moon"},
+{q:"What does ‘cycle’ mean in the passage?",choices:["a series of events that repeats","a type of bicycle","a bright light","a loud sound"],correct:"a series of events that repeats"},
+{q:"Is the moon actually changing its shape?",choices:["No, it always stays a round ball of rock","Yes, it grows bigger every night","Yes, it melts and reforms","No one knows"],correct:"No, it always stays a round ball of rock"}
 ]}
 ];
 const PASSAGES4=[
@@ -705,6 +801,86 @@ questions:[
 {q:"What was the lighthouse keepers' unbreakable rule?",choices:["The light could never go out","Ships had to pay a toll","No visitors were allowed","The tower had to be repainted yearly"],correct:"The light could never go out"},
 {q:'What does "automated" mean in the passage?',choices:["torn down","made to run by machine instead of people","painted a new color","sold to a new owner"],correct:"made to run by machine instead of people"},
 {q:"Why did storms make the keepers' job especially important?",choices:["Storms turned off the electricity","Ships needed the light most exactly when it was hardest to keep burning","Storms brought more visitors","Storms made the ocean calmer"],correct:"Ships needed the light most exactly when it was hardest to keep burning"}
+]},
+{title:"How the Printing Press Changed the World",
+text:"Before the 1400s, every book in Europe had to be copied out by hand, letter by letter, which could take a monk almost a year to finish a single book. Because books took so long to make, only wealthy people or churches usually owned them, and most ordinary people never learned to read. Everything changed when a German craftsman built a printing press that used movable metal letters, which could be arranged, inked, and pressed onto paper again and again. Suddenly, dozens of copies of the same book could be made in the time it once took to make one. Within decades, printed books spread across Europe, and prices dropped low enough that merchants, teachers, and even students could afford them. As more people gained access to books, more people learned to read, and new ideas in science, religion, and politics could spread faster than ever before. Historians often point to the printing press as one of the most important inventions in human history, because it changed not just how books were made, but who got to read them.",
+questions:[
+{q:"What is this passage mostly about?",choices:["How the invention of the printing press made books cheaper and more widespread","How monks lived in the 1400s","Why paper was invented","How churches built libraries"],correct:"How the invention of the printing press made books cheaper and more widespread"},
+{q:"What did copying a single book by hand often take?",choices:["Almost a year","A single afternoon","One week","Ten years"],correct:"Almost a year"},
+{q:"What does ‘movable’ mean in the passage?",choices:["able to be moved or rearranged","stuck permanently in place","extremely heavy","made of paper"],correct:"able to be moved or rearranged"},
+{q:"Why does the author call the printing press ‘one of the most important inventions in human history’?",choices:["Because it changed who could access books and ideas","Because it was the first machine ever built","Because it made paper cheaper to grow","Because monks demanded it"],correct:"Because it changed who could access books and ideas"}
+]},
+{title:"Chasing Monarchs",
+text:"Each fall, millions of monarch butterflies leave their summer homes across the United States and Canada and begin an extraordinary journey south to central Mexico, flying up to 3,000 miles. What makes this trip remarkable is that no single butterfly completes the whole round trip alone. The monarchs that arrive in Mexico are actually the great-great-grandchildren of the ones that flew north the previous spring, since it takes four or five generations to finish the full cycle. Scientists still aren't entirely sure how each new generation knows exactly where to go, since none of them have made the journey before. Some researchers believe the butterflies use the position of the sun combined with an internal sense of time to navigate, similar to a built-in compass. Every winter, the mountain forests of Mexico turn orange and black as millions of monarchs cluster together on the trees to stay warm, creating one of the most stunning wildlife gatherings on Earth.",
+questions:[
+{q:"What is this passage mostly about?",choices:["How monarch butterflies migrate thousands of miles across generations","How butterflies build cocoons","Why Mexico has warm winters","How scientists tag insects"],correct:"How monarch butterflies migrate thousands of miles across generations"},
+{q:"How far can the monarchs' journey stretch?",choices:["Up to 3,000 miles","About 50 miles","Around 200 miles","Nearly 10,000 miles"],correct:"Up to 3,000 miles"},
+{q:"What does ‘generations’ mean in the passage?",choices:["groups of offspring born at different stages, like grandparents, parents, and children","types of butterflies","different colors of wings","seasons of the year"],correct:"groups of offspring born at different stages, like grandparents, parents, and children"},
+{q:"Why is the monarch migration considered remarkable, according to the passage?",choices:["No single butterfly completes the whole trip alone; it takes several generations","Butterflies are the fastest flying insect","The trip only takes one day","Monarchs migrate in complete silence"],correct:"No single butterfly completes the whole trip alone; it takes several generations"}
+]},
+{title:"The Sleep Detectives",
+text:"Scientists once thought the brain simply “shut off” during sleep, but modern research shows the opposite is true — a sleeping brain is remarkably busy. While the body rests, the brain sorts through everything learned that day, strengthening important memories and clearing out unnecessary clutter, much like tidying a cluttered desk at the end of a workday. During certain stages of sleep, the brain also flushes out waste products that build up during waking hours, a kind of nightly cleaning system. Studies on students have shown that those who sleep enough the night before a test tend to recall information better than those who stayed up studying instead. Without enough sleep, it becomes harder to focus, control emotions, and even fight off common illnesses. Doctors generally recommend that children and teenagers get between nine and eleven hours of sleep each night, since growing brains rely on that rest to develop properly. Skipping sleep to cram in extra study time, researchers warn, often backfires by making it harder to remember what was studied in the first place.",
+questions:[
+{q:"What is this passage mostly about?",choices:["Why sleep is essential for memory, focus, and health","How to build a bedroom for better sleep","Why students dislike tests","How doctors treat illnesses"],correct:"Why sleep is essential for memory, focus, and health"},
+{q:"How many hours of sleep do doctors recommend for children and teenagers?",choices:["Between nine and eleven hours","Four to five hours","Fifteen hours","Exactly six hours"],correct:"Between nine and eleven hours"},
+{q:"What does ‘clutter’ mean in the passage?",choices:["a messy collection of unnecessary things","a bright light","a loud noise","a type of food"],correct:"a messy collection of unnecessary things"},
+{q:"Why might staying up late to study actually backfire, according to the passage?",choices:["Without enough sleep, the brain struggles to store and recall memories","Studying at night uses too much electricity","Teachers prefer students who sleep a lot","Sleep has nothing to do with memory"],correct:"Without enough sleep, the brain struggles to store and recall memories"}
+]},
+{title:"The Bridge That Bends",
+text:"It might seem like the strongest bridge should be the stiffest one, but engineers actually design many bridges to bend and sway slightly on purpose. Wind, heavy traffic, and even earthquakes put constant stress on a bridge's structure, and a completely rigid bridge would have nowhere to send that stress except through cracks. Instead, engineers use flexible materials and clever designs, like expansion joints, which are small gaps that allow the bridge to expand in the heat and contract in the cold without buckling. Suspension bridges, held up by giant cables, are especially good at swaying gently in strong winds, which actually protects them from snapping. One famous bridge that collapsed decades ago taught engineers an important lesson: it wasn't built to handle a specific kind of wind-driven motion, and the vibrations grew until the bridge twisted itself apart. Since then, bridge designs are carefully tested in wind tunnels before construction begins, so today's bridges bend exactly as much as they're supposed to, and not a bit more.",
+questions:[
+{q:"What is this passage mostly about?",choices:["Why engineers design bridges to flex instead of staying perfectly rigid","How suspension cables are manufactured","Why earthquakes happen","How traffic lights are timed"],correct:"Why engineers design bridges to flex instead of staying perfectly rigid"},
+{q:"What are expansion joints designed to do?",choices:["Let the bridge expand and contract without buckling","Make the bridge heavier","Stop all wind from reaching the bridge","Add extra lanes for traffic"],correct:"Let the bridge expand and contract without buckling"},
+{q:"What does ‘rigid’ mean in the passage?",choices:["stiff and unable to bend","extremely colorful","very old","lightweight"],correct:"stiff and unable to bend"},
+{q:"Why do engineers test bridge designs in wind tunnels before building them?",choices:["To make sure the bridge bends safely instead of vibrating apart","To paint the bridge before it's built","To count how many cars will use it","To decide what color to make it"],correct:"To make sure the bridge bends safely instead of vibrating apart"}
+]},
+{title:"The Community Garden Truce",
+text:"For years, the Ridgewood and Elm Street families had argued over who was responsible for the overgrown, weed-choked lot between their two streets. Neither side wanted to spend the money to clean it up, and neither side wanted to back down first. Everything changed when a new neighbor, Mr. Osei, suggested turning the lot into a shared community garden instead of continuing the argument. At first, only a handful of skeptical neighbors showed up to help clear the weeds. But as raised garden beds went in and the first tomato seedlings were planted, more families started stopping by to help water, weed, and chat with neighbors they'd never really spoken to before. By midsummer, the once-abandoned lot was bursting with vegetables, and families from both streets were sharing the harvest at a weekly potluck. The years-long argument was never officially resolved with an apology or a vote — it simply became irrelevant once everyone had a shared reason to work together instead of against each other.",
+questions:[
+{q:"What is this passage mostly about?",choices:["How a shared garden project ends a long neighborhood argument","How to grow tomatoes","A contest between two garden clubs","Why vacant lots attract weeds"],correct:"How a shared garden project ends a long neighborhood argument"},
+{q:"Who suggested turning the lot into a community garden?",choices:["Mr. Osei","A city council member","One of the original arguing families","A newspaper reporter"],correct:"Mr. Osei"},
+{q:"What does ‘skeptical’ mean in the passage?",choices:["doubtful that something will work","extremely excited","completely certain","very generous"],correct:"doubtful that something will work"},
+{q:"Why does the author say the argument ‘became irrelevant’ instead of being resolved with an apology?",choices:["Working together toward a shared goal made the old disagreement stop mattering","The families forgot they had ever argued","A judge ordered them to stop arguing","The garden failed and everyone moved away"],correct:"Working together toward a shared goal made the old disagreement stop mattering"}
+]},
+{title:"The Cave Painters",
+text:"Deep inside a cave that had been sealed off by a rockslide for thousands of years, a team of researchers discovered walls covered in painted animals — horses, deer, and creatures that no longer exist today. The paint itself was made from ground minerals mixed with animal fat, applied using fingers, chewed sticks, and even hollow bones used to blow pigment onto the wall like a spray. What amazed the researchers most wasn't just the age of the paintings, but how skillfully they were made; the artists had used the natural bumps and curves of the rock to make the animals appear to have depth and motion, almost like an ancient form of 3-D art. Some paintings were placed in spots so deep and hard to reach that the artists must have worked by flickering torchlight for hours. Researchers still debate why the paintings were made at all — some believe they were part of religious ceremonies, while others think they simply recorded successful hunts. Whatever the reason, the cave offers a rare, direct window into how people communicated and expressed themselves tens of thousands of years before writing existed.",
+questions:[
+{q:"What is this passage mostly about?",choices:["The discovery of ancient, skillfully made cave paintings and what they reveal","How rockslides are formed","A modern art museum exhibit","How researchers dig for dinosaur bones"],correct:"The discovery of ancient, skillfully made cave paintings and what they reveal"},
+{q:"What was the paint made from?",choices:["Ground minerals mixed with animal fat","Modern acrylic paint","Melted wax and berries","Dyed cloth"],correct:"Ground minerals mixed with animal fat"},
+{q:"What does ‘pigment’ mean in the passage?",choices:["a substance that gives color to paint","a type of rock","a hollow bone tool","a kind of cave animal"],correct:"a substance that gives color to paint"},
+{q:"Why do researchers still debate the purpose of the paintings?",choices:["There is no written record from that time to explain why they were made","The paintings were destroyed before being studied","The artists left detailed notes that contradict each other","Modern cameras couldn't capture the paintings clearly"],correct:"There is no written record from that time to explain why they were made"}
+]},
+{title:"Debate Night Jitters",
+text:"Priya had prepared for weeks for the school debate, filling index cards with facts and practicing her opening argument in the mirror every night. But the moment she stepped up to the podium and saw the audience staring back at her, every fact she had memorized seemed to vanish from her mind at once. She glanced at her index cards, but her hands were shaking too much to read them clearly. In the silence, she noticed her debate partner, Marcus, give her a small, steady nod from the front row. Priya took a slow breath, set the cards down, and simply said what she actually believed in her own words instead of trying to recite memorized lines. Her voice wavered at first, but as she kept talking, it grew steadier. She didn't deliver the polished speech she had rehearsed, but she said something true, and the judges nodded along as she spoke. Afterward, her coach told her that the moment she stopped performing and started actually talking to the audience was the strongest part of her whole debate.",
+questions:[
+{q:"What is this passage mostly about?",choices:["A nervous student who overcomes stage fright by speaking honestly instead of reciting memorized lines","A debate about a school rule","A coach who writes a speech for a student","A student who forgets to prepare and fails"],correct:"A nervous student who overcomes stage fright by speaking honestly instead of reciting memorized lines"},
+{q:"What happened when Priya tried to read her index cards?",choices:["Her hands were shaking too much to read them clearly","She read them perfectly","She lost the cards entirely","She gave them to Marcus"],correct:"Her hands were shaking too much to read them clearly"},
+{q:"What does ‘wavered’ mean in the passage?",choices:["became unsteady or shaky","grew extremely loud","stopped completely","became perfectly calm"],correct:"became unsteady or shaky"},
+{q:"Why did the coach say Priya's unscripted moment was the strongest part of her debate?",choices:["Because speaking honestly and directly connected with the audience more than a memorized speech would have","Because judges only reward long speeches","Because Marcus spoke instead of her","Because the memorized facts were incorrect"],correct:"Because speaking honestly and directly connected with the audience more than a memorized speech would have"}
+]},
+{title:"The Deep-Sea Explorers",
+text:"Thousands of meters below the ocean's surface, sunlight completely disappears, and water pressure grows heavy enough to crush an unprotected submarine like a soda can. Yet this crushing, pitch-black world is far from empty. Scientists exploring these depths in specially reinforced submersibles have discovered fish with enormous eyes built to catch the faintest traces of light, along with creatures that produce their own glow through a chemical reaction called bioluminescence. Some deep-sea anglerfish dangle a glowing lure above their mouths to attract curious prey close enough to catch. Because food is scarce at such extreme depths, many deep-sea animals have adapted slow metabolisms, allowing them to survive for long stretches between meals. Exploring this environment is so difficult and expensive that scientists estimate humans have physically observed less of the deep ocean floor than they have of the surface of the moon. Every expedition tends to uncover species never recorded before, which is why many researchers consider the deep sea one of the last true frontiers left to explore on our own planet.",
+questions:[
+{q:"What is this passage mostly about?",choices:["The strange, difficult-to-explore world of deep-sea creatures and how they survive","How submarines are built","Why the moon has craters","How ocean currents form"],correct:"The strange, difficult-to-explore world of deep-sea creatures and how they survive"},
+{q:"What is bioluminescence?",choices:["A chemical reaction that lets some creatures produce their own glow","A type of deep-sea rock","A tool scientists use to measure pressure","A kind of underwater volcano"],correct:"A chemical reaction that lets some creatures produce their own glow"},
+{q:"What does ‘scarce’ mean in the passage?",choices:["rare or hard to find","overly abundant","brightly colored","extremely heavy"],correct:"rare or hard to find"},
+{q:"Why does the author compare deep-sea exploration to the moon?",choices:["To show just how little of the deep ocean humans have actually seen and explored","To prove the moon is more interesting than the ocean","To explain how astronauts train","To argue that the deep sea is easier to explore than space"],correct:"To show just how little of the deep ocean humans have actually seen and explored"}
+]},
+{title:"The Recycling Robot",
+text:"For their engineering class project, Talia's team was assigned an ambitious goal: build a machine that could sort plastic, metal, and paper without any human help. Their first prototype was a disaster — the sorting arm swung wildly and flung recyclables across the room instead of into the correct bins. Rather than giving up, the team broke the problem into smaller pieces, testing the sensor, then the arm, then the bins, one system at a time instead of all together. Talia's teammate Dev suggested using a magnet to pull out metal cans before the machine even tried to identify them visually, which turned out to be the breakthrough they needed. After nearly a month of small adjustments and countless test runs, their machine could finally sort a mixed pile of recyclables with about ninety percent accuracy. At the science fair, when a judge asked what the hardest part of the project was, Talia said it wasn't the coding or the wiring — it was learning to test one small piece at a time instead of expecting the whole complicated machine to work perfectly on the first try.",
+questions:[
+{q:"What is this passage mostly about?",choices:["A team that learns to solve a complex engineering problem by testing one piece at a time","A robot that wins a dance contest","A class that studies recycling laws","A judge who builds a sorting machine"],correct:"A team that learns to solve a complex engineering problem by testing one piece at a time"},
+{q:"What breakthrough idea did Dev suggest?",choices:["Using a magnet to pull out metal cans before sorting visually","Painting the bins different colors","Adding a second sorting arm","Asking a judge for help"],correct:"Using a magnet to pull out metal cans before sorting visually"},
+{q:"What does ‘prototype’ mean in the passage?",choices:["an early, test version of something being built","a finished, perfect product","a type of recycling bin","a school science fair"],correct:"an early, test version of something being built"},
+{q:"What lesson did Talia take from the project, according to the passage?",choices:["Testing small pieces of a problem separately is more effective than expecting everything to work at once","Recycling machines are impossible to build","Judges always ask about coding","The first prototype should always work perfectly"],correct:"Testing small pieces of a problem separately is more effective than expecting everything to work at once"}
+]},
+{title:"Echoes in the Dark",
+text:"Flying through a pitch-black cave at high speed, a bat has no need for light to avoid crashing into walls or catching a moving insect out of the air. Instead, bats rely on a remarkable system called echolocation: they emit rapid, high-pitched sounds, many too high for human ears to hear, and then listen closely to how those sounds bounce back after hitting nearby objects. By measuring the tiny delay between the sound leaving and its echo returning, a bat's brain can calculate not only how far away an object is, but roughly its size, shape, and even whether it's moving. Some bats can process these echoes quickly enough to track a single flying moth through dozens of sudden turns, adjusting their flight path in a fraction of a second. Engineers have studied echolocation closely because similar principles power sonar systems used by submarines and ultrasound machines used in hospitals to see inside the human body. What began as a way to understand a small flying mammal has ended up helping humans build tools to “see” through darkness and even through skin.",
+questions:[
+{q:"What is this passage mostly about?",choices:["How bats use echolocation to navigate and hunt in complete darkness","Why bats sleep upside down","How submarines are built","Why moths fly at night"],correct:"How bats use echolocation to navigate and hunt in complete darkness"},
+{q:"What does a bat measure to figure out how far away an object is?",choices:["The delay between a sound leaving and its echo returning","The brightness of moonlight","The temperature of the cave","The size of its own wings"],correct:"The delay between a sound leaving and its echo returning"},
+{q:"What does ‘emit’ mean in the passage?",choices:["to send out or release","to absorb completely","to freeze in place","to hide from view"],correct:"to send out or release"},
+{q:"Why does the author mention sonar and ultrasound machines at the end of the passage?",choices:["To show how the science behind echolocation has helped humans build useful tools","To prove that bats invented sonar first","To explain how doctors treat broken bones","To argue that submarines are dangerous"],correct:"To show how the science behind echolocation has helped humans build useful tools"}
 ]}
 ];
 
@@ -747,8 +923,14 @@ const BADGE_DEFS=[
 {id:'streak-30',label:'30-Day Streak',icon:'flame',desc:'Practice 30 days in a row.',check:(l)=>l.streakDays>=30},
 {id:'elevation-master',label:'Elevation Master',icon:'mountain',desc:'Reach Elevation 5 in any skill.',check:(l,ss)=>Object.values(ss).some(s=>s.difficulty===5)},
 {id:'summit-reacher',label:'Summit Reacher',icon:'flag',desc:'Fully master any skill.',check:(l,ss)=>Object.values(ss).some(s=>s.mastered)},
+{id:'grandmaster',label:'Grandmaster',icon:'star',desc:'Reach Master II in any skill by staying sharp well past first mastery.',check:(l,ss)=>Object.values(ss).some(s=>(s.masteryTier||0)>=2)},
+{id:'champion',label:'Champion',icon:'star',desc:'Reach Master III in any skill.',check:(l,ss)=>Object.values(ss).some(s=>(s.masteryTier||0)>=3)},
+{id:'legend',label:'Legend',icon:'flame',desc:'Reach the top mastery tier in any skill.',check:(l,ss)=>Object.values(ss).some(s=>(s.masteryTier||0)>=4)},
+{id:'renaissance-learner',label:'Renaissance Learner',icon:'compass',desc:'Reach Master II or higher in three different skills.',check:(l,ss)=>Object.values(ss).filter(s=>(s.masteryTier||0)>=2).length>=3},
 {id:'level-5',label:'Level 5 Explorer',icon:'badge',desc:'Reach Level 5.',check:(l)=>l.level>=5},
 {id:'level-10',label:'Level 10 Explorer',icon:'badge',desc:'Reach Level 10.',check:(l)=>l.level>=10},
+{id:'level-20',label:'Level 20 Trailblazer',icon:'badge',desc:'Reach Level 20.',check:(l)=>l.level>=20},
+{id:'level-30',label:'Level 30 Pathfinder',icon:'badge',desc:'Reach Level 30.',check:(l)=>l.level>=30},
 {id:'token-saver',label:'Token Saver',icon:'token',desc:'Save up 200 Trail Tokens at once.',check:(l)=>l.tokens>=200},
 {id:'bookworm',label:'Bookworm',icon:'book',desc:'Finish every Reading Comprehension passage at least once.',check:(l,ss,passageCount)=>{const c=ss.comprehension2||ss.comprehension4;return c&&c.passagesCompleted&&c.passagesCompleted.filter(Boolean).length>=passageCount;}}
 ];
@@ -814,14 +996,35 @@ function ensureLearnerRuntimeState(user){
 }
 
 /* ================= ADAPTIVE ENGINE ================= */
-function makeSkillState(){return{difficulty:1,streakCorrect:0,streakWrong:0,history:[],totalAnswered:0,totalCorrect:0,mastered:false,lastPracticed:null,passageIndex:0,passagesCompleted:[false,false,false,false,false,false]};}
+/* Mastery tiers: reaching difficulty 5 with solid accuracy used to be a dead end —
+   "mastered" just flipped to true and nothing about the skill card ever changed
+   again, however much more the child practiced it (reported: "level 到master之後
+   沒有任何變化"). Tiers give practice AFTER first mastery somewhere to go: staying
+   at difficulty 5 and keeping accuracy up over a growing number of questions climbs
+   through named tiers, each with its own badge, pill and elevation-path flourish.
+   Tiers are a ratchet (computeMasteryTier never returns lower than the stored tier)
+   so a temporary rough patch that drops difficulty below 5 doesn't erase progress
+   already earned. */
+const MASTERY_TIER_THRESHOLDS=[10,30,60,100]; // totalAnswered needed for tier 1..4
+const MASTERY_TIER_LABELS=['','Master','Master II','Master III','Legend'];
+function computeMasteryTier(state){
+  const prior=state.masteryTier||0;
+  if(state.difficulty<5) return prior;
+  const last10=state.history.slice(-10);
+  const acc=last10.length?last10.reduce((a,v)=>a+v,0)/last10.length:0;
+  if(state.totalAnswered<MASTERY_TIER_THRESHOLDS[0]||acc<0.85) return prior;
+  let tier=0;
+  for(let i=0;i<MASTERY_TIER_THRESHOLDS.length;i++){ if(state.totalAnswered>=MASTERY_TIER_THRESHOLDS[i]) tier=i+1; }
+  return Math.max(prior,tier);
+}
+function makeSkillState(){return{difficulty:1,streakCorrect:0,streakWrong:0,history:[],totalAnswered:0,totalCorrect:0,mastered:false,masteryTier:0,lastPracticed:null,passageIndex:0,passagesCompleted:[false,false,false,false,false,false]};}
 function applyAnswer(state,correct){
   state.totalAnswered++; if(correct)state.totalCorrect++;
   state.history.push(correct?1:0); if(state.history.length>20)state.history.shift();
   if(correct){state.streakCorrect++;state.streakWrong=0; if(state.streakCorrect>=3&&state.difficulty<5){state.difficulty++;state.streakCorrect=0;}}
   else{state.streakWrong++;state.streakCorrect=0; if(state.streakWrong>=2&&state.difficulty>1){state.difficulty--;state.streakWrong=0;}}
-  const last10=state.history.slice(-10); const acc=last10.reduce((a,v)=>a+v,0)/last10.length;
-  state.mastered=state.difficulty===5&&state.totalAnswered>=10&&acc>=0.85;
+  state.masteryTier=computeMasteryTier(state);
+  state.mastered=state.masteryTier>=1;
   state.lastPracticed=todayStr();
   return state;
 }
@@ -1053,8 +1256,88 @@ function svgMascot(kind,color,mood){
     ${face}
   </svg>`;
 }
+
+/* ================= CREATURE COMPANION (original creature-collector theme) =================
+   User request: "以寶可夢為主題, 重新設計整體網頁美學能夠有動畫讓小孩更有動力" — collector/
+   evolution game mechanics for motivation, but with a wholly original creature (no Pokémon
+   character, name, or official art anywhere). Each learner's companion hatches from an egg
+   and evolves through named stages as their overall Level climbs, reusing the Rank bands
+   from the leveling redesign above so the two systems stay in lockstep: every time a learner
+   crosses into a new Rank band, their companion also visibly evolves. Two original species
+   (no relation to any existing IP) are used so Osmand's and Oliver's companions look distinct
+   from each other, matching their existing accent/teal color identity. */
+const COMPANION_STAGE_NAMES=['Egg','Hatchling','Juvenile','Adult','Elder','Ascended','Mythic','Legendary'];
+const COMPANION_SPECIES_BY_COLOR={accent:'ember',teal:'tide'};
+function companionSpeciesFor(learnerId){ return COMPANION_SPECIES_BY_COLOR[LEARNERS_META[learnerId].color]||'ember'; }
+function companionStage(learner){
+  if(!((learner.xp||0)>0)) return 0; // still an egg until the very first bit of XP is earned
+  const band=Math.floor(((learner.level||1)-1)/10);
+  return Math.min(COMPANION_STAGE_NAMES.length-1,band+1);
+}
+function companionNextEvoLevel(learner){
+  const stage=companionStage(learner);
+  if(stage===0||stage>=COMPANION_STAGE_NAMES.length-1) return null;
+  return stage*10+1;
+}
+/* Purely geometric, procedurally-built creature art — original shapes/colors only. */
+function svgCompanion(stage,color,species){
+  species=species||'ember';
+  if(stage<=0){
+    return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="58" rx="26" ry="32" fill="${color}" opacity=".22"/>
+      <ellipse cx="50" cy="58" rx="22" ry="28" fill="${color}" opacity=".42"/>
+      <circle cx="42" cy="46" r="3.4" fill="${color}" opacity=".55"/>
+      <circle cx="60" cy="66" r="2.6" fill="${color}" opacity=".55"/>
+      <path d="M50 30 L44 46 L52 50 L40 68" fill="none" style="stroke:var(--surface)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+  }
+  const rx=27+Math.min(stage,4)*0.8, ry=24+Math.min(stage,4)*0.8;
+  const earPath=species==='tide'
+    ?`<path d="M28 34 Q20 18 34 22 Q30 30 28 34Z" fill="${color}"/><path d="M72 34 Q80 18 66 22 Q70 30 72 34Z" fill="${color}"/>`
+    :`<path d="M30 32 Q24 14 38 20 Q34 28 30 32Z" fill="${color}"/><path d="M70 32 Q76 14 62 20 Q66 28 70 32Z" fill="${color}"/>`;
+  const tailPath=species==='tide'
+    ?`<path d="M76 66 Q92 62 90 74 Q84 70 76 72Z" fill="${color}"/>`
+    :`<path d="M76 66 Q94 60 88 78 Q82 68 76 72Z" fill="${color}"/>`;
+  const eyeY=54, mouthY=eyeY+9;
+  const face=`<circle cx="41" cy="${eyeY}" r="3.6" fill="var(--ink)"/><circle cx="59" cy="${eyeY}" r="3.6" fill="var(--ink)"/>
+    <path d="M39 ${mouthY} Q50 ${mouthY+7} 61 ${mouthY}" fill="none" style="stroke:var(--ink)" stroke-width="2.6" stroke-linecap="round"/>`;
+  const feet=stage>=2?`<ellipse cx="38" cy="86" rx="7" ry="4.2" fill="${color}"/><ellipse cx="62" cy="86" rx="7" ry="4.2" fill="${color}"/>`:'';
+  const chestMark=stage>=3?`<path d="M50 60 L54 68 L50 76 L46 68Z" fill="var(--surface)" opacity=".85"/>`:'';
+  const wings=stage>=4?`<path d="M22 56 Q4 50 10 70 Q20 66 26 60Z" fill="${color}" opacity=".75"/><path d="M78 56 Q96 50 90 70 Q80 66 74 60Z" fill="${color}" opacity=".75"/>`:'';
+  const crown=stage>=6?`<path d="M42 22 L46 12 L50 20 L54 12 L58 22Z" fill="var(--warn)"/>`:'';
+  const aura=stage>=6?`<circle cx="50" cy="58" r="${38+(stage>=7?6:0)}" fill="none" style="stroke:${color}" stroke-width="1.4" stroke-dasharray="4 5" opacity=".55" class="companion-aura"/>`:'';
+  const sparkles=stage>=7?`<path transform="translate(14 30)" d="M0-5L1.4-1 5-1 2-.8 3 4 0 1.5 -3 4 -2-.8 -5-1 -1.4-1Z" fill="var(--warn)"/><path transform="translate(86 40)" d="M0-4L1.1-1 4-1 1.6.8 2.5 4 0 2 -2.5 4 -1.6.8 -4-1 -1.1-1Z" fill="var(--warn)"/>`:'';
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    ${aura}${tailPath}${wings}
+    <ellipse cx="50" cy="58" rx="${rx}" ry="${ry}" fill="${color}"/>
+    ${earPath}
+    ${chestMark}
+    ${face}
+    ${feet}
+    ${crown}${sparkles}
+  </svg>`;
+}
+function renderCompanionCard(learnerId){
+  const learner=APP.learners[learnerId]; const meta=LEARNERS_META[learnerId]; const av=accentVars(meta.color);
+  const species=companionSpeciesFor(learnerId);
+  const stage=companionStage(learner);
+  const stageName=COMPANION_STAGE_NAMES[stage];
+  const nextLevel=companionNextEvoLevel(learner);
+  const note=stage===0?'Finish your first practice session today to hatch your companion!'
+    :nextLevel?`Evolves again at Level ${nextLevel} — currently Level ${learner.level}`
+    :'Fully evolved — this is its strongest form!';
+  return `<div class="card companion-card">
+    <div class="companion-art">${svgCompanion(stage,av.c,species)}</div>
+    <div>
+      <div class="companion-name">${esc(learner.name)}'s Companion · <span style="color:${av.c}">${stageName}</span></div>
+      <div class="companion-note">${esc(note)}</div>
+    </div>
+  </div>`;
+}
+const SUBJECT_ELEMENTS={math:{label:'Spark',glyph:'⚡',color:'var(--warn)'},reading:{label:'Leaf',glyph:'🍃',color:'var(--good)'}};
 /* Small mountain trail visual for elevation 1-5, with current-position marker. */
-function svgElevationPath(difficulty,mastered,color){
+function svgElevationPath(difficulty,mastered,color,masteryTier){
+  masteryTier=masteryTier||0;
   const W=200,H=54;
   const pts=[[10,44],[52,33],[94,29],[136,17],[178,8]];
   const activeIdx=Math.max(0,Math.min(4,difficulty-1));
@@ -1065,10 +1348,16 @@ function svgElevationPath(difficulty,mastered,color){
     return `<circle cx="${p[0]}" cy="${p[1]}" r="${cur?6.5:4}" fill="${reached?color:'var(--surface-3)'}" style="stroke:var(--surface);stroke-width:2"/>`;
   }).join('');
   const flag=mastered?`<path d="M178 8 V-6" style="stroke:${color}" stroke-width="2.4" stroke-linecap="round"/><path d="M178 -6 l12 5 l-12 5Z" fill="${color}"/>`:'';
-  return `<svg viewBox="-2 -14 204 70" width="100%" height="52" preserveAspectRatio="none">
+  // Beyond first mastery, further tiers add tiny stars climbing above the flagpole
+  // instead of the path just sitting there unchanged forever.
+  let stars='';
+  for(let i=0;i<Math.max(0,masteryTier-1);i++){
+    stars+=`<path transform="translate(178 ${-16-i*11})" d="M0-4L1.1-1 4-1 1.6.8 2.5 4 0 2 -2.5 4 -1.6.8 -4-1 -1.1-1Z" fill="${color}"/>`;
+  }
+  return `<svg viewBox="-2 -${14+Math.max(0,masteryTier-1)*11} 204 ${70+Math.max(0,masteryTier-1)*11}" width="100%" height="${52+Math.max(0,masteryTier-1)*11}" preserveAspectRatio="none">
     <path d="${baseSeg}" fill="none" style="stroke:var(--surface-3)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="${activeSeg}" fill="none" style="stroke:${color}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-    ${dots}${flag}
+    ${dots}${flag}${stars}
   </svg>`;
 }
 function flameRow(n,color){
@@ -1310,9 +1599,32 @@ function saveWorkshop(id){ Store.save(`learners/${id}/workshop`,APP.workshops[id
 function saveRewards(){ Store.save('rewards/list',APP.rewards); }
 
 /* ================= GAME LOGIC HELPERS ================= */
-const LEVEL_XP_STEP=150, MAX_LEVEL=10;
-function levelFromXp(xp){ return Math.min(MAX_LEVEL,Math.floor(xp/LEVEL_XP_STEP)+1); }
-function xpIntoLevel(xp){ return levelFromXp(xp)>=MAX_LEVEL?LEVEL_XP_STEP:xp%LEVEL_XP_STEP; }
+/* Leveling used to hard-stop at Level 10 ("MAX") — every bit of XP earned after that
+   point vanished into a flat progress bar that never moved again. Levels now climb
+   without a ceiling: each band of 10 levels costs a bit more XP than the last (so
+   early levels still come quickly, keeping new learners motivated, while deep
+   progress stays a long-term goal instead of trivializing itself) and each band
+   carries its own Rank name, so the header keeps changing even long after any
+   individual skill's difficulty has topped out. LEVEL_XP_STEP is kept only as the
+   base cost for band 0, for any old code/tests that reference it. */
+const LEVEL_XP_STEP=150;
+const LEVEL_SOFT_CAP=300; // purely a runaway-loop guard, not a real ceiling
+const RANK_NAMES=['Scout','Trailblazer','Pathfinder','Summiteer','Voyager Elite','Mythic Ranger','Trail Legend'];
+function xpCostForLevel(level){ // XP required to advance FROM `level` TO `level+1`
+  const band=Math.floor((level-1)/10);
+  return Math.round(LEVEL_XP_STEP*Math.pow(1.12,band));
+}
+function rankForLevel(level){ const band=Math.min(RANK_NAMES.length-1,Math.floor((level-1)/10)); return RANK_NAMES[band]; }
+function levelFromXp(xp){
+  let level=1,remaining=xp;
+  while(level<LEVEL_SOFT_CAP && remaining>=xpCostForLevel(level)){ remaining-=xpCostForLevel(level); level++; }
+  return level;
+}
+function xpIntoLevel(xp){
+  let level=1,remaining=xp;
+  while(level<LEVEL_SOFT_CAP && remaining>=xpCostForLevel(level)){ remaining-=xpCostForLevel(level); level++; }
+  return remaining;
+}
 function touchStreak(learner){
   const today=todayStr();
   if(learner.lastActiveDate===today)return false;
@@ -1405,11 +1717,11 @@ function renderStatStrip(){
   const el=document.getElementById('statstrip');
   if(APP.auth.currentUser.role!=='student'){ el.innerHTML=''; return; }
   const id=APP.currentLearnerId; const learner=APP.learners[id]; const av=accentVars(LEARNERS_META[id].color);
-  const atMax=learner.level>=MAX_LEVEL;
-  const into=xpIntoLevel(learner.xp); const pct=atMax?100:Math.round(into/LEVEL_XP_STEP*100);
+  const into=xpIntoLevel(learner.xp); const step=xpCostForLevel(learner.level); const pct=Math.round(into/step*100);
+  const rank=rankForLevel(learner.level);
   el.innerHTML=`
     <div class="xpbar-wrap" style="--accent-color:${av.c};--accent-color-strong:${av.cs}">
-      <div class="xpbar-top"><span>Level ${learner.level}${atMax?' · Summit!':' · Trail Miles'}</span><span class="mono">${atMax?'MAX':`${into}/${LEVEL_XP_STEP} XP`}</span></div>
+      <div class="xpbar-top"><span>Level ${learner.level} · ${rank}</span><span class="mono">${into}/${step} XP</span></div>
       <div class="xpbar-track"><div class="xpbar-fill" style="width:${pct}%"></div></div>
     </div>
     <div class="stat-chip">${icon('token',av.c,18)}<div><div class="num mono">${learner.tokens}</div><div class="cap">Trail Tokens</div></div></div>
@@ -1520,10 +1832,11 @@ function renderToday(){
     <div class="hero-mascot">${svgMascot(mascot,av.c,learner.streakDays>=3?'excited':'happy')}</div>
     <div>
       <div class="hero-greet">${esc(pick(greetings))} ${esc(learner.name)}</div>
-      <div class="hero-sub">Level ${learner.level} explorer · ${doneCount}/4 route stops done today</div>
+      <div class="hero-sub">Level ${learner.level} ${rankForLevel(learner.level)} · ${doneCount}/4 route stops done today</div>
       ${learner.streakDays>0?`<div class="hero-streak">${flameRow(learner.streakDays,av.c)} ${learner.streakDays}-day streak</div>`:''}
     </div>
   </div>
+  ${renderCompanionCard(id)}
   <div class="section-title">Today's Route</div>
   <div class="section-sub">A suggested rhythm inspired by focused morning academics + afternoon projects. Nothing here is locked to the clock — go at ${esc(learner.name)}'s pace.</div>
   <div class="route-list">${rows}</div>
@@ -1554,7 +1867,8 @@ function toast(msg){
 /* ================= MATH / READING TRAIL (skill grids) ================= */
 function ascentBar(state){
   const last10=state.history.slice(-10); const acc=last10.length?Math.round(last10.reduce((a,v)=>a+v,0)/last10.length*100):0;
-  return{pct:acc,label:state.mastered?'Summit!':`Elev. ${state.difficulty}`};
+  const tier=state.masteryTier||0;
+  return{pct:acc,label:tier>=1?MASTERY_TIER_LABELS[tier]:`Elev. ${state.difficulty}`};
 }
 function renderSkillTrail(subject){
   const id=APP.currentLearnerId; const meta=LEARNERS_META[id];
@@ -1563,14 +1877,19 @@ function renderSkillTrail(subject){
   const cards=skills.map(s=>{
     const state=APP.skillStates[id][s.id];
     const asc=ascentBar(state);
-    const masteredPill=state.mastered?`<span class="pill pill-good">${icon('star','var(--good)',12)} Mastered</span>`:'';
-    const extra=s.isComprehension?`<div class="skill-meta">Passages read: ${state.passagesCompleted.filter(Boolean).length}/${state.passagesCompleted.length}</div>`:`<div class="skill-meta">Last practiced: ${state.lastPracticed||'—'}</div>`;
+    const tier=state.masteryTier||0;
+    const masteredPill=state.mastered?`<span class="pill pill-good">${icon('star','var(--good)',12)} ${MASTERY_TIER_LABELS[tier]}</span>`:'';
+    const nextTierNote=state.mastered&&tier<MASTERY_TIER_THRESHOLDS.length?`<div class="skill-meta" style="opacity:.75">Next: ${MASTERY_TIER_LABELS[tier+1]} at ${MASTERY_TIER_THRESHOLDS[tier]} questions (${state.totalAnswered} so far)</div>`:'';
+    const extra=s.isComprehension?`<div class="skill-meta">Passages read: ${state.passagesCompleted.filter(Boolean).length}/${meta.passages.length}</div>`:`<div class="skill-meta">Last practiced: ${state.lastPracticed||'—'}</div>`;
+    const elInfo=SUBJECT_ELEMENTS[subject];
+    const elementChip=elInfo?`<span class="element-chip" style="background:color-mix(in srgb, ${elInfo.color} 18%, transparent);color:${elInfo.color}">${elInfo.glyph} ${elInfo.label}</span>`:'';
     return `<div class="card skill-card">
       <div class="skill-top"><div class="skill-icon" style="background:${av.soft}">${icon(s.icon,av.c,20)}</div>
         <span class="elev-badge">${asc.label}</span></div>
+      ${elementChip}
       <div class="skill-name">${s.label}</div>
-      <div class="elev-path-wrap">${svgElevationPath(state.difficulty,state.mastered,av.c)}</div>
-      ${extra} ${masteredPill}
+      <div class="elev-path-wrap">${svgElevationPath(state.difficulty,state.mastered,av.c,tier)}</div>
+      ${extra} ${masteredPill} ${nextTierNote}
       <button class="btn btn-primary btn-block" onclick="${s.isComprehension?`openComprehension('${s.id}')`:`startSession('${s.id}')`}">Start Session</button>
     </div>`;
   }).join('');
@@ -1742,8 +2061,11 @@ function finalizeCommon(learnerId,subjectKey,xpEarned,correctCount,total,skillId
   const learner=APP.learners[learnerId];
   const wrongCount=total-correctCount;
   touchStreak(learner);
+  const stageBefore=companionStage(learner);
   learner.xp+=xpEarned;
   const newLevel=levelFromXp(learner.xp); const leveledUp=newLevel>learner.level; learner.level=newLevel;
+  const stageAfter=companionStage(learner);
+  const evolved=stageAfter>stageBefore;
   markTodayLog(learner,subjectKey); // marks today's route checklist done; tokens are decided below, independently
   logSessionResult(learner,skillId,correctCount,total); // per-session accuracy, for Camp Log's Daily Progress breakdown
   ensureTokenLog(learner);
@@ -1756,21 +2078,22 @@ function finalizeCommon(learnerId,subjectKey,xpEarned,correctCount,total,skillId
   }
   const newBadges=checkBadges(learnerId);
   saveLearner(learnerId);
-  return{leveledUp,newBadges,tokenAwarded,alreadyEarnedToday};
+  return{leveledUp,newBadges,tokenAwarded,alreadyEarnedToday,evolved,stageAfter};
 }
 function finishPracticeSession(){
   const meta=skillLabelMap(session.learnerId)[session.skillId];
   const subjectKey=meta.subject==='math'?'mathDone':'readingDone';
-  const{leveledUp,newBadges,tokenAwarded,alreadyEarnedToday}=finalizeCommon(session.learnerId,subjectKey,session.xpEarned,session.correctCount,session.total,session.skillId);
-  openModal(renderSummary(leveledUp,newBadges,tokenAwarded,alreadyEarnedToday));
+  const{leveledUp,newBadges,tokenAwarded,alreadyEarnedToday,evolved,stageAfter}=finalizeCommon(session.learnerId,subjectKey,session.xpEarned,session.correctCount,session.total,session.skillId);
+  openModal(renderSummary(leveledUp,newBadges,tokenAwarded,alreadyEarnedToday,evolved,stageAfter));
 }
-function renderSummary(leveledUp,newBadges,tokenAwarded,alreadyEarnedToday){
+function renderSummary(leveledUp,newBadges,tokenAwarded,alreadyEarnedToday,evolved,stageAfter){
   const av=accentVars(LEARNERS_META[APP.currentLearnerId].color);
   const mascot=LEARNERS_META[APP.currentLearnerId].mascot;
   const pct=session.correctCount/session.total;
-  const bigWin=leveledUp||newBadges.length>0||pct>=0.85;
+  const bigWin=leveledUp||newBadges.length>0||pct>=0.85||evolved;
   if(bigWin) burstConfettiBig();
   const badgeHtml=newBadges.length?`<div class="badge-row" style="justify-content:center;margin-bottom:10px">${newBadges.map(b=>`<div class="badge-tile"><div class="badge-shape" style="background:${av.soft}">${icon(b.icon,av.c,28)}</div>${b.label}</div>`).join('')}</div>`:'';
+  const evoLine=evolved?`<div class="summit-banner"><div style="width:48px;height:48px;flex:none">${svgCompanion(stageAfter,av.c,companionSpeciesFor(APP.currentLearnerId))}</div><div>Your companion evolved to <b>${COMPANION_STAGE_NAMES[stageAfter]}</b>!</div></div>`:'';
   const summitLine=leveledUp?`<div class="summit-banner">${icon('star',av.c,22)} Level Up! Now Level ${APP.learners[APP.currentLearnerId].level}</div>`:(pct>=0.85?`<div class="summit-banner">${icon('flame',av.c,20)} Amazing session!</div>`:'');
   const noTokenReason=alreadyEarnedToday?'Already earned a token for this skill today':'No token this time — missed more than 2';
   const tokenChip=tokenAwarded?`<div class="stat-chip">${icon('token','var(--accent)',16)}<div><div class="num mono">+1</div><div class="cap">Token</div></div></div>`:`<div class="stat-chip"><div><div class="cap" style="text-transform:none">${noTokenReason}</div></div></div>`;
@@ -1778,6 +2101,7 @@ function renderSummary(leveledUp,newBadges,tokenAwarded,alreadyEarnedToday){
     <div class="hero-mascot" style="width:64px;height:64px;margin:0 auto 6px">${svgMascot(mascot,av.c,bigWin?'excited':'happy')}</div>
     <div class="section-title">Session Complete!</div>
     <div class="section-sub">${session.correctCount} / ${session.total} correct</div>
+    ${evoLine}
     ${summitLine}
     <div class="row" style="justify-content:center;margin:14px 0">
       <div class="stat-chip">${icon('star','var(--accent)',16)}<div><div class="num mono">+${session.xpEarned}</div><div class="cap">XP</div></div></div>
@@ -1855,9 +2179,9 @@ function finishComprehension(){
   state.passageIndex=(state.passageIndex+1)%meta.passages.length;
   saveSkill(comp.learnerId,comp.skillId);
   const compTotal=comp.passage.questions.length;
-  const{leveledUp,newBadges,tokenAwarded,alreadyEarnedToday}=finalizeCommon(comp.learnerId,'readingDone',comp.xpEarned,comp.correctCount,compTotal,comp.skillId);
+  const{leveledUp,newBadges,tokenAwarded,alreadyEarnedToday,evolved,stageAfter}=finalizeCommon(comp.learnerId,'readingDone',comp.xpEarned,comp.correctCount,compTotal,comp.skillId);
   session={correctCount:comp.correctCount,total:compTotal,xpEarned:comp.xpEarned};
-  openModal(renderSummary(leveledUp,newBadges,tokenAwarded,alreadyEarnedToday));
+  openModal(renderSummary(leveledUp,newBadges,tokenAwarded,alreadyEarnedToday,evolved,stageAfter));
 }
 function quitComp(){ closeModal(); comp=null; render(); }
 
@@ -1986,18 +2310,27 @@ function renderDailyProgress(learner){
   const rowsHtml=rows.map(r=>{
     const acc=r.answeredCount>0?Math.round(r.correctCount/r.answeredCount*100):null;
     const sessions=sessionsForDate(learner,r.date);
+    // Sessions completed before per-session tracking (sessionLog) was added have no
+    // entry here even though the day's aggregate answeredCount/correctCount counts them.
+    // Surface the gap as a single reconciliation row instead of silently hiding it.
+    const trackedAnswered=sessions.reduce((s,x)=>s+(x.total||0),0);
+    const trackedCorrect=sessions.reduce((s,x)=>s+(x.correct||0),0);
+    const untrackedAnswered=Math.max(0,(r.answeredCount||0)-trackedAnswered);
+    const untrackedCorrect=Math.max(0,(r.correctCount||0)-trackedCorrect);
     const sessionRows=sessions.map(s=>{
       const pct=s.total>0?Math.round(s.correct/s.total*100):0;
       const label=(labels[s.skillId]||{}).label||s.skillId;
       return `<div class="session-row"><span>${esc(label)}</span><span class="mono">${s.correct}/${s.total} (${pct}%)</span></div>`;
     }).join('');
+    const untrackedRow=untrackedAnswered>0?`<div class="session-row" style="opacity:.6;font-style:italic"><span>Other practice (before per-session tracking)</span><span class="mono">${untrackedCorrect}/${untrackedAnswered} (${Math.round(untrackedCorrect/untrackedAnswered*100)}%)</span></div>`:'';
+    const hasDetail=sessions.length>0||untrackedAnswered>0;
     return `<div class="card" style="padding:10px 16px">
-      <div style="display:flex;align-items:center;gap:14px${sessions.length?';margin-bottom:8px':''}">
+      <div style="display:flex;align-items:center;gap:14px${hasDetail?';margin-bottom:8px':''}">
         <div style="flex:1"><b class="mono">${esc(r.date)}</b>${r.isToday?' <span class="tag">Today</span>':''}</div>
         <div style="width:110px">Route ${r.routeDone}/4</div>
         <div style="width:140px">${acc===null?'No questions yet':`Accuracy ${acc}%`}</div>
       </div>
-      ${sessions.length?`<div class="session-list">${sessionRows}</div>`:''}
+      ${hasDetail?`<div class="session-list">${sessionRows}${untrackedRow}</div>`:''}
     </div>`;
   }).join('');
   return `<div style="display:flex;flex-direction:column;gap:6px">${rowsHtml}</div>`;
@@ -2039,12 +2372,17 @@ function renderWeeklySummary(learner){
 function renderTokenSources(learnerId){
   const learner=APP.learners[learnerId];
   const hist=learner.tokenHistory||[];
-  if(!hist.length) return `<div class="section-sub">No tokens earned yet.</div>`;
+  // Tokens earned before tokenHistory tracking existed have no source entry, so the
+  // breakdown below would undercount a learner's real total. Reconcile against the
+  // ground truth (current balance + everything ever redeemed) and show the gap.
+  const totalEverEarned=(learner.tokens||0)+((learner.redemptions||[]).reduce((sum,r)=>sum+(r.cost||0),0));
+  const untracked=Math.max(0,totalEverEarned-hist.length);
+  if(!hist.length && !untracked) return `<div class="section-sub">No tokens earned yet.</div>`;
   const labels=skillLabelMap(learnerId);
   const counts={};
   hist.forEach(h=>{ counts[h.source]=(counts[h.source]||0)+1; });
   const labelFor=(src)=>src==='workshop'?'Trail Time Check-in':(src==='journal'?'Closing Circle Reflection':(labels[src]?labels[src].label:src));
-  const max=Math.max(...Object.values(counts));
+  const max=Math.max(...Object.values(counts),untracked,1);
   const av=accentVars(LEARNERS_META[learnerId].color);
   const rows=Object.keys(counts).sort((a,b)=>counts[b]-counts[a]).map(src=>{
     const pct=max>0?Math.round(counts[src]/max*100):0;
@@ -2054,7 +2392,12 @@ function renderTokenSources(learnerId){
       <div class="mono" style="width:30px;text-align:right">${counts[src]}</div>
     </div>`;
   }).join('');
-  return `<div style="display:flex;flex-direction:column;gap:6px">${rows}</div>`;
+  const untrackedRow=untracked>0?`<div class="card" style="padding:10px 16px;display:flex;align-items:center;gap:12px;opacity:.6;font-style:italic">
+      <div style="flex:1;font-size:.85rem">Earned before source-tracking was added</div>
+      <div style="width:110px" class="ascent"><div class="ascent-track"><div class="ascent-fill" style="width:${Math.round(untracked/max*100)}%;background:${av.c}"></div></div></div>
+      <div class="mono" style="width:30px;text-align:right">${untracked}</div>
+    </div>`:'';
+  return `<div style="display:flex;flex-direction:column;gap:6px">${rows}${untrackedRow}</div>`;
 }
 function renderCampLog(){
   const ids=visibleLearnerIds();
@@ -2083,7 +2426,7 @@ function renderCampLog(){
     return `<div class="card" style="padding:12px 16px;display:flex;align-items:center;gap:12px">
       <div style="flex:1"><b style="font-size:.88rem">${s.label}</b><div class="skill-meta">Elevation ${state.difficulty}/5 · ${state.totalCorrect}/${state.totalAnswered} correct all-time</div></div>
       <div style="width:110px" class="ascent"><div class="ascent-track"><div class="ascent-fill" style="width:${asc.pct}%;background:${av.c}"></div></div></div>
-      ${state.mastered?'<span class="pill pill-good">Mastered</span>':''} ${flag}
+      ${state.mastered?`<span class="pill pill-good">${MASTERY_TIER_LABELS[state.masteryTier||1]}</span>`:''} ${flag}
     </div>`;
   }).join('');
   const badgeGallery=BADGE_DEFS.map(b=>{
