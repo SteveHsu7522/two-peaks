@@ -197,6 +197,40 @@ label.flabel{font-size:.76rem;color:var(--ink-soft);font-weight:600;display:bloc
 .ascent-fill::after,.xpbar-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:bar-shimmer 2.2s ease-in-out infinite;}
 @keyframes bar-shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 @media (prefers-reduced-motion: reduce){.ascent-fill::after,.xpbar-fill::after{animation:none;}}
+
+/* ================= SITE-WIDE MOTION POLISH =================
+   Request: "網站過於靜態, 請增添一些動態的動畫讓整個網站更加生動吸引人" (the site feels
+   too static -- add more dynamic animation throughout). Buttons press, choices and
+   cards lift on hover, modals pop in instead of snapping open, tabs glide, and a
+   wrong answer gets a little shake -- on top of the celebration/companion animations
+   that already existed. Every new animation is skipped under prefers-reduced-motion. */
+.btn{transition:transform .12s ease, box-shadow .12s ease, opacity .12s ease;}
+.btn:not(:disabled):active{transform:scale(.95);}
+.btn-primary:not(:disabled):hover{box-shadow:0 3px 10px rgba(0,0,0,.14);transform:translateY(-1px);}
+.tab-btn{transition:color .15s ease, border-color .2s ease;}
+.choice-btn{transition:transform .12s ease, box-shadow .12s ease, background .15s ease, border-color .15s ease;}
+.choice-btn:not([disabled]):hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(0,0,0,.1);}
+.choice-btn[data-state="wrong"]{animation:choice-shake .4s ease;}
+@keyframes choice-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.key-btn,.field-box{transition:transform .1s ease;}
+.key-btn:active{transform:scale(.92);}
+.skill-card,.companion-card,.area-card{transition:transform .18s ease, box-shadow .18s ease;}
+.skill-card:hover,.companion-card:hover,.area-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
+.modal-overlay{animation:overlay-fade .18s ease;}
+@keyframes overlay-fade{from{opacity:0}to{opacity:1}}
+.modal-card{animation:modal-pop .26s cubic-bezier(.2,1.3,.4,1);}
+@keyframes modal-pop{0%{transform:scale(.93) translateY(10px);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
+.sound-toggle{padding:8px 10px;}
+.badge-tile{transition:transform .15s ease;}
+.badge-row .badge-tile{animation:pop-in .35s cubic-bezier(.2,1.4,.4,1) backwards;}
+.badge-row .badge-tile:nth-child(2){animation-delay:.08s;}
+.badge-row .badge-tile:nth-child(3){animation-delay:.16s;}
+.badge-row .badge-tile:nth-child(n+4){animation-delay:.22s;}
+.summit-banner{animation:pop-in .32s cubic-bezier(.2,1.4,.4,1);}
+@media (prefers-reduced-motion: reduce){
+  .btn,.choice-btn,.key-btn,.field-box,.skill-card,.companion-card,.area-card{transition:none;}
+  .choice-btn[data-state="wrong"],.modal-overlay,.modal-card,.badge-row .badge-tile,.summit-banner{animation:none;}
+}
 </style>
 </head>
 <body>
@@ -244,158 +278,171 @@ function gcd(a,b){return b===0?a:gcd(b,a%b);}
 function factorsOf(n){const f=[];for(let i=1;i<=n;i++)if(n%i===0)f.push(i);return f;}
 function isPrime(n){if(n<2)return false;for(let i=2;i*i<=n;i++)if(n%i===0)return false;return true;}
 
+/* ================= DIFFICULTY SCALING (Elevation 1-10) =================
+   Elevation used to be a flat 5 rungs. Each rung is now split into two: diffTier()
+   maps the new 1-10 elevation down to the original 5 "qualitative" tiers (which
+   still decide the *kind* of question — e.g. single-digit vs. 3-digit, or which
+   question format), while diffBoost() flags the upper half of each tier (even
+   elevations) so the *numbers* inside that tier get a bit bigger/tighter — "每升
+   一級難度稍微調高一些". Odd elevations (1,3,5,7,9) reproduce the exact old
+   level-1..5 ranges, so nothing gets harder OR easier for anyone already on the old
+   5-rung scale; only the new in-between rungs add anything. */
+const MAX_DIFFICULTY=10;
+function diffTier(level){ return Math.min(5,Math.ceil(level/2)); }
+function diffBoost(level){ return (level%2===0)?1:0; }
+
 /* ================= MATH GENERATORS: GRADE 2 (Comet) ================= */
-function gAdd2(level){let a,b;
-  if(level===1){a=randInt(2,9);b=randInt(2,9);}
-  else if(level===2){a=randInt(10,50);b=randInt(2,9);}
-  else if(level===3){a=randInt(10,60);b=randInt(10,39);}
-  else if(level===4){a=randInt(20,80);b=randInt(15,79);}
-  else{a=randInt(100,400);b=randInt(20,99);}
+function gAdd2(level){const lvl=diffTier(level),bo=diffBoost(level);let a,b;
+  if(lvl===1){a=randInt(2,9+bo*3);b=randInt(2,9+bo*3);}
+  else if(lvl===2){a=randInt(10,50+bo*15);b=randInt(2,9+bo*3);}
+  else if(lvl===3){a=randInt(10,60+bo*15);b=randInt(10,39+bo*10);}
+  else if(lvl===4){a=randInt(20,80+bo*15);b=randInt(15,79+bo*15);}
+  else{a=randInt(100,400+bo*150);b=randInt(20,99+bo*50);}
   const sum=a+b;
-  const visual=level===1?{type:'sumpiles',a,b}:undefined;
+  const visual=lvl===1?{type:'sumpiles',a,b}:undefined;
   return{prompt:`${a} + ${b} = ?`,mode:'numeric',correctAnswer:sum,visual,explanation:`${a} + ${b} = ${sum}`};}
-function gSub2(level){let a,b;
-  if(level===1){a=randInt(5,18);b=randInt(1,a);}
-  else if(level===2){a=randInt(20,60);b=randInt(2,9);}
-  else if(level===3){a=randInt(30,80);b=randInt(11,29);}
-  else if(level===4){a=randInt(40,99);b=randInt(15,a-1);}
-  else{a=randInt(200,500);b=randInt(20,99);}
+function gSub2(level){const lvl=diffTier(level),bo=diffBoost(level);let a,b;
+  if(lvl===1){a=randInt(5,18+bo*6);b=randInt(1,a);}
+  else if(lvl===2){a=randInt(20,60+bo*15);b=randInt(2,9+bo*3);}
+  else if(lvl===3){a=randInt(30,80+bo*15);b=randInt(11,29+bo*10);}
+  else if(lvl===4){a=randInt(40,99+bo*20);b=randInt(15+bo*10,a-1);}
+  else{a=randInt(200,500+bo*200);b=randInt(20,99+bo*50);}
   if(b>a)[a,b]=[b,a];
   const diff=a-b;
-  const visual=level===1?{type:'takeaway',total:a,removed:b}:undefined;
+  const visual=lvl===1?{type:'takeaway',total:a,removed:b}:undefined;
   return{prompt:`${a} - ${b} = ?`,mode:'numeric',correctAnswer:diff,visual,explanation:`${a} - ${b} = ${diff}`};}
-function gPlaceValue2(level){
-  if(level===1){const tens=randInt(1,9),ones=randInt(0,9);const n=tens*10+ones;const askTens=Math.random()<0.5;const correct=askTens?tens:ones;
+function gPlaceValue2(level){const lvl=diffTier(level),bo=diffBoost(level);
+  if(lvl===1){const tens=randInt(1,9),ones=randInt(0,9);const n=tens*10+ones;const askTens=Math.random()<0.5;const correct=askTens?tens:ones;
     const choices=[...new Set([correct,askTens?ones:tens,randInt(0,9),randInt(0,9)])].slice(0,4);
     while(choices.length<4)uniqPush(choices,randInt(0,9));
     return{prompt:`In the number ${n}, how many ${askTens?'tens':'ones'} are there?`,mode:'mc',choices:shuffle(choices),correctAnswer:correct,explanation:`${n} = ${tens} tens and ${ones} ones.`};}
-  if(level===2){const tens=randInt(1,9),ones=randInt(0,9);const n=tens*10+ones;const digit=Math.random()<0.5?tens:ones;const isTensDigit=digit===tens;const value=isTensDigit?tens*10:ones;
+  if(lvl===2){const tens=randInt(1,9),ones=randInt(0,9);const n=tens*10+ones;const digit=Math.random()<0.5?tens:ones;const isTensDigit=digit===tens;const value=isTensDigit?tens*10:ones;
     const choices=[...new Set([value,digit,tens*10,ones,value+10])].slice(0,4);
     while(choices.length<4)uniqPush(choices,randInt(0,99));
     return{prompt:`What is the value of the ${digit} in ${n}?`,mode:'mc',choices:shuffle(choices),correctAnswer:value,explanation:`The ${digit} is in the ${isTensDigit?'tens':'ones'} place, so its value is ${value}.`};}
-  if(level===3){const tens=randInt(1,9),ones=randInt(0,9);const n=tens*10+ones;
+  if(lvl===3){const tens=randInt(1,9),ones=randInt(0,9);const n=tens*10+ones;
     return{prompt:`${tens} tens and ${ones} ones = ?`,mode:'numeric',correctAnswer:n,explanation:`${tens} tens + ${ones} ones = ${n}.`};}
-  if(level===4){const a=randInt(10,99),b=randInt(10,99);if(a===b)return gPlaceValue2(level);const symbol=a>b?'>':'<';
+  if(lvl===4){const gap=bo?randInt(1,9):randInt(1,30);const a=randInt(10,99-gap),b=a+gap*(Math.random()<0.5?1:-1);if(a===b||b<10||b>99)return gPlaceValue2(level);const symbol=a>b?'>':'<';
     return{prompt:`Compare: ${a} ___ ${b}`,mode:'mc',choices:['<','>','='],correctAnswer:symbol,explanation:`${a} ${symbol} ${b}.`};}
   const h=randInt(1,9),t=randInt(0,9),o=randInt(0,9);const n=h*100+t*10+o;
   return{prompt:`In the number ${n}, what digit is in the hundreds place?`,mode:'mc',choices:shuffle([...new Set([h,t,o,randInt(0,9)])]).slice(0,4),correctAnswer:h,explanation:`${n} has ${h} in the hundreds place.`};}
-function gSkipMult2(level){
-  if(level===1){const step=pick([2,5,10]);const start=step*randInt(1,5);const seq=[start,start+step,start+step*2];const next=start+step*3;
+function gSkipMult2(level){const lvl=diffTier(level),bo=diffBoost(level);
+  if(lvl===1){const step=pick([2,5,10]);const start=step*randInt(1,5+bo*3);const seq=[start,start+step,start+step*2];const next=start+step*3;
     return{prompt:`${seq.join(', ')}, __?`,mode:'numeric',correctAnswer:next,explanation:`Counting by ${step}s: ${seq.join(', ')}, ${next}.`};}
-  if(level===2){const groups=randInt(2,5),each=pick([2,3,5]);const repeated=Array(groups).fill(each).join(' + ');const total=groups*each;
+  if(lvl===2){const groups=randInt(2,5+bo*2),each=pick(bo?[2,3,5,4]:[2,3,5]);const repeated=Array(groups).fill(each).join(' + ');const total=groups*each;
     return{prompt:`${repeated} = ${groups} groups of ${each} = ?`,mode:'numeric',correctAnswer:total,visual:{type:'array',rows:groups,cols:each},explanation:`${groups} x ${each} = ${total}.`};}
-  if(level===3){const a=pick([2,5,10]),b=randInt(1,10);
+  if(lvl===3){const a=pick(bo?[2,5,10,3]:[2,5,10]),b=randInt(1,10+bo*2);
     return{prompt:`${a} x ${b} = ?`,mode:'numeric',correctAnswer:a*b,visual:a*b<=40?{type:'array',rows:a,cols:b}:undefined,explanation:`${a} x ${b} = ${a*b}.`};}
-  if(level===4){const rows=randInt(2,6),cols=randInt(2,6);
+  if(lvl===4){const rows=randInt(2,6+bo*2),cols=randInt(2,6+bo*2);
     return{prompt:`There are ${rows} rows of ${cols} apples. How many apples in all?`,mode:'numeric',correctAnswer:rows*cols,visual:{type:'array',rows,cols},explanation:`${rows} x ${cols} = ${rows*cols}.`};}
-  const a=randInt(2,10),b=randInt(2,10);
+  const a=randInt(2,10+bo*2),b=randInt(2,10+bo*2);
   return{prompt:`${a} x ${b} = ?`,mode:'numeric',correctAnswer:a*b,visual:a*b<=40?{type:'array',rows:a,cols:b}:undefined,explanation:`${a} x ${b} = ${a*b}.`};}
-function gMoney2(level){const coinVals={penny:1,nickel:5,dime:10,quarter:25};const coinLetter={penny:'P',nickel:'N',dime:'D',quarter:'Q'};
-  if(level===1){const coin=pick(Object.keys(coinVals));
+function gMoney2(level){const lvl=diffTier(level),bo=diffBoost(level);const coinVals={penny:1,nickel:5,dime:10,quarter:25};const coinLetter={penny:'P',nickel:'N',dime:'D',quarter:'Q'};
+  if(lvl===1){const coin=pick(Object.keys(coinVals));
     return{prompt:`A ${coin} is worth how many cents?`,mode:'numeric',correctAnswer:coinVals[coin],visual:{type:'coins',coins:[{label:coinLetter[coin],count:1}]},explanation:`A ${coin} = ${coinVals[coin]} cents.`};}
-  if(level===2){const n1=randInt(1,4),n2=randInt(1,4);const total=n1*10+n2*5;
+  if(lvl===2){const n1=randInt(1,4+bo*2),n2=randInt(1,4+bo*2);const total=n1*10+n2*5;
     return{prompt:`${n1} dimes and ${n2} nickels = how many cents?`,mode:'numeric',correctAnswer:total,visual:{type:'coins',coins:[{label:'D',count:n1},{label:'N',count:n2}]},explanation:`${n1} x 10 + ${n2} x 5 = ${total} cents.`};}
-  if(level===3){const q=randInt(1,3),d=randInt(0,3),n=randInt(0,3);const total=q*25+d*10+n*5;
+  if(lvl===3){const q=randInt(1,3+bo),d=randInt(0,3+bo),n=randInt(0,3+bo);const total=q*25+d*10+n*5;
     return{prompt:`${q} quarters, ${d} dimes, ${n} nickels = how many cents?`,mode:'numeric',correctAnswer:total,visual:{type:'coins',coins:[{label:'Q',count:q},{label:'D',count:d},{label:'N',count:n}]},explanation:`${q} x 25 + ${d} x 10 + ${n} x 5 = ${total} cents.`};}
-  if(level===4){const priceCents=randInt(20,90);const paidCents=Math.ceil((priceCents+randInt(5,50))/25)*25;const change=paidCents-priceCents;
+  if(lvl===4){const priceCents=randInt(20,90);const paidCents=Math.ceil((priceCents+randInt(5,50+bo*30))/25)*25;const change=paidCents-priceCents;
     return{prompt:`An item costs ${fmtMoney(priceCents)}. You pay ${fmtMoney(paidCents)}. How much change (in cents)?`,mode:'numeric',correctAnswer:change,explanation:`${fmtMoney(paidCents)} - ${fmtMoney(priceCents)} = ${change} cents.`};}
-  const p1=randInt(50,300),p2=randInt(50,300);
+  const p1=randInt(50,300+bo*150),p2=randInt(50,300+bo*150);
   return{prompt:`You buy a toy for ${fmtMoney(p1)} and a book for ${fmtMoney(p2)}. What is the total in cents?`,mode:'numeric',correctAnswer:p1+p2,explanation:`${fmtMoney(p1)} + ${fmtMoney(p2)} = ${fmtMoney(p1+p2)} = ${p1+p2} cents.`};}
-function gTime2(level){let h=randInt(1,12),m;
-  if(level===1)m=pick([0,30]);else if(level===2)m=pick([0,15,30,45]);else m=pick([0,5,10,15,20,25,30,35,40,45,50,55]);
+function gTime2(level){const lvl=diffTier(level),bo=diffBoost(level);let h=randInt(1,12),m;
+  if(lvl===1)m=pick([0,30]);else if(lvl===2)m=pick(bo?[0,15,30,45,10,20]:[0,15,30,45]);else m=pick([0,5,10,15,20,25,30,35,40,45,50,55]);
   const correctLabel=`${h}:${m.toString().padStart(2,'0')}`;
   const distractors=new Set();
   while(distractors.size<3){const dh=randInt(1,12),dm=pick([0,5,10,15,20,25,30,35,40,45,50,55]);const lbl=`${dh}:${dm.toString().padStart(2,'0')}`;if(lbl!==correctLabel)distractors.add(lbl);}
   const choices=shuffle([correctLabel,...distractors]);
-  return{prompt:'What time does the clock show?',visual:{type:'clock',h,m},mode:'mc',choices,correctAnswer:correctLabel,explanation:`The clock shows ${correctLabel}.`};}
-function gWordProblems2(level){const names=['Mia','Leo','Ana','Sam','Priya','Noah'];const n1=pick(names);let n2=pick(names);while(n2===n1)n2=pick(names);
-  if(level===1){const a=randInt(4,12),b=randInt(2,8);const isAdd=Math.random()<0.5;
+  return{prompt:'What time does the clock show?',dedupeKey:`time-${h}-${m}`,visual:{type:'clock',h,m},mode:'mc',choices,correctAnswer:correctLabel,explanation:`The clock shows ${correctLabel}.`};}
+function gWordProblems2(level){const lvl=diffTier(level),bo=diffBoost(level);const names=['Mia','Leo','Ana','Sam','Priya','Noah'];const n1=pick(names);let n2=pick(names);while(n2===n1)n2=pick(names);
+  if(lvl===1){const a=randInt(4,12+bo*4),b=randInt(2,8+bo*3);const isAdd=Math.random()<0.5;
     return isAdd?{prompt:`${n1} has ${a} stickers. ${n1} gets ${b} more. How many stickers now?`,mode:'numeric',correctAnswer:a+b,visual:{type:'sumpiles',a,b},explanation:`${a} + ${b} = ${a+b}.`}
       :{prompt:`${n1} has ${a+b} stickers and gives away ${b}. How many are left?`,mode:'numeric',correctAnswer:a,visual:{type:'takeaway',total:a+b,removed:b},explanation:`${a+b} - ${b} = ${a}.`};}
-  if(level===2){const a=randInt(20,70),b=randInt(10,40);
+  if(lvl===2){const a=randInt(20,70+bo*20),b=randInt(10,40+bo*15);
     return{prompt:`${n1} read ${a} pages on Monday and ${b} pages on Tuesday. How many pages in all?`,mode:'numeric',correctAnswer:a+b,explanation:`${a} + ${b} = ${a+b}.`};}
-  if(level===3){const a=randInt(10,40),b=randInt(5,20),c=randInt(5,15);
+  if(lvl===3){const a=randInt(10,40+bo*15),b=randInt(5,20+bo*10),c=randInt(5,15+bo*8);
     return{prompt:`${n1} had ${a} marbles, found ${b} more, then lost ${c}. How many marbles now?`,mode:'numeric',correctAnswer:a+b-c,explanation:`${a} + ${b} - ${c} = ${a+b-c}.`};}
-  if(level===4){const base=randInt(6,20),more=randInt(2,10);
+  if(lvl===4){const base=randInt(6,20+bo*10),more=randInt(2,10+bo*8);
     return{prompt:`${n1} has ${base} stickers. ${n2} has ${more} more than ${n1}. How many stickers does ${n2} have?`,mode:'numeric',correctAnswer:base+more,explanation:`${base} + ${more} = ${base+more}.`};}
-  const priceCents=randInt(150,400),coins=randInt(500,900);
+  const priceCents=randInt(150,400+bo*150),coins=randInt(500,900+bo*300);
   return{prompt:`${n1} has ${fmtMoney(coins)} and spends ${fmtMoney(priceCents)} on a toy. How much money (in cents) is left?`,mode:'numeric',correctAnswer:coins-priceCents,explanation:`${coins} - ${priceCents} = ${coins-priceCents} cents.`};}
 
 /* ================= MATH GENERATORS: GRADE 4 (Voyager) ================= */
-function gMult4(level){let a,b;
-  if(level===1){a=randInt(11,44);b=randInt(2,4);}
-  else if(level===2){a=randInt(15,89);b=randInt(2,9);}
-  else if(level===3){a=randInt(100,400);b=randInt(2,9);}
-  else if(level===4){a=Math.round(randInt(10,90)/10)*10;b=randInt(11,30);}
-  else{a=randInt(11,99);b=randInt(11,40);}
+function gMult4(level){const lvl=diffTier(level),bo=diffBoost(level);let a,b;
+  if(lvl===1){a=randInt(11,44+bo*15);b=randInt(2,4+bo*2);}
+  else if(lvl===2){a=randInt(15,89+bo*20);b=randInt(2,9+bo*3);}
+  else if(lvl===3){a=randInt(100,400+bo*150);b=randInt(2,9+bo*3);}
+  else if(lvl===4){a=Math.round(randInt(10,90+bo*30)/10)*10;b=randInt(11,30+bo*10);}
+  else{a=randInt(11,99+bo*50);b=randInt(11,40+bo*20);}
   return{prompt:`${a} x ${b} = ?`,mode:'numeric',correctAnswer:a*b,explanation:`${a} x ${b} = ${a*b}.`};}
-function gDiv4(level){let divisor,quotient,dividend,rem=0;
-  if(level===1){divisor=randInt(2,9);quotient=randInt(2,9);dividend=divisor*quotient;}
-  else if(level===2){divisor=randInt(2,9);quotient=randInt(10,20);dividend=divisor*quotient;}
-  else if(level===3){divisor=randInt(3,9);quotient=randInt(10,25);rem=randInt(1,divisor-1);dividend=divisor*quotient+rem;}
-  else if(level===4){divisor=randInt(2,9);quotient=randInt(100,300);dividend=divisor*quotient;}
-  else{divisor=randInt(3,9);quotient=randInt(100,300);rem=randInt(1,divisor-1);dividend=divisor*quotient+rem;}
+function gDiv4(level){const lvl=diffTier(level),bo=diffBoost(level);let divisor,quotient,dividend,rem=0;
+  if(lvl===1){divisor=randInt(2,9);quotient=randInt(2,9+bo*3);dividend=divisor*quotient;}
+  else if(lvl===2){divisor=randInt(2,9);quotient=randInt(10,20+bo*8);dividend=divisor*quotient;}
+  else if(lvl===3){divisor=randInt(3,9);quotient=randInt(10,25+bo*10);rem=randInt(1,divisor-1);dividend=divisor*quotient+rem;}
+  else if(lvl===4){divisor=randInt(2,9);quotient=randInt(100,300+bo*150);dividend=divisor*quotient;}
+  else{divisor=randInt(3,9);quotient=randInt(100,300+bo*200);rem=randInt(1,divisor-1);dividend=divisor*quotient+rem;}
   const visual={type:'groups',total:dividend,groups:divisor};
   if(rem===0)return{prompt:`${dividend} ÷ ${divisor} = ?`,mode:'numeric',correctAnswer:quotient,visual,explanation:`${dividend} ÷ ${divisor} = ${quotient}.`};
   return{prompt:`${dividend} ÷ ${divisor} = ? (quotient and remainder)`,mode:'divmod',correctAnswer:{q:quotient,r:rem},visual,explanation:`${dividend} ÷ ${divisor} = ${quotient} remainder ${rem}.`};}
-function gFractions4(level){
-  if(level===1){const den=pick([4,6,8,10]);const num=randInt(1,den-1);
+function gFractions4(level){const lvl=diffTier(level),bo=diffBoost(level);
+  if(lvl===1){const den=pick(bo?[4,6,8,10,12]:[4,6,8,10]);const num=randInt(1,den-1);
     return{prompt:`A bar is split into ${den} equal parts. ${num} parts are shaded. What fraction is shaded?`,mode:'fraction',correctAnswer:{n:num,d:den},visual:{type:'fractionbar',num,den},explanation:`${num} of ${den} parts shaded = ${num}/${den}.`};}
-  if(level===2){const den=pick([2,3,4,5]);const num=randInt(1,den-1);const mult=randInt(2,4);
+  if(lvl===2){const den=pick([2,3,4,5]);const num=randInt(1,den-1);const mult=randInt(2,4+bo*2);
     return{prompt:`${num}/${den} = __/${den*mult}`,mode:'numeric',correctAnswer:num*mult,visual:{type:'fractionbar',num,den},explanation:`Multiply top and bottom by ${mult}: ${num}/${den} = ${num*mult}/${den*mult}.`};}
-  if(level===3){const den=pick([3,4,5,6,8]);let n1=randInt(1,den-1),n2=randInt(1,den-1);while(n1===n2)n2=randInt(1,den-1);const symbol=n1>n2?'>':'<';
+  if(lvl===3){const den=pick(bo?[3,4,5,6,8,12]:[3,4,5,6,8]);let n1=randInt(1,den-1),n2=randInt(1,den-1);while(n1===n2)n2=randInt(1,den-1);const symbol=n1>n2?'>':'<';
     return{prompt:`Compare: ${n1}/${den} ___ ${n2}/${den}`,mode:'mc',choices:['<','>','='],correctAnswer:symbol,visual:{type:'fractionpair',n1,d1:den,n2,d2:den},explanation:`${n1}/${den} ${symbol} ${n2}/${den} because ${n1} ${symbol} ${n2}.`};}
-  if(level===4){const den=pick([4,5,6,8,10]);const n1=randInt(1,den-2);const n2=randInt(1,den-n1-1)||1;
+  if(lvl===4){const den=pick(bo?[4,5,6,8,10,12]:[4,5,6,8,10]);const n1=randInt(1,den-2);const n2=randInt(1,den-n1-1)||1;
     return{prompt:`${n1}/${den} + ${n2}/${den} = __/${den}`,mode:'numeric',correctAnswer:n1+n2,visual:{type:'fractionpair',n1,d1:den,n2,d2:den},explanation:`${n1}/${den} + ${n2}/${den} = ${n1+n2}/${den}.`};}
-  const pairs=[[1,2,1,4],[1,2,3,4],[1,4,1,2]];const[n1,d1,n2,d2]=pick(pairs);const v1=n1/d1,v2=n2/d2;const symbol=v1>v2?'>':(v1<v2?'<':'=');
+  const pairs=bo?[[1,2,1,4],[1,2,3,4],[1,4,1,2],[2,3,1,6],[3,5,1,2]]:[[1,2,1,4],[1,2,3,4],[1,4,1,2]];const[n1,d1,n2,d2]=pick(pairs);const v1=n1/d1,v2=n2/d2;const symbol=v1>v2?'>':(v1<v2?'<':'=');
   return{prompt:`Compare: ${n1}/${d1} ___ ${n2}/${d2}`,mode:'mc',choices:['<','>','='],correctAnswer:symbol,visual:{type:'fractionpair',n1,d1,n2,d2},explanation:`${n1}/${d1} = ${v1}, ${n2}/${d2} = ${v2}, so ${n1}/${d1} ${symbol} ${n2}/${d2}.`};}
-function gDecimals4(level){
-  if(level===1){const tenths=randInt(1,9);
+function gDecimals4(level){const lvl=diffTier(level),bo=diffBoost(level);
+  if(lvl===1){const tenths=randInt(1,9);
     return{prompt:`${tenths} out of 10 squares are shaded. Write this as a decimal.`,mode:'numeric',correctAnswer:parseFloat((tenths/10).toFixed(1)),visual:{type:'fractionbar',num:tenths,den:10},explanation:`${tenths}/10 = 0.${tenths}.`};}
-  if(level===2){let a=randInt(1,9)/10,b=randInt(1,9)/10;while(Math.abs(a-b)<0.0001)b=randInt(1,9)/10;const symbol=a>b?'>':'<';
+  if(lvl===2){let a=randInt(1,9)/10,b=randInt(1,9)/10;while(Math.abs(a-b)<0.0001)b=randInt(1,9)/10;const symbol=a>b?'>':'<';
     return{prompt:`Compare: ${a.toFixed(1)} ___ ${b.toFixed(1)}`,mode:'mc',choices:['<','>','='],correctAnswer:symbol,explanation:`${a.toFixed(1)} ${symbol} ${b.toFixed(1)}.`};}
-  if(level===3){const a=randInt(1,8)/10,b=randInt(1,8)/10;const sum=parseFloat((a+b).toFixed(1));
-    return{prompt:`${a.toFixed(1)} + ${b.toFixed(1)} = ?`,mode:'numeric',correctAnswer:sum,explanation:`${a.toFixed(1)} + ${b.toFixed(1)} = ${sum}.`};}
-  if(level===4){const hundredths=randInt(1,99);const val=parseFloat((hundredths/100).toFixed(2));
+  if(lvl===3){const a=randInt(1,8+bo*(bo?80:0))/10,b=randInt(1,8+bo*(bo?80:0))/10;const sum=parseFloat((a+b).toFixed(bo?2:1));
+    return{prompt:`${a.toFixed(bo?2:1)} + ${b.toFixed(bo?2:1)} = ?`,mode:'numeric',correctAnswer:sum,explanation:`${a.toFixed(bo?2:1)} + ${b.toFixed(bo?2:1)} = ${sum}.`};}
+  if(lvl===4){const hundredths=randInt(1,99);const val=parseFloat((hundredths/100).toFixed(2));
     return{prompt:`Write "${hundredths} hundredths" as a decimal.`,mode:'numeric',correctAnswer:val,explanation:`${hundredths} hundredths = ${val}.`};}
-  const a=randInt(10,80)/100,b=randInt(5,19)/100;const sum=parseFloat((a-b).toFixed(2));
+  const a=randInt(10,80+bo*15)/100,b=randInt(5,19+bo*60)/100;const sum=parseFloat((a-b).toFixed(2));
   return{prompt:`${a.toFixed(2)} - ${b.toFixed(2)} = ?`,mode:'numeric',correctAnswer:sum,explanation:`${a.toFixed(2)} - ${b.toFixed(2)} = ${sum}.`};}
-function gFactors4(level){
-  if(level===1){const n=randInt(12,36);const facs=factorsOf(n);const correct=pick(facs);let wrong=randInt(2,n-1);while(facs.includes(wrong))wrong=randInt(2,n-1);
+function gFactors4(level){const lvl=diffTier(level),bo=diffBoost(level);
+  if(lvl===1){const n=randInt(12,36+bo*12);const facs=factorsOf(n);const correct=pick(facs);let wrong=randInt(2,n-1);while(facs.includes(wrong))wrong=randInt(2,n-1);
     const choices=[...new Set([correct,wrong,wrong+1,correct+1])].slice(0,4);while(choices.length<4)uniqPush(choices,randInt(2,n));
     return{prompt:`Which of these is a factor of ${n}?`,mode:'mc',choices:shuffle(choices),correctAnswer:correct,explanation:`${n} ÷ ${correct} = ${n/correct}, so ${correct} is a factor.`};}
-  if(level===2){const base=randInt(3,9);const correct=base*randInt(2,6);const choiceSet=new Set([correct]);let guard=0;
+  if(lvl===2){const base=randInt(3,9);const correct=base*randInt(2,6+bo*3);const choiceSet=new Set([correct]);let guard=0;
     while(choiceSet.size<4&&guard<200){guard++;const cand=correct+randInt(-8,8);if(cand<=0||cand%base===0)continue;choiceSet.add(cand);}
     return{prompt:`Which of these is a multiple of ${base}?`,mode:'mc',choices:shuffle([...choiceSet]),correctAnswer:correct,explanation:`${correct} ÷ ${base} = ${correct/base}, so ${correct} is a multiple of ${base}.`};}
-  if(level===3){const n=randInt(2,50);const p=isPrime(n);
+  if(lvl===3){const n=randInt(2,50+bo*50);const p=isPrime(n);
     return{prompt:`Is ${n} prime or composite?`,mode:'mc',choices:['Prime','Composite'],correctAnswer:p?'Prime':'Composite',explanation:p?`${n} has only 1 and itself as factors, so it's prime.`:`${n} has factors besides 1 and itself, so it's composite.`};}
-  if(level===4){const a=pick([4,6,8,9]),b=pick([6,8,12,15]);if(a===b)return gFactors4(level);const fa=factorsOf(a),fb=factorsOf(b);const common=fa.filter(x=>fb.includes(x));const answer=Math.max(...common);
+  if(lvl===4){const a=pick(bo?[4,6,8,9,12,10]:[4,6,8,9]),b=pick(bo?[6,8,12,15,10,14]:[6,8,12,15]);if(a===b)return gFactors4(level);const fa=factorsOf(a),fb=factorsOf(b);const common=fa.filter(x=>fb.includes(x));const answer=Math.max(...common);
     return{prompt:`What is the greatest common factor (GCF) of ${a} and ${b}?`,mode:'numeric',correctAnswer:answer,explanation:`Factors of ${a}: ${fa.join(',')}. Factors of ${b}: ${fb.join(',')}. GCF = ${answer}.`};}
-  const a=pick([3,4,5]),b=pick([4,6,8]);if(a===b)return gFactors4(level);let lcm=a;while(lcm%b!==0)lcm+=a;
+  const a=pick(bo?[3,4,5,6]:[3,4,5]),b=pick(bo?[4,6,8,9]:[4,6,8]);if(a===b)return gFactors4(level);let lcm=a;while(lcm%b!==0)lcm+=a;
   return{prompt:`What is the least common multiple (LCM) of ${a} and ${b}?`,mode:'numeric',correctAnswer:lcm,explanation:`Multiples of ${a}: ${a},${a*2},${a*3}... The smallest one that is also a multiple of ${b} is ${lcm}.`};}
-function gAreaPerim4(level){
-  if(level===1){const l=randInt(3,12),w=randInt(2,10);
+function gAreaPerim4(level){const lvl=diffTier(level),bo=diffBoost(level);
+  if(lvl===1){const l=randInt(3,12+bo*6),w=randInt(2,10+bo*5);
     return{prompt:`A rectangle is ${l} cm by ${w} cm. What is its perimeter (in cm)?`,visual:{type:'rect',l,w},mode:'numeric',correctAnswer:2*(l+w),explanation:`Perimeter = 2 x (${l} + ${w}) = ${2*(l+w)} cm.`};}
-  if(level===2){const l=randInt(3,12),w=randInt(2,10);
+  if(lvl===2){const l=randInt(3,12+bo*6),w=randInt(2,10+bo*5);
     return{prompt:`A rectangle is ${l} cm by ${w} cm. What is its area (in cm²)?`,visual:{type:'rect',l,w},mode:'numeric',correctAnswer:l*w,explanation:`Area = ${l} x ${w} = ${l*w} cm².`};}
-  if(level===3){const w=randInt(3,10),perim=2*(w+randInt(3,10));const l=perim/2-w;
+  if(lvl===3){const w=randInt(3,10+bo*5),perim=2*(w+randInt(3,10+bo*5));const l=perim/2-w;
     return{prompt:`A rectangle has a width of ${w} cm and a perimeter of ${perim} cm. What is its length (in cm)?`,mode:'numeric',correctAnswer:l,explanation:`Length = Perimeter/2 - width = ${perim/2} - ${w} = ${l} cm.`};}
-  if(level===4){const l1=randInt(4,8),w1=randInt(3,6),l2=randInt(2,4),w2=randInt(2,4);const total=l1*w1+l2*w2;
+  if(lvl===4){const l1=randInt(4,8+bo*4),w1=randInt(3,6+bo*3),l2=randInt(2,4+bo*3),w2=randInt(2,4+bo*3);const total=l1*w1+l2*w2;
     return{prompt:`An L-shaped room is made of a ${l1}x${w1} rectangle plus a ${l2}x${w2} rectangle. What is the total area (in units²)?`,mode:'numeric',correctAnswer:total,explanation:`${l1}x${w1} + ${l2}x${w2} = ${l1*w1} + ${l2*w2} = ${total}.`};}
-  const l=randInt(4,15),w=randInt(3,12);
+  const l=randInt(4,15+bo*10),w=randInt(3,12+bo*8);
   return{prompt:`You want to build a fence around a garden ${l} m by ${w} m. How many meters of fence do you need?`,visual:{type:'rect',l,w},mode:'numeric',correctAnswer:2*(l+w),explanation:`Fence = perimeter = 2 x (${l} + ${w}) = ${2*(l+w)} m.`};}
-function gWordProblems4(level){const names=['Mia','Leo','Ana','Sam','Priya','Noah'];const n1=pick(names);
-  if(level===1){const boxes=randInt(4,9),each=randInt(6,12);
+function gWordProblems4(level){const lvl=diffTier(level),bo=diffBoost(level);const names=['Mia','Leo','Ana','Sam','Priya','Noah'];const n1=pick(names);
+  if(lvl===1){const boxes=randInt(4,9+bo*4),each=randInt(6,12+bo*6);
     return{prompt:`${n1} packs ${boxes} boxes with ${each} pencils each. How many pencils in all?`,mode:'numeric',correctAnswer:boxes*each,visual:boxes*each<=40?{type:'array',rows:boxes,cols:each}:undefined,explanation:`${boxes} x ${each} = ${boxes*each}.`};}
-  if(level===2){const packs=randInt(3,6),each=randInt(8,15),extra=randInt(5,20);
+  if(lvl===2){const packs=randInt(3,6+bo*3),each=randInt(8,15+bo*8),extra=randInt(5,20+bo*10);
     return{prompt:`${n1} buys ${packs} packs of ${each} stickers, then gets ${extra} more free. How many stickers total?`,mode:'numeric',correctAnswer:packs*each+extra,visual:packs*each<=40?{type:'array',rows:packs,cols:each}:undefined,explanation:`${packs} x ${each} + ${extra} = ${packs*each+extra}.`};}
-  if(level===3){const total=randInt(60,200),groups=randInt(4,8);const perGroup=Math.floor(total/groups);const leftover=total-perGroup*groups;
+  if(lvl===3){const total=randInt(60,200+bo*100),groups=randInt(4,8+bo*4);const perGroup=Math.floor(total/groups);const leftover=total-perGroup*groups;
     const visual={type:'groups',total,groups};
     if(leftover===0)return{prompt:`${total} apples are shared equally among ${groups} baskets. How many apples in each basket?`,mode:'numeric',correctAnswer:perGroup,visual,explanation:`${total} ÷ ${groups} = ${perGroup}.`};
     return{prompt:`${total} apples are shared equally among ${groups} baskets. How many apples in each basket, and how many are left over?`,mode:'divmod',correctAnswer:{q:perGroup,r:leftover},visual,explanation:`${total} ÷ ${groups} = ${perGroup} remainder ${leftover}.`};}
-  if(level===4){const priceCents=randInt(150,600),qty=randInt(2,5),paidDollars=randInt(10,30);const totalCents=priceCents*qty;const change=paidDollars*100-totalCents;
+  if(lvl===4){const priceCents=randInt(150,600+bo*300),qty=randInt(2,5+bo*3),paidDollars=randInt(10,30+bo*20);const totalCents=priceCents*qty;const change=paidDollars*100-totalCents;
     return{prompt:`${n1} buys ${qty} notebooks at ${fmtMoney(priceCents)} each, paying with $${paidDollars}. How much change (in cents)?`,mode:'numeric',correctAnswer:change,explanation:`${qty} x ${priceCents} = ${totalCents} cents. $${paidDollars} = ${paidDollars*100} cents. Change = ${change} cents.`};}
-  const den=pick([4,5,8]);const num=randInt(1,den-1);const total=randInt(2,6)*den;
+  const den=pick(bo?[4,5,8,10,12]:[4,5,8]);const num=randInt(1,den-1);const total=randInt(2,6+bo*3)*den;
   return{prompt:`${n1} read ${num}/${den} of a ${total}-page book. How many pages did ${n1} read?`,mode:'numeric',correctAnswer:total*num/den,visual:{type:'fractionbar',num,den},explanation:`${total} x ${num}/${den} = ${total*num/den} pages.`};}
 
 /* ================= READING DATA BANKS ================= */
@@ -921,7 +968,7 @@ const BADGE_DEFS=[
 {id:'century-club',label:'Century Club',icon:'star',desc:'Answer 100 questions correctly across all skills.',check:(l,ss)=>Object.values(ss).reduce((a,s)=>a+s.totalCorrect,0)>=100},
 {id:'streak-7',label:'7-Day Streak',icon:'flame',desc:'Practice 7 days in a row.',check:(l)=>l.streakDays>=7},
 {id:'streak-30',label:'30-Day Streak',icon:'flame',desc:'Practice 30 days in a row.',check:(l)=>l.streakDays>=30},
-{id:'elevation-master',label:'Elevation Master',icon:'mountain',desc:'Reach Elevation 5 in any skill.',check:(l,ss)=>Object.values(ss).some(s=>s.difficulty===5)},
+{id:'elevation-master',label:'Elevation Master',icon:'mountain',desc:'Reach Elevation 10 in any skill.',check:(l,ss)=>Object.values(ss).some(s=>s.difficulty===MAX_DIFFICULTY)},
 {id:'summit-reacher',label:'Summit Reacher',icon:'flag',desc:'Fully master any skill.',check:(l,ss)=>Object.values(ss).some(s=>s.mastered)},
 {id:'grandmaster',label:'Grandmaster',icon:'star',desc:'Reach Master II in any skill by staying sharp well past first mastery.',check:(l,ss)=>Object.values(ss).some(s=>(s.masteryTier||0)>=2)},
 {id:'champion',label:'Champion',icon:'star',desc:'Reach Master III in any skill.',check:(l,ss)=>Object.values(ss).some(s=>(s.masteryTier||0)>=3)},
@@ -1009,7 +1056,7 @@ const MASTERY_TIER_THRESHOLDS=[10,30,60,100]; // totalAnswered needed for tier 1
 const MASTERY_TIER_LABELS=['','Master','Master II','Master III','Legend'];
 function computeMasteryTier(state){
   const prior=state.masteryTier||0;
-  if(state.difficulty<5) return prior;
+  if(state.difficulty<MAX_DIFFICULTY) return prior;
   const last10=state.history.slice(-10);
   const acc=last10.length?last10.reduce((a,v)=>a+v,0)/last10.length:0;
   if(state.totalAnswered<MASTERY_TIER_THRESHOLDS[0]||acc<0.85) return prior;
@@ -1021,7 +1068,7 @@ function makeSkillState(){return{difficulty:1,streakCorrect:0,streakWrong:0,hist
 function applyAnswer(state,correct){
   state.totalAnswered++; if(correct)state.totalCorrect++;
   state.history.push(correct?1:0); if(state.history.length>20)state.history.shift();
-  if(correct){state.streakCorrect++;state.streakWrong=0; if(state.streakCorrect>=3&&state.difficulty<5){state.difficulty++;state.streakCorrect=0;}}
+  if(correct){state.streakCorrect++;state.streakWrong=0; if(state.streakCorrect>=3&&state.difficulty<MAX_DIFFICULTY){state.difficulty++;state.streakCorrect=0;}}
   else{state.streakWrong++;state.streakCorrect=0; if(state.streakWrong>=2&&state.difficulty>1){state.difficulty--;state.streakWrong=0;}}
   state.masteryTier=computeMasteryTier(state);
   state.mastered=state.masteryTier>=1;
@@ -1057,26 +1104,100 @@ function icon(name,color,size){
   if(name==='note')return `<svg ${s}><circle cx="8" cy="17" r="2.4" fill="${color}"/><circle cx="17" cy="15" r="2.4" fill="${color}"/><path d="M10.4 17V5.5l7-1.8V13"/></svg>`;
   if(name==='ruler')return `<svg ${s}><rect x="3" y="9" width="18" height="6" rx="1"/><path d="M6 9v2M9 9v3M12 9v2M15 9v3M18 9v2"/></svg>`;
   if(name==='fraction')return `<svg ${s}><path d="M6 18L18 6"/><circle cx="8" cy="8" r="2" fill="${color}"/><circle cx="16" cy="16" r="2" fill="${color}"/></svg>`;
+  if(name==='sound-on')return `<svg ${s}><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9a5 5 0 010 6"/><path d="M19.5 6.5a9 9 0 010 11"/></svg>`;
+  if(name==='sound-off')return `<svg ${s}><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9l5 6M21 9l-5 6"/></svg>`;
   return `<svg ${s}></svg>`;
 }
+/* ================= VISUAL POLISH HELPERS =================
+   Request: "題目中的圖片缺乏美感過於粗糙, 請參考美學做出精美的圖形 即使是3D圖案也可以" —
+   the manipulatives below were flat single-color outlines/dots. These helpers give
+   every shape a soft gradient, a subtle drop-shadow and a small gloss highlight for
+   a gently 3D, polished look, while keeping every generator's declarative q.visual
+   contract (and every existing function name/signature) unchanged. */
+function accentPair(color){
+  const teal=String(color).includes('teal');
+  return {c:color, cs:teal?'var(--teal-strong)':'var(--accent-strong)', soft:teal?'var(--teal-soft)':'var(--accent-soft)'};
+}
+function svgUid(){ return Math.random().toString(36).slice(2,9); }
+function svgMarbleDefs(uid,color,strong){
+  return `<defs>
+    <radialGradient id="mg-${uid}" cx="35%" cy="30%" r="75%">
+      <stop offset="0%" style="stop-color:var(--surface)"/>
+      <stop offset="40%" style="stop-color:${color}"/>
+      <stop offset="100%" style="stop-color:${strong}"/>
+    </radialGradient>
+    <filter id="ms-${uid}" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="1.4" stdDeviation="1.3" flood-color="${strong}" flood-opacity="0.4"/>
+    </filter>
+  </defs>`;
+}
+function svgMarble(cx,cy,r,uid){
+  return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" fill="url(#mg-${uid})" filter="url(#ms-${uid})"/><ellipse cx="${(cx-r*0.32).toFixed(1)}" cy="${(cy-r*0.35).toFixed(1)}" rx="${(r*0.28).toFixed(1)}" ry="${(r*0.17).toFixed(1)}" fill="var(--surface)" opacity=".6"/>`;
+}
 function svgClock(h,m){
+  const uid=svgUid();
   const cx=60,cy=60,r=52;
   const minuteAngle=(m/60)*360; const hourAngle=((h%12)/12)*360+(m/60)*30;
   function pt(a,radius){const rad=(a-90)*Math.PI/180;return[cx+radius*Math.cos(rad),cy+radius*Math.sin(rad)];}
   let ticks='';
-  for(let i=0;i<12;i++){const a=i*30;const[x1,y1]=pt(a,47);const[x2,y2]=pt(a,42);ticks+=`<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" style="stroke:var(--ink-faint)" stroke-width="2"/>`;}
+  for(let i=0;i<12;i++){
+    const a=i*30, major=i%3===0;
+    const[x1,y1]=pt(a,major?45:47.5);const[x2,y2]=pt(a,major?38:42);
+    ticks+=`<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" style="stroke:var(--ink-faint)" stroke-width="${major?2.6:1.5}" stroke-linecap="round"/>`;
+  }
+  const numerals=[12,3,6,9].map((n,i)=>{const a=i*90;const[nx,ny]=pt(a,32.5);return `<text x="${nx.toFixed(1)}" y="${(ny+4.5).toFixed(1)}" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--ink-soft)">${n}</text>`;}).join('');
   const[hx,hy]=pt(hourAngle,26); const[mx,my]=pt(minuteAngle,40);
-  return `<svg viewBox="0 0 120 120" width="150" height="150"><circle cx="${cx}" cy="${cy}" r="${r}" style="fill:var(--surface);stroke:var(--border)" stroke-width="3"/>${ticks}<line x1="${cx}" y1="${cy}" x2="${hx.toFixed(1)}" y2="${hy.toFixed(1)}" style="stroke:var(--ink)" stroke-width="4.5" stroke-linecap="round"/><line x1="${cx}" y1="${cy}" x2="${mx.toFixed(1)}" y2="${my.toFixed(1)}" style="stroke:var(--ink)" stroke-width="3" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="3.5" style="fill:var(--accent)"/></svg>`;
+  return `<svg viewBox="0 0 120 120" width="150" height="150">
+    <defs>
+      <radialGradient id="cf-${uid}" cx="35%" cy="28%" r="80%">
+        <stop offset="0%" style="stop-color:var(--surface)"/>
+        <stop offset="100%" style="stop-color:var(--surface-2)"/>
+      </radialGradient>
+      <linearGradient id="cb-${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:var(--accent)"/>
+        <stop offset="100%" style="stop-color:var(--accent-strong)"/>
+      </linearGradient>
+      <filter id="csh-${uid}" x="-30%" y="-30%" width="160%" height="160%">
+        <feDropShadow dx="0" dy="2" stdDeviation="2.2" flood-color="var(--ink)" flood-opacity=".18"/>
+      </filter>
+    </defs>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#cf-${uid})" filter="url(#csh-${uid})" style="stroke:url(#cb-${uid})" stroke-width="4"/>
+    <circle cx="${cx}" cy="${cy}" r="${r-6}" fill="none" style="stroke:var(--border)" stroke-width="1"/>
+    ${ticks}${numerals}
+    <line x1="${cx}" y1="${cy}" x2="${hx.toFixed(1)}" y2="${hy.toFixed(1)}" style="stroke:var(--ink)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="${cx}" y1="${cy}" x2="${mx.toFixed(1)}" y2="${my.toFixed(1)}" style="stroke:var(--ink-soft)" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${cy}" r="5" fill="url(#cb-${uid})"/>
+    <circle cx="${cx}" cy="${cy}" r="2" fill="var(--surface)"/>
+  </svg>`;
 }
 function svgRect(l,w){
+  const uid=svgUid();
   const W=200,H=130,pad=34;
   const scale=Math.min((W-pad*2)/w,(H-pad*2)/l);
   const rw=w*scale, rh=l*scale;
   const x=(W-rw)/2, y=(H-rh)/2;
+  const arrowY=y+rh+22;
   return `<svg viewBox="0 0 ${W} ${H}" width="220" height="145">
-    <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${rw.toFixed(1)}" height="${rh.toFixed(1)}" fill="none" style="stroke:var(--teal)" stroke-width="3"/>
-    <text x="${(W/2).toFixed(1)}" y="${(y-10).toFixed(1)}" text-anchor="middle" style="font-family:var(--font-mono);font-size:13px;fill:var(--ink-soft)">${w}</text>
-    <text x="${(x-12).toFixed(1)}" y="${(H/2).toFixed(1)}" text-anchor="end" dominant-baseline="middle" style="font-family:var(--font-mono);font-size:13px;fill:var(--ink-soft)">${l}</text>
+    <defs>
+      <linearGradient id="rf-${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:var(--teal-soft)"/>
+        <stop offset="100%" style="stop-color:var(--teal)" stop-opacity=".5"/>
+      </linearGradient>
+      <marker id="arw-${uid}" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M0 0 L8 4 L0 8Z" style="fill:var(--teal-strong)"/>
+      </marker>
+    </defs>
+    <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${rw.toFixed(1)}" height="${rh.toFixed(1)}" rx="6" fill="url(#rf-${uid})" style="stroke:var(--teal-strong)" stroke-width="3"/>
+    <line x1="${(x+3).toFixed(1)}" y1="${arrowY.toFixed(1)}" x2="${(x+rw-3).toFixed(1)}" y2="${arrowY.toFixed(1)}" style="stroke:var(--teal-strong)" stroke-width="1.6" marker-start="url(#arw-${uid})" marker-end="url(#arw-${uid})"/>
+    <line x1="${x.toFixed(1)}" y1="${(y+rh).toFixed(1)}" x2="${x.toFixed(1)}" y2="${(arrowY+7).toFixed(1)}" style="stroke:var(--border)" stroke-width="1" stroke-dasharray="2 3"/>
+    <line x1="${(x+rw).toFixed(1)}" y1="${(y+rh).toFixed(1)}" x2="${(x+rw).toFixed(1)}" y2="${(arrowY+7).toFixed(1)}" style="stroke:var(--border)" stroke-width="1" stroke-dasharray="2 3"/>
+    <rect x="${(W/2-15).toFixed(1)}" y="${(arrowY-9).toFixed(1)}" width="30" height="16" rx="8" fill="var(--surface)" style="stroke:var(--border)" stroke-width="1"/>
+    <text x="${(W/2).toFixed(1)}" y="${(arrowY+3.5).toFixed(1)}" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--teal-strong)">${w}</text>
+    <line x1="${(x-14).toFixed(1)}" y1="${(y+3).toFixed(1)}" x2="${(x-14).toFixed(1)}" y2="${(y+rh-3).toFixed(1)}" style="stroke:var(--teal-strong)" stroke-width="1.6" marker-start="url(#arw-${uid})" marker-end="url(#arw-${uid})"/>
+    <line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x-20).toFixed(1)}" y2="${y.toFixed(1)}" style="stroke:var(--border)" stroke-width="1" stroke-dasharray="2 3"/>
+    <line x1="${x.toFixed(1)}" y1="${(y+rh).toFixed(1)}" x2="${(x-20).toFixed(1)}" y2="${(y+rh).toFixed(1)}" style="stroke:var(--border)" stroke-width="1" stroke-dasharray="2 3"/>
+    <rect x="4" y="${(y+rh/2-8).toFixed(1)}" width="30" height="16" rx="8" fill="var(--surface)" style="stroke:var(--border)" stroke-width="1"/>
+    <text x="19" y="${(y+rh/2+4.5).toFixed(1)}" text-anchor="middle" style="font-family:var(--font-mono);font-size:12px;font-weight:700;fill:var(--teal-strong)">${l}</text>
   </svg>`;
 }
 /* ================= QUESTION VISUAL AIDS ================= */
@@ -1087,26 +1208,41 @@ function svgRect(l,w){
    never how many items land in each one -- so they're a manipulative, not an
    answer key. */
 function svgDotsPile(n,color,x0,y0,w0,h0){
-  // Raw <circle> elements (no wrapping <svg>) so this can be embedded either
-  // standalone or as a building block inside another visual's own <svg>.
+  // Raw markup (no wrapping <svg>) so this can be embedded either standalone
+  // or as a building block inside another visual's own <svg>.
+  const {cs}=accentPair(color);
+  const uid=svgUid();
   const cols=Math.max(1,Math.min(10,Math.ceil(Math.sqrt(n*w0/h0))));
   const rows=Math.ceil(n/cols);
   const padX=Math.min(14,w0*0.08), padY=Math.min(14,h0*0.12);
   const cellW=(w0-padX*2)/cols, cellH=(h0-padY*2)/Math.max(rows,1);
   const r=Math.max(3,Math.min(cellW,cellH)/2-2);
-  let out='';
+  let out=svgMarbleDefs(uid,color,cs);
   for(let i=0;i<n;i++){
     const col=i%cols, row=Math.floor(i/cols);
     const cx=x0+padX+cellW*col+cellW/2, cy=y0+padY+cellH*row+cellH/2;
-    out+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" fill="${color}"/>`;
+    out+=svgMarble(cx,cy,r,uid);
   }
   return out;
 }
 function svgAbstractCount(n,color,caption){
-  return `<svg viewBox="0 0 200 74" width="200" height="74">
-    <circle cx="100" cy="34" r="30" fill="none" style="stroke:${color}" stroke-width="3"/>
-    <text x="100" y="41" text-anchor="middle" style="font-family:var(--font-mono);font-size:20px;font-weight:700;fill:${color}">${n}</text>
-    ${caption?`<text x="100" y="68" text-anchor="middle" style="font-family:var(--font-display);font-size:11px;fill:var(--ink-soft)">${esc(caption)}</text>`:''}
+  const {cs,soft}=accentPair(color);
+  const uid=svgUid();
+  return `<svg viewBox="0 0 200 84" width="200" height="84">
+    <defs>
+      <radialGradient id="bg-${uid}" cx="35%" cy="30%" r="80%">
+        <stop offset="0%" style="stop-color:${soft}"/>
+        <stop offset="100%" style="stop-color:${color}" stop-opacity=".15"/>
+      </radialGradient>
+      <linearGradient id="ring-${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:${color}"/>
+        <stop offset="100%" style="stop-color:${cs}"/>
+      </linearGradient>
+    </defs>
+    <circle cx="100" cy="36" r="32" fill="url(#bg-${uid})"/>
+    <circle cx="100" cy="36" r="32" fill="none" style="stroke:url(#ring-${uid})" stroke-width="4"/>
+    <text x="100" y="44" text-anchor="middle" style="font-family:var(--font-mono);font-size:20px;font-weight:700;fill:${color}">${n}</text>
+    ${caption?`<text x="100" y="76" text-anchor="middle" style="font-family:var(--font-display);font-size:11px;fill:var(--ink-soft)">${esc(caption)}</text>`:''}
   </svg>`;
 }
 function svgDotsPileStandalone(n,color){
@@ -1114,19 +1250,39 @@ function svgDotsPileStandalone(n,color){
   return `<svg viewBox="0 0 200 100" width="200" height="100">${svgDotsPile(n,color,0,0,200,100)}</svg>`;
 }
 function svgArrayGrid(rows,cols,color){
-  const W=200,H=120,padX=16,padY=16;
+  const {cs}=accentPair(color);
+  const uid=svgUid();
+  const W=200,H=120,padX=14,padY=14;
   const cellW=(W-padX*2)/cols, cellH=(H-padY*2)/rows;
-  const r=Math.max(3,Math.min(cellW,cellH)/2-3);
-  let out='';
+  const size=Math.max(6,Math.min(cellW,cellH)-6);
+  let out=`<defs>
+    <linearGradient id="tile-${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:${color}"/>
+      <stop offset="100%" style="stop-color:${cs}"/>
+    </linearGradient>
+    <filter id="tsh-${uid}" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="1.2" stdDeviation="1" flood-color="${cs}" flood-opacity=".3"/>
+    </filter>
+  </defs>`;
   for(let row=0;row<rows;row++){
     for(let col=0;col<cols;col++){
       const cx=padX+cellW*col+cellW/2, cy=padY+cellH*row+cellH/2;
-      out+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" fill="${color}"/>`;
+      out+=`<rect x="${(cx-size/2).toFixed(1)}" y="${(cy-size/2).toFixed(1)}" width="${size.toFixed(1)}" height="${size.toFixed(1)}" rx="${(size*0.28).toFixed(1)}" fill="url(#tile-${uid})" filter="url(#tsh-${uid})"/><rect x="${(cx-size/2+size*0.14).toFixed(1)}" y="${(cy-size/2+size*0.12).toFixed(1)}" width="${(size*0.4).toFixed(1)}" height="${(size*0.22).toFixed(1)}" rx="${(size*0.1).toFixed(1)}" fill="var(--surface)" opacity=".35"/>`;
     }
   }
   return `<svg viewBox="0 0 ${W} ${H}" width="200" height="120">${out}</svg>`;
 }
 function svgGroupsVisual(total,groups,color){
+  const {cs}=accentPair(color);
+  const uid=svgUid();
+  const basketDefs=`<defs><linearGradient id="bsk-${uid}" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" style="stop-color:var(--surface-2)"/>
+    <stop offset="100%" style="stop-color:${color}" stop-opacity=".5"/>
+  </linearGradient></defs>`;
+  function basket(cx,topY,halfW,bottomOffset){
+    const bottomY=topY+bottomOffset;
+    return `<path d="M${(cx-halfW*0.9).toFixed(1)} ${topY.toFixed(1)} L${(cx-halfW).toFixed(1)} ${bottomY.toFixed(1)} Q${cx.toFixed(1)} ${(bottomY+halfW*0.32).toFixed(1)} ${(cx+halfW).toFixed(1)} ${bottomY.toFixed(1)} L${(cx+halfW*0.9).toFixed(1)} ${topY.toFixed(1)}Z" fill="url(#bsk-${uid})" style="stroke:${cs}" stroke-width="1.6"/><path d="M${(cx-halfW*0.7).toFixed(1)} ${(topY+bottomOffset*0.4).toFixed(1)} Q${cx.toFixed(1)} ${(topY+bottomOffset*0.52).toFixed(1)} ${(cx+halfW*0.7).toFixed(1)} ${(topY+bottomOffset*0.4).toFixed(1)}" fill="none" style="stroke:${cs}" stroke-width="1.2" opacity=".5"/><ellipse cx="${cx.toFixed(1)}" cy="${topY.toFixed(1)}" rx="${(halfW*1.02).toFixed(1)}" ry="${(halfW*0.24).toFixed(1)}" fill="none" style="stroke:${cs}" stroke-width="2"/>`;
+  }
   if(total>40){
     // Too many to draw as individual dots -- show the total as a number plus
     // one basket icon per group, so the CONCEPT (this many groups) still
@@ -1134,10 +1290,11 @@ function svgGroupsVisual(total,groups,color){
     const W=220,H=112,shown=Math.min(groups,10);
     let baskets='';
     for(let i=0;i<shown;i++){
-      const cx=20+i*((W-40)/Math.max(shown-1,1));
-      baskets+=`<path d="M${(cx-11).toFixed(1)} 66 L${(cx-13).toFixed(1)} 88 Q${cx.toFixed(1)} 94 ${(cx+13).toFixed(1)} 88 L${(cx+11).toFixed(1)} 66Z" fill="none" style="stroke:${color}" stroke-width="2.5"/>`;
+      const cx=22+i*((W-44)/Math.max(shown-1,1));
+      baskets+=basket(cx,66,11,22);
     }
     return `<svg viewBox="0 0 ${W} ${H}" width="220" height="112">
+      ${basketDefs}
       <text x="${W/2}" y="28" text-anchor="middle" style="font-family:var(--font-mono);font-size:21px;font-weight:700;fill:${color}">${total} in all</text>
       ${baskets}
       <text x="${W/2}" y="108" text-anchor="middle" style="font-family:var(--font-display);font-size:11px;fill:var(--ink-soft)">${groups} baskets</text>
@@ -1150,66 +1307,91 @@ function svgGroupsVisual(total,groups,color){
   let baskets='';
   for(let i=0;i<groups;i++){
     const cx=padX+basketW*i+basketW/2;
-    baskets+=`<path d="M${(cx-basketW*0.36).toFixed(1)} 96 L${(cx-basketW*0.42).toFixed(1)} 122 Q${cx.toFixed(1)} 130 ${(cx+basketW*0.42).toFixed(1)} 122 L${(cx+basketW*0.36).toFixed(1)} 96Z" fill="none" style="stroke:${color}" stroke-width="2.5"/>`;
+    baskets+=basket(cx,96,basketW*0.4,26);
   }
   return `<svg viewBox="0 0 ${W} ${H}" width="220" height="142">
+    ${basketDefs}
     ${svgDotsPile(total,color,10,0,W-20,86)}
     ${baskets}
     <text x="${W/2}" y="140" text-anchor="middle" style="font-family:var(--font-display);font-size:11px;fill:var(--ink-soft)">${groups} baskets</text>
   </svg>`;
 }
 function svgFractionBar(num,den,color){
-  const W=200,H=42,padX=6;
-  const segW=(W-padX*2)/den;
-  let segs='';
+  const {cs,soft}=accentPair(color);
+  const uid=svgUid();
+  const W=200,H=46,padX=6,gap=2;
+  const segW=(W-padX*2-gap*(den-1))/den;
+  let segs=`<defs><linearGradient id="fb-${uid}" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" style="stop-color:${color}"/>
+    <stop offset="100%" style="stop-color:${cs}"/>
+  </linearGradient></defs>`;
   for(let i=0;i<den;i++){
-    const x=padX+i*segW;
-    segs+=`<rect x="${x.toFixed(1)}" y="0" width="${Math.max(segW-2,1).toFixed(1)}" height="${H}" fill="${i<num?color:'none'}" opacity="${i<num?0.85:1}" style="stroke:${color}" stroke-width="2"/>`;
+    const x=padX+i*(segW+gap), filled=i<num;
+    segs+=`<rect x="${x.toFixed(1)}" y="2" width="${segW.toFixed(1)}" height="${H-4}" rx="6" fill="${filled?`url(#fb-${uid})`:soft}" style="stroke:${cs}" stroke-width="1.6"/>`;
+    if(filled) segs+=`<rect x="${(x+segW*0.12).toFixed(1)}" y="5" width="${(segW*0.76).toFixed(1)}" height="${((H-4)*0.28).toFixed(1)}" rx="4" fill="var(--surface)" opacity=".25"/>`;
   }
-  return `<svg viewBox="0 0 ${W} ${H}" width="200" height="42">${segs}</svg>`;
+  return `<svg viewBox="0 0 ${W} ${H}" width="200" height="${H}">${segs}</svg>`;
 }
 function svgFractionPair(n1,d1,n2,d2,color){
   return `<div style="display:flex;flex-direction:column;gap:8px;align-items:center">${svgFractionBar(n1,d1,color)}${svgFractionBar(n2,d2,color)}</div>`;
 }
 function svgCoinsRow(coins,color){
-  // coins: [{label:'Q'|'D'|'N'|'P', count}] -- draws one ring per coin, given
-  // counts (never the total, which is the answer being asked for).
+  // coins: [{label:'Q'|'D'|'N'|'P', count}] -- draws one glossy coin per given
+  // count (never the total, which is the answer being asked for).
+  const {cs}=accentPair(color);
+  const uid=svgUid();
   const sizeMap={Q:22,D:16,N:19,P:14};
-  let x=16; const items=[];
+  let x=18; const items=[];
   (coins||[]).forEach(c=>{
     for(let i=0;i<c.count;i++){
       const r=sizeMap[c.label]||18;
-      items.push(`<circle cx="${(x+r).toFixed(1)}" cy="42" r="${r}" fill="none" style="stroke:${color}" stroke-width="2.5"/><text x="${(x+r).toFixed(1)}" y="47" text-anchor="middle" style="font-family:var(--font-mono);font-size:13px;fill:${color}">${c.label}</text>`);
-      x+=r*2+8;
+      const cx=x+r, cy=44;
+      items.push(`<ellipse cx="${cx.toFixed(1)}" cy="${(cy+r*0.85).toFixed(1)}" rx="${(r*0.85).toFixed(1)}" ry="${(r*0.22).toFixed(1)}" fill="var(--ink)" opacity=".14"/><circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r}" fill="url(#coin-${uid})"/><circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${(r-3.4).toFixed(1)}" fill="none" style="stroke:${cs}" stroke-width="1" stroke-dasharray="2 2" opacity=".65"/><ellipse cx="${(cx-r*0.32).toFixed(1)}" cy="${(cy-r*0.35).toFixed(1)}" rx="${(r*0.3).toFixed(1)}" ry="${(r*0.18).toFixed(1)}" fill="var(--surface)" opacity=".45"/><text x="${cx.toFixed(1)}" y="${(cy+4.5).toFixed(1)}" text-anchor="middle" style="font-family:var(--font-mono);font-size:${Math.max(10,r*0.62).toFixed(0)}px;font-weight:700;fill:var(--ink)">${c.label}</text>`);
+      x+=r*2+10;
     }
   });
   const W=Math.max(x+8,160);
-  return `<svg viewBox="0 0 ${W} 84" width="${W}" height="84">${items.join('')}</svg>`;
+  return `<svg viewBox="0 0 ${W} 96" width="${W}" height="96">
+    <defs><radialGradient id="coin-${uid}" cx="35%" cy="28%" r="80%">
+      <stop offset="0%" style="stop-color:${color}"/>
+      <stop offset="100%" style="stop-color:${cs}"/>
+    </radialGradient></defs>
+    ${items.join('')}
+  </svg>`;
 }
 function svgTwoPiles(a,b,color){
+  const {cs}=accentPair(color);
+  const uid=svgUid();
   const W=220,H=100;
   return `<svg viewBox="0 0 ${W} ${H}" width="220" height="100">
+    <defs><linearGradient id="dv-${uid}" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:${color}" stop-opacity="0"/>
+      <stop offset="50%" style="stop-color:${cs}" stop-opacity=".55"/>
+      <stop offset="100%" style="stop-color:${color}" stop-opacity="0"/>
+    </linearGradient></defs>
     ${svgDotsPile(a,color,0,0,W/2-6,H)}
-    <line x1="${W/2}" y1="6" x2="${W/2}" y2="${H-6}" style="stroke:var(--border)" stroke-width="2" stroke-dasharray="4 4"/>
+    <rect x="${(W/2-1.2).toFixed(1)}" y="4" width="2.4" height="${H-8}" rx="1.2" fill="url(#dv-${uid})"/>
     ${svgDotsPile(b,color,W/2+6,0,W/2-6,H)}
   </svg>`;
 }
 function svgTakeaway(total,removed,color){
+  const {cs}=accentPair(color);
+  const uid=svgUid();
   const W=220,H=114;
   const cols=Math.max(1,Math.min(10,Math.ceil(Math.sqrt(total*W/H))));
   const rows=Math.ceil(total/cols);
   const padX=14,padY=14;
   const cellW=(W-padX*2)/cols, cellH=(H-padY*2)/Math.max(rows,1);
   const r=Math.max(3,Math.min(cellW,cellH)/2-2);
-  let out='';
+  let out=svgMarbleDefs(uid,color,cs);
   for(let i=0;i<total;i++){
     const col=i%cols, row=Math.floor(i/cols);
     const cx=padX+cellW*col+cellW/2, cy=padY+cellH*row+cellH/2;
-    const isRemoved=i>=total-removed; // cross out the LAST `removed` dots
-    out+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" fill="${isRemoved?'none':color}" opacity="${isRemoved?0.4:1}" style="stroke:${color}" stroke-width="${isRemoved?1.5:0}"/>`;
+    const isRemoved=i>=total-removed; // "poof" out the LAST `removed` dots
     if(isRemoved){
-      out+=`<line x1="${(cx-r).toFixed(1)}" y1="${(cy-r).toFixed(1)}" x2="${(cx+r).toFixed(1)}" y2="${(cy+r).toFixed(1)}" style="stroke:${color}" stroke-width="1.5"/>
-            <line x1="${(cx-r).toFixed(1)}" y1="${(cy+r).toFixed(1)}" x2="${(cx+r).toFixed(1)}" y2="${(cy-r).toFixed(1)}" style="stroke:${color}" stroke-width="1.5"/>`;
+      out+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" fill="none" style="stroke:${cs}" stroke-width="1.4" stroke-dasharray="2.4 2.4" opacity=".45"/><path d="M${(cx-r*0.5).toFixed(1)} ${(cy-r*0.5).toFixed(1)} L${(cx+r*0.5).toFixed(1)} ${(cy+r*0.5).toFixed(1)} M${(cx-r*0.5).toFixed(1)} ${(cy+r*0.5).toFixed(1)} L${(cx+r*0.5).toFixed(1)} ${(cy-r*0.5).toFixed(1)}" style="stroke:${cs}" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>`;
+    } else {
+      out+=svgMarble(cx,cy,r,uid);
     }
   }
   return `<svg viewBox="0 0 ${W} ${H}" width="220" height="114">${out}</svg>`;
@@ -1339,20 +1521,32 @@ const SUBJECT_ELEMENTS={math:{label:'Spark',glyph:'⚡',color:'var(--warn)'},rea
 function svgElevationPath(difficulty,mastered,color,masteryTier){
   masteryTier=masteryTier||0;
   const W=200,H=54;
-  const pts=[[10,44],[52,33],[94,29],[136,17],[178,8]];
-  const activeIdx=Math.max(0,Math.min(4,difficulty-1));
+  // 10-rung trail: interpolate an ascending, gently zigzagging path (deterministic,
+  // not random, so it doesn't reshuffle on re-render) instead of a fixed 5-point array,
+  // now that Elevation goes 1-10.
+  const N=MAX_DIFFICULTY;
+  const x0=10,x1=178,y0=44,y1=8;
+  const pts=Array.from({length:N},(_,i)=>{
+    const t=i/(N-1);
+    const ease=1-Math.pow(1-t,1.7);
+    const x=x0+(x1-x0)*t;
+    const y=(y0-(y0-y1)*ease)+Math.sin(i*1.4)*2.2;
+    return [Math.round(x*10)/10,Math.round(y*10)/10];
+  });
+  const lastPt=pts[N-1];
+  const activeIdx=Math.max(0,Math.min(N-1,difficulty-1));
   const activeSeg=pts.slice(0,activeIdx+1).map((p,i)=>(i===0?'M':'L')+p[0]+' '+p[1]).join(' ');
   const baseSeg=pts.map((p,i)=>(i===0?'M':'L')+p[0]+' '+p[1]).join(' ');
   const dots=pts.map((p,i)=>{
     const reached=i<=activeIdx; const cur=i===activeIdx;
     return `<circle cx="${p[0]}" cy="${p[1]}" r="${cur?6.5:4}" fill="${reached?color:'var(--surface-3)'}" style="stroke:var(--surface);stroke-width:2"/>`;
   }).join('');
-  const flag=mastered?`<path d="M178 8 V-6" style="stroke:${color}" stroke-width="2.4" stroke-linecap="round"/><path d="M178 -6 l12 5 l-12 5Z" fill="${color}"/>`:'';
+  const flag=mastered?`<path d="M${lastPt[0]} ${lastPt[1]} V-6" style="stroke:${color}" stroke-width="2.4" stroke-linecap="round"/><path d="M${lastPt[0]} -6 l12 5 l-12 5Z" fill="${color}"/>`:'';
   // Beyond first mastery, further tiers add tiny stars climbing above the flagpole
   // instead of the path just sitting there unchanged forever.
   let stars='';
   for(let i=0;i<Math.max(0,masteryTier-1);i++){
-    stars+=`<path transform="translate(178 ${-16-i*11})" d="M0-4L1.1-1 4-1 1.6.8 2.5 4 0 2 -2.5 4 -1.6.8 -4-1 -1.1-1Z" fill="${color}"/>`;
+    stars+=`<path transform="translate(${lastPt[0]} ${-16-i*11})" d="M0-4L1.1-1 4-1 1.6.8 2.5 4 0 2 -2.5 4 -1.6.8 -4-1 -1.1-1Z" fill="${color}"/>`;
   }
   return `<svg viewBox="-2 -${14+Math.max(0,masteryTier-1)*11} 204 ${70+Math.max(0,masteryTier-1)*11}" width="100%" height="${52+Math.max(0,masteryTier-1)*11}" preserveAspectRatio="none">
     <path d="${baseSeg}" fill="none" style="stroke:var(--surface-3)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1367,6 +1561,51 @@ function flameRow(n,color){
   if(n>5) out+=`<span class="mono" style="font-size:.7rem;color:${color}">+${n-5}</span>`;
   return `<span class="flame-row">${out}</span>`;
 }
+/* ================= SOUND EFFECTS (synthesized, no external audio assets) =================
+   Request: "加入一些過關音效" (add some pass/completion sound effects). Every effect
+   below is a handful of Web Audio oscillator "blips" with a quick attack and an
+   exponential decay -- no audio files to fetch, so the app stays one offline-capable
+   HTML file. Muted with a small speaker toggle in the topbar; the on/off preference
+   is a per-device convenience, so it lives in localStorage rather than the synced
+   learner record. */
+let _actx=null;
+function _audioCtx(){
+  if(_actx) return _actx;
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC) return null;
+  try{ _actx=new AC(); }catch(e){ _actx=null; }
+  return _actx;
+}
+function soundEnabled(){
+  try{ const v=localStorage.getItem('twopeaks:sound'); return v===null?true:v==='on'; }catch(e){ return true; }
+}
+function setSoundEnabled(on){
+  try{ localStorage.setItem('twopeaks:sound',on?'on':'off'); }catch(e){}
+}
+function toggleSound(){ setSoundEnabled(!soundEnabled()); if(soundEnabled()) SFX.correct(); render(); }
+/* notes: [{freq,start,dur,type,gain}] (start/dur in seconds, relative to "now"). */
+function playNotes(notes){
+  if(!soundEnabled()) return;
+  const ctx=_audioCtx(); if(!ctx) return;
+  if(ctx.state==='suspended') ctx.resume().catch(()=>{});
+  const now=ctx.currentTime;
+  notes.forEach(n=>{
+    const osc=ctx.createOscillator(), gain=ctx.createGain();
+    osc.type=n.type||'sine'; osc.frequency.value=n.freq;
+    const t0=now+(n.start||0), dur=n.dur||0.16, peak=n.gain!=null?n.gain:0.16;
+    gain.gain.setValueAtTime(0.0001,t0);
+    gain.gain.exponentialRampToValueAtTime(peak,t0+0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(t0); osc.stop(t0+dur+0.03);
+  });
+}
+const SFX={
+  correct(){ playNotes([{freq:880,start:0,dur:.14},{freq:1318.51,start:.07,dur:.18}]); },
+  wrong(){ playNotes([{freq:196,start:0,dur:.24,type:'triangle',gain:.13}]); },
+  sessionComplete(){ playNotes([{freq:523.25,start:0,dur:.16},{freq:659.25,start:.12,dur:.16},{freq:783.99,start:.24,dur:.3}]); },
+  celebrate(){ playNotes([{freq:523.25,start:0,dur:.14},{freq:659.25,start:.1,dur:.14},{freq:783.99,start:.2,dur:.14},{freq:1046.5,start:.3,dur:.42}]); },
+};
 /* Celebration confetti burst for level-ups, mastery and badges. Skips animation if the viewer prefers reduced motion. */
 function burstConfettiBig(){
   if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -1707,9 +1946,11 @@ function accentVars(color){ return color==='teal'?{c:'var(--teal)',cs:'var(--tea
 function renderTopbar(){
   const el=document.getElementById('topbar');
   const u=APP.auth.currentUser;
+  const soundOn=soundEnabled();
   el.innerHTML=`<div class="brand">${icon('mountain','var(--accent)',34)}<div><div class="brand-name">Two Peaks</div><div class="brand-sub">Home Basecamp</div></div></div>
     <div class="row" style="align-items:center;gap:12px">
       <span style="font-size:.82rem;color:var(--ink-soft)">Signed in as <b>${esc(u.username)}</b>${u.isAdmin?' · Admin':''}</span>
+      <button class="btn btn-secondary sound-toggle" title="${soundOn?'Mute sound effects':'Turn on sound effects'}" onclick="toggleSound()">${icon(soundOn?'sound-on':'sound-off','var(--ink)',18)}</button>
       <button class="btn btn-secondary" onclick="logout()">Log Out</button>
     </div>`;
 }
@@ -1919,7 +2160,7 @@ function fieldDefsFor(mode){
 }
 function startSession(skillId){
   const learnerId=APP.currentLearnerId;
-  session={learnerId,skillId,qIndex:0,total:8,correctCount:0,xpEarned:0,missedQueue:0,answered:false,numericInput:'',fields:{},activeField:null,selected:null,currentIsReview:false,comboStreak:0};
+  session={learnerId,skillId,qIndex:0,total:8,correctCount:0,xpEarned:0,missedQueue:0,answered:false,numericInput:'',fields:{},activeField:null,selected:null,currentIsReview:false,comboStreak:0,seenPrompts:new Set()};
   nextQuestionInSession();
   openModal(renderSessionModal());
 }
@@ -1928,7 +2169,17 @@ function nextQuestionInSession(){
   const gen=GENERATORS[session.skillId];
   let isReview=false;
   if(session.qIndex>0&&session.qIndex%4===0&&session.missedQueue>0){ isReview=true; session.missedQueue--; }
-  session.currentQuestion=gen(state.difficulty);
+  /* Avoid repeating the exact same question within one session (request: "每個session
+     出過的題目盡可能不要再重複出現"). Procedural generators are randomized, so a handful
+     of retries on an exact prompt collision is normally enough; bank-based generators
+     already shuffle through the whole bank before repeating, so this rarely triggers for
+     them. The retry cap keeps this safe for very small combinatorial spaces (e.g. a
+     prime/composite check) where a repeat is sometimes unavoidable. */
+  if(!session.seenPrompts) session.seenPrompts=new Set();
+  let q,tries=0;
+  do{ q=gen(state.difficulty); tries++; }while(session.seenPrompts.has(q.dedupeKey||q.prompt)&&tries<8);
+  session.seenPrompts.add(q.dedupeKey||q.prompt);
+  session.currentQuestion=q;
   session.currentIsReview=isReview; session.answered=false; session.numericInput=''; session.selected=null;
   const fields=fieldDefsFor(session.currentQuestion.mode);
   session.fields=fields?Object.fromEntries(fields.map(f=>[f,''])):{};
@@ -2025,6 +2276,7 @@ function submitAnswer(value){
   else{ correct=(value===q.correctAnswer); }
   session.answered=true; session.lastCorrect=correct;
   session.lastPhrase=correct?pick(CORRECT_PHRASES):pick(WRONG_PHRASES);
+  correct?SFX.correct():SFX.wrong();
   const state=APP.skillStates[session.learnerId][session.skillId];
   applyAnswer(state,correct);
   const learner=APP.learners[session.learnerId];
@@ -2091,7 +2343,7 @@ function renderSummary(leveledUp,newBadges,tokenAwarded,alreadyEarnedToday,evolv
   const mascot=LEARNERS_META[APP.currentLearnerId].mascot;
   const pct=session.correctCount/session.total;
   const bigWin=leveledUp||newBadges.length>0||pct>=0.85||evolved;
-  if(bigWin) burstConfettiBig();
+  if(bigWin){ burstConfettiBig(); SFX.celebrate(); } else { SFX.sessionComplete(); }
   const badgeHtml=newBadges.length?`<div class="badge-row" style="justify-content:center;margin-bottom:10px">${newBadges.map(b=>`<div class="badge-tile"><div class="badge-shape" style="background:${av.soft}">${icon(b.icon,av.c,28)}</div>${b.label}</div>`).join('')}</div>`:'';
   const evoLine=evolved?`<div class="summit-banner"><div style="width:48px;height:48px;flex:none">${svgCompanion(stageAfter,av.c,companionSpeciesFor(APP.currentLearnerId))}</div><div>Your companion evolved to <b>${COMPANION_STAGE_NAMES[stageAfter]}</b>!</div></div>`:'';
   const summitLine=leveledUp?`<div class="summit-banner">${icon('star',av.c,22)} Level Up! Now Level ${APP.learners[APP.currentLearnerId].level}</div>`:(pct>=0.85?`<div class="summit-banner">${icon('flame',av.c,20)} Amazing session!</div>`:'');
@@ -2155,6 +2407,7 @@ function answerComp(value){
   const q=comp.passage.questions[comp.qIndex];
   const correct=(value===q.correct);
   comp.answered=true; comp.selected=value; comp.lastCorrect=correct;
+  correct?SFX.correct():SFX.wrong();
   const state=APP.skillStates[comp.learnerId][comp.skillId];
   applyAnswer(state,correct);
   const compLearner=APP.learners[comp.learnerId];
@@ -2424,7 +2677,7 @@ function renderCampLog(){
     const state=APP.skillStates[id][s.id]; const asc=ascentBar(state);
     const flag=(!state.mastered && state.totalAnswered>=6 && asc.pct<60)?`<span class="pill pill-warn">Needs attention</span>`:'';
     return `<div class="card" style="padding:12px 16px;display:flex;align-items:center;gap:12px">
-      <div style="flex:1"><b style="font-size:.88rem">${s.label}</b><div class="skill-meta">Elevation ${state.difficulty}/5 · ${state.totalCorrect}/${state.totalAnswered} correct all-time</div></div>
+      <div style="flex:1"><b style="font-size:.88rem">${s.label}</b><div class="skill-meta">Elevation ${state.difficulty}/${MAX_DIFFICULTY} · ${state.totalCorrect}/${state.totalAnswered} correct all-time</div></div>
       <div style="width:110px" class="ascent"><div class="ascent-track"><div class="ascent-fill" style="width:${asc.pct}%;background:${av.c}"></div></div></div>
       ${state.mastered?`<span class="pill pill-good">${MASTERY_TIER_LABELS[state.masteryTier||1]}</span>`:''} ${flag}
     </div>`;
