@@ -2508,6 +2508,14 @@ const Store={
     catch(e){ console.warn('db set threw',path,e); }
   },
   save(path,data){ this.writeSeq++; this.lastWrite[path]=this.writeSeq; this.lsSet(path,data); this.dbSet(path,data); },
+  /* Like save(), but merges the given fields into the node instead of replacing it — so
+     child nodes that are stored separately (a learner's skills/ and workshop/) survive. */
+  saveFields(path,data){ this.writeSeq++; this.lastWrite[path]=this.writeSeq; this.lsSet(path,data); this.dbUpdate(path,data); },
+  dbUpdate(path,data){
+    if(!this.db)return;
+    try{ this.db.ref(path).update(data).catch(e=>console.warn('db update failed',path,e)); }
+    catch(e){ console.warn('db update threw',path,e); }
+  },
   /* Race guard for refreshCloudData(): a cloud read that was sent BEFORE this device saved
      newer data to the same path must not overwrite that newer data when it arrives.
      (Found in live testing: tap a tab — which starts a background re-sync — then start a
@@ -2596,7 +2604,7 @@ function defaultWorkshop(){
 
 async function loadAllData(){
   for(const id of Object.keys(LEARNERS_META)){
-    const cached=Store.lsGet(`learners/${id}`);
+    const cached=learnerRecordOrNull(Store.lsGet(`learners/${id}`));
     APP.learners[id]=cached||defaultLearner(id);
     const cachedWs=Store.lsGet(`learners/${id}/workshop`);
     APP.workshops[id]=cachedWs||defaultWorkshop();
@@ -2618,6 +2626,7 @@ async function loadAllData(){
    without the parent having to reload the page (the app only ever fetched
    once at boot before this). Returns true if it actually touched the cloud
    (false when running fully offline/local-only, e.g. in tests). */
+function learnerRecordOrNull(o){ return o?learnerRecord(o):null; }
 async function refreshCloudData(){
   if(!Store.db)return false;
   // Firebase Realtime Database silently drops keys whose value is an empty
@@ -2629,8 +2638,8 @@ async function refreshCloudData(){
     let seq=Store.writeSeq;
     const remote=await Store.dbGet(lp);
     if(remote&&Store.savedSince(lp,seq)){ /* saved locally while this read was in flight — keep the newer local copy (already pushed to the cloud by its own save) */ }
-    else if(remote){ const merged=Object.assign(defaultLearner(id),remote); APP.learners[id]=merged; Store.lsSet(`learners/${id}`,merged); }
-    else{ Store.dbSet(`learners/${id}`,APP.learners[id]); }
+    else if(remote){ const merged=Object.assign(defaultLearner(id),learnerRecord(remote)); APP.learners[id]=merged; Store.lsSet(`learners/${id}`,merged); }
+    else{ APP.learners[id]=learnerRecord(APP.learners[id]); Store.dbUpdate(`learners/${id}`,APP.learners[id]); }
     seq=Store.writeSeq;
     const remoteWs=await Store.dbGet(wp);
     if(remoteWs&&Store.savedSince(wp,seq)){ /* newer local copy wins */ }
@@ -2701,7 +2710,15 @@ async function refreshCampLogNow(){
   if(APP.activeTab==='camp') render();
   toast('Camp Log 已更新！');
 }
-function saveLearner(id){ Store.save(`learners/${id}`,APP.learners[id]); }
+/* A learner's skills and Trail Time workshop live UNDER the learner's node in Firebase
+   (learners/<id>/skills/..., learners/<id>/workshop). Reading learners/<id> therefore returns
+   that whole subtree, and the old saveLearner() wrote it straight back with set() — so every
+   profile save (after every session / token) replaced ALL skills and the workshop with the
+   stale copy captured at the last sync, rolling progress back. Found in live testing. Now the
+   learner record never carries those children, and it is saved with update() (merge), which
+   leaves the separately-saved skills/ and workshop/ nodes untouched. */
+function learnerRecord(obj){ const o=Object.assign({},obj); delete o.skills; delete o.workshop; return o; }
+function saveLearner(id){ APP.learners[id]=learnerRecord(APP.learners[id]); Store.saveFields(`learners/${id}`,APP.learners[id]); }
 function saveSkill(id,skillId){ Store.save(`learners/${id}/skills/${skillId}`,APP.skillStates[id][skillId]); }
 function saveWorkshop(id){ Store.save(`learners/${id}/workshop`,APP.workshops[id]); }
 function saveRewards(){ Store.save('rewards/list',APP.rewards); }
