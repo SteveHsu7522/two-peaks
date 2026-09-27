@@ -447,7 +447,26 @@ function gWordProblems4(level){const lvl=diffTier(level),bo=diffBoost(level);con
   return{prompt:`${n1} read ${num}/${den} of a ${total}-page book. How many pages did ${n1} read?`,mode:'numeric',correctAnswer:total*num/den,visual:{type:'fractionbar',num,den},explanation:`${total} x ${num}/${den} = ${total*num/den} pages.`};}
 
 /* ================= READING DATA BANKS ================= */
-function makeBankGenerator(bank,buildQuestion){let queue=[];return function(){if(queue.length===0)queue=shuffle(bank.map((_,i)=>i));const idx=queue.pop();return buildQuestion(bank[idx],bank);};}
+/* Shuffled-bag picker (same pattern as the Reading Comprehension passage picker):
+   every call draws the next item from a shuffled permutation of the whole bank, so
+   nothing repeats until the whole bank has been used once -- and when the bag runs out
+   and reshuffles, the freshly-shuffled bag is not allowed to start on the very item
+   that was just drawn, so two consecutive draws (e.g. across "Start Session" clicks)
+   never show the same question back-to-back. */
+function makeBankGenerator(bank,buildQuestion){
+  let queue=[];
+  let lastIdx=null;
+  return function(){
+    if(queue.length===0){
+      let order;
+      do{ order=shuffle(bank.map((_,i)=>i)); }while(bank.length>1 && lastIdx!==null && order[order.length-1]===lastIdx);
+      queue=order;
+    }
+    const idx=queue.pop();
+    lastIdx=idx;
+    return buildQuestion(bank[idx],bank);
+  };
+}
 
 const SIGHTWORDS2_BANK=[
 {word:'because',sentence:'I brought an umbrella ___ it looked like rain.',distractors:['before','around','upon']},
