@@ -2338,10 +2338,17 @@ function advanceSession(){
 }
 function quitSession(){ closeModal(); render(); }
 /* A completed session (math/reading practice, or a reading comprehension
-   passage) earns a flat +1 Trail Token, as long as the child got no more than
-   2 questions wrong in it -- but capped at 1 token per SKILL per day (a
+   passage) earns a flat +1 Trail Token, as long as (a) the session was played
+   all the way through -- for a math/reading practice session that always
+   means the full 8 questions (session.total is fixed at 8 in startSession;
+   quitSession() never calls finalizeCommon, so an early exit never earns a
+   token), and a comprehension passage means all of its questions -- and (b)
+   the child got fewer than 2 questions wrong in it, i.e. at most 1 wrong
+   (request: "同一天一個session最多只能獲得一個token,各session要做滿8題並且
+   錯的題數小於2題才能獲得token" -- tightened from the previous "no more than 2
+   wrong" rule). This is further capped at 1 token per SKILL per day (a
    different skill that same day still earns its own token; the same skill
-   again the same day does not). Miss more than 2, or already earned today's
+   again the same day does not). Miss 2 or more, or already earned today's
    token for this exact skill, and the session still counts for XP/streak/
    "done for today", just no extra token. */
 function finalizeCommon(learnerId,subjectKey,xpEarned,correctCount,total,skillId){
@@ -2357,7 +2364,7 @@ function finalizeCommon(learnerId,subjectKey,xpEarned,correctCount,total,skillId
   logSessionResult(learner,skillId,correctCount,total); // per-session accuracy, for Camp Log's Daily Progress breakdown
   ensureTokenLog(learner);
   const alreadyEarnedToday=!!learner.tokenLog.awarded[skillId];
-  const tokenAwarded=wrongCount<=2 && !alreadyEarnedToday;
+  const tokenAwarded=wrongCount<2 && !alreadyEarnedToday;
   if(tokenAwarded){
     learner.tokens=(learner.tokens||0)+1;
     learner.tokenLog.awarded[skillId]=true;
@@ -2382,7 +2389,7 @@ function renderSummary(leveledUp,newBadges,tokenAwarded,alreadyEarnedToday,evolv
   const badgeHtml=newBadges.length?`<div class="badge-row" style="justify-content:center;margin-bottom:10px">${newBadges.map(b=>`<div class="badge-tile"><div class="badge-shape" style="background:${av.soft}">${icon(b.icon,av.c,28)}</div>${b.label}</div>`).join('')}</div>`:'';
   const evoLine=evolved?`<div class="summit-banner"><div style="width:48px;height:48px;flex:none">${svgCompanion(stageAfter,av.c,companionSpeciesFor(APP.currentLearnerId))}</div><div>Your companion evolved to <b>${COMPANION_STAGE_NAMES[stageAfter]}</b>!</div></div>`:'';
   const summitLine=leveledUp?`<div class="summit-banner">${icon('star',av.c,22)} Level Up! Now Level ${APP.learners[APP.currentLearnerId].level}</div>`:(pct>=0.85?`<div class="summit-banner">${icon('flame',av.c,20)} Amazing session!</div>`:'');
-  const noTokenReason=alreadyEarnedToday?'Already earned a token for this skill today':'No token this time — missed more than 2';
+  const noTokenReason=alreadyEarnedToday?'Already earned a token for this skill today':'No token this time — missed 2 or more';
   const tokenChip=tokenAwarded?`<div class="stat-chip">${icon('token','var(--accent)',16)}<div><div class="num mono">+1</div><div class="cap">Token</div></div></div>`:`<div class="stat-chip"><div><div class="cap" style="text-transform:none">${noTokenReason}</div></div></div>`;
   return `<div class="modal-card center" onclick="stopProp(event)">
     <div class="hero-mascot" style="width:64px;height:64px;margin:0 auto 6px">${svgMascot(mascot,av.c,bigWin?'excited':'happy')}</div>
