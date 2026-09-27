@@ -2507,7 +2507,14 @@ const Store={
     try{ this.db.ref(path).set(data).catch(e=>console.warn('db set failed',path,e)); }
     catch(e){ console.warn('db set threw',path,e); }
   },
-  save(path,data){ this.lsSet(path,data); this.dbSet(path,data); }
+  save(path,data){ this.writeSeq++; this.lastWrite[path]=this.writeSeq; this.lsSet(path,data); this.dbSet(path,data); },
+  /* Race guard for refreshCloudData(): a cloud read that was sent BEFORE this device saved
+     newer data to the same path must not overwrite that newer data when it arrives.
+     (Found in live testing: tap a tab — which starts a background re-sync — then start a
+     session right away, and the re-sync would land mid-session and roll the answers back
+     to the pre-session copy; the next save then pushed that stale copy to the cloud.) */
+  writeSeq:0, lastWrite:{},
+  savedSince(path,seq){ return (this.lastWrite[path]||0)>seq; }
 };
 
 const DEFAULT_REWARDS=[
@@ -2618,24 +2625,34 @@ async function refreshCloudData(){
   // merging onto a freshly-built default object restores those keys so the
   // UI never sees `undefined` where it expects an array/object.
   for(const id of Object.keys(LEARNERS_META)){
-    const remote=await Store.dbGet(`learners/${id}`);
-    if(remote){ const merged=Object.assign(defaultLearner(id),remote); APP.learners[id]=merged; Store.lsSet(`learners/${id}`,merged); }
+    const lp=`learners/${id}`, wp=`learners/${id}/workshop`;
+    let seq=Store.writeSeq;
+    const remote=await Store.dbGet(lp);
+    if(remote&&Store.savedSince(lp,seq)){ /* saved locally while this read was in flight — keep the newer local copy (already pushed to the cloud by its own save) */ }
+    else if(remote){ const merged=Object.assign(defaultLearner(id),remote); APP.learners[id]=merged; Store.lsSet(`learners/${id}`,merged); }
     else{ Store.dbSet(`learners/${id}`,APP.learners[id]); }
-    const remoteWs=await Store.dbGet(`learners/${id}/workshop`);
-    if(remoteWs){ const mergedWs=Object.assign(defaultWorkshop(),remoteWs); APP.workshops[id]=mergedWs; Store.lsSet(`learners/${id}/workshop`,mergedWs); }
+    seq=Store.writeSeq;
+    const remoteWs=await Store.dbGet(wp);
+    if(remoteWs&&Store.savedSince(wp,seq)){ /* newer local copy wins */ }
+    else if(remoteWs){ const mergedWs=Object.assign(defaultWorkshop(),remoteWs); APP.workshops[id]=mergedWs; Store.lsSet(`learners/${id}/workshop`,mergedWs); }
     else{ Store.dbSet(`learners/${id}/workshop`,APP.workshops[id]); }
     // Fetched in parallel: with the next-grade + Life Skills tiers each learner now has
     // ~25 skills, and one-at-a-time round trips would make every refresh noticeably slow.
     const skillDefs=LEARNERS_META[id].skills;
+    seq=Store.writeSeq;
     const remotes=await Promise.all(skillDefs.map(sk=>Store.dbGet(`learners/${id}/skills/${sk.id}`)));
     skillDefs.forEach((sk,k)=>{
       const remoteSk=remotes[k];
+      const sp=`learners/${id}/skills/${sk.id}`;
+      if(remoteSk&&Store.savedSince(sp,seq)) return; // answered during this read — keep the live local state
       if(remoteSk){ const mergedSk=Object.assign(makeSkillState(),remoteSk); APP.skillStates[id][sk.id]=mergedSk; Store.lsSet(`learners/${id}/skills/${sk.id}`,mergedSk); }
       else{ if(!APP.skillStates[id][sk.id]) APP.skillStates[id][sk.id]=makeSkillState(); Store.dbSet(`learners/${id}/skills/${sk.id}`,APP.skillStates[id][sk.id]); }
     });
   }
+  const rseq=Store.writeSeq;
   const remoteRewards=await Store.dbGet('rewards/list');
-  if(remoteRewards){ const mergedRewards=Object.assign({items:DEFAULT_REWARDS.slice()},remoteRewards); APP.rewards=mergedRewards; Store.lsSet('rewards/list',mergedRewards); }
+  if(remoteRewards&&Store.savedSince('rewards/list',rseq)){ /* newer local copy wins */ }
+  else if(remoteRewards){ const mergedRewards=Object.assign({items:DEFAULT_REWARDS.slice()},remoteRewards); APP.rewards=mergedRewards; Store.lsSet('rewards/list',mergedRewards); }
   else{ Store.dbSet('rewards/list',APP.rewards); }
   migrateRewardsIfLegacy();
   APP.lastCloudSyncAt=Date.now();
