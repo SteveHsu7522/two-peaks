@@ -122,6 +122,10 @@ button{font-family:inherit;cursor:pointer;}
 .field-labels{display:flex;justify-content:center;gap:30px;font-size:.68rem;color:var(--ink-faint);margin:4px 0 12px;}
 .session-list{display:flex;flex-direction:column;gap:4px;padding-left:10px;border-left:2px solid var(--border);}
 .session-row{display:flex;justify-content:space-between;gap:10px;font-size:.78rem;color:var(--ink-soft);}
+.range-toggle{display:flex;gap:6px;margin-bottom:14px;}
+.range-btn{font-family:var(--font-mono);font-size:.72rem;font-weight:600;padding:5px 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--ink-soft);cursor:pointer;}
+.range-btn[data-active="true"]{background:var(--accent);color:#221602;border-color:var(--accent);}
+.chart-tooltip{position:fixed;z-index:999;background:var(--ink);color:var(--surface);font-family:var(--font-mono);font-size:.72rem;padding:5px 9px;border-radius:7px;pointer-events:none;box-shadow:var(--shadow-sm);display:none;white-space:nowrap;}
 .feedback-box{margin-top:16px;padding:14px;border-radius:12px;font-size:.9rem;}
 .feedback-good{background:var(--good-soft);color:var(--good);}
 .feedback-bad{background:var(--bad-soft);color:var(--bad);}
@@ -1902,7 +1906,7 @@ function ensureTodayLog(learner){
       const prev=learner.todayLog;
       const routeDone=[prev.mathDone,prev.readingDone,prev.workshopDone,prev.journalDone].filter(Boolean).length;
       learner.history.push({date:prev.date,routeDone,answeredCount:prev.answeredCount||0,correctCount:prev.correctCount||0});
-      learner.history=learner.history.slice(-30);
+      learner.history=learner.history.slice(-120); // ~17 weeks, enough to back Camp Log's 12-week Weekly Summary chart
     }
     learner.todayLog={date:today,mathDone:false,readingDone:false,workshopDone:false,journalDone:false,answeredCount:0,correctCount:0};
   }
@@ -1945,7 +1949,7 @@ function logTokenAward(learner,source){
 function logSessionResult(learner,skillId,correct,total){
   if(!learner.sessionLog)learner.sessionLog=[]; // guards Firebase's empty-array-drop quirk
   learner.sessionLog.push({date:todayStr(),time:Date.now(),skillId,correct,total});
-  learner.sessionLog=learner.sessionLog.slice(-200);
+  learner.sessionLog=learner.sessionLog.slice(-3000); // generous enough to back a full year of per-skill accuracy charts
 }
 function checkBadges(learnerId){
   const learner=APP.learners[learnerId]; const ss=APP.skillStates[learnerId];
@@ -2600,60 +2604,159 @@ function addJournal(){
 }
 
 /* ================= CAMP LOG (guide / parent dashboard) ================= */
-/* Daily Progress: today's route-completion + accuracy, plus recent history
-   (request: "家長帳戶的sessio追縱要改成可以追蹤每天達成率跟答對率" -- per-day
-   route-completion rate and accuracy rate), further broken out to each
-   individual session's own score (request: "家長帳戶中的Daily Progress 要展開到
-   每個session 正確率"), plus a weekly roll-up (request: "每一週要做一個周統計"). */
-function allStatsRows(learner){
-  const t=learner.todayLog;
-  const todayRow=t?{date:t.date,routeDone:[t.mathDone,t.readingDone,t.workshopDone,t.journalDone].filter(Boolean).length,answeredCount:t.answeredCount||0,correctCount:t.correctCount||0,isToday:true}:null;
-  const past=(learner.history||[]).slice().reverse(); // most recent first
-  return (todayRow?[todayRow]:[]).concat(past);
+/* Session statistics are shown as XY charts rather than text lists (request:
+   "管理者表單中 每天每個session統計改成用xy軸圖表顯示, 表格可以切換最近7天/月/最近一年,
+   一個session一張圖表x為日期y為accuracy,移動到當天小點會跳出 答對題數/總題數" -- turn
+   the daily per-session stats into XY charts, switchable between the last 7 days /
+   month / year, one chart per session/skill with date on X and accuracy on Y, and
+   hovering (or tapping) a day's dot pops up that day's correct/total. Also:
+   "weekly summary也用圖表呈現" and "Elevation map也用XY圖表呈現" (X = each subject,
+   Y = current Elevation level, per the parent's own choice when asked which axes
+   made sense there). */
+
+/* ---- shared inline-SVG XY chart + floating tooltip. No external charting library
+   (this is a single self-contained HTML file) -- built from the same hand-drawn SVG
+   approach already used everywhere else in this app (elevation paths, badges, etc). */
+function chartTipEscape(s){
+  return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
 }
-function dailyStatsRows(learner){ return allStatsRows(learner).slice(0,14); }
-function sessionsForDate(learner,date){ return (learner.sessionLog||[]).filter(s=>s.date===date); }
-function renderDailyProgress(learner){
-  const rows=dailyStatsRows(learner);
-  if(!rows.length) return `<div class="section-sub">No sessions logged yet.</div>`;
-  const labels=skillLabelMap(learner.id);
-  const rowsHtml=rows.map(r=>{
-    const acc=r.answeredCount>0?Math.round(r.correctCount/r.answeredCount*100):null;
-    const sessions=sessionsForDate(learner,r.date);
-    // Sessions completed before per-session tracking (sessionLog) was added have no
-    // entry here even though the day's aggregate answeredCount/correctCount counts them.
-    // Surface the gap as a single reconciliation row instead of silently hiding it.
-    const trackedAnswered=sessions.reduce((s,x)=>s+(x.total||0),0);
-    const trackedCorrect=sessions.reduce((s,x)=>s+(x.correct||0),0);
-    const untrackedAnswered=Math.max(0,(r.answeredCount||0)-trackedAnswered);
-    const untrackedCorrect=Math.max(0,(r.correctCount||0)-trackedCorrect);
-    const sessionRows=sessions.map(s=>{
-      const pct=s.total>0?Math.round(s.correct/s.total*100):0;
-      const label=(labels[s.skillId]||{}).label||s.skillId;
-      return `<div class="session-row"><span>${esc(label)}</span><span class="mono">${s.correct}/${s.total} (${pct}%)</span></div>`;
-    }).join('');
-    const untrackedRow=untrackedAnswered>0?`<div class="session-row" style="opacity:.6;font-style:italic"><span>Other practice (before per-session tracking)</span><span class="mono">${untrackedCorrect}/${untrackedAnswered} (${Math.round(untrackedCorrect/untrackedAnswered*100)}%)</span></div>`:'';
-    const hasDetail=sessions.length>0||untrackedAnswered>0;
-    return `<div class="card" style="padding:10px 16px">
-      <div style="display:flex;align-items:center;gap:14px${hasDetail?';margin-bottom:8px':''}">
-        <div style="flex:1"><b class="mono">${esc(r.date)}</b>${r.isToday?' <span class="tag">Today</span>':''}</div>
-        <div style="width:110px">Route ${r.routeDone}/4</div>
-        <div style="width:140px">${acc===null?'No questions yet':`Accuracy ${acc}%`}</div>
-      </div>
-      ${hasDetail?`<div class="session-list">${sessionRows}${untrackedRow}</div>`:''}
-    </div>`;
+let _chartTipHideTimer=null;
+function showChartTip(evt,text){
+  if(!text)return;
+  let tip=document.getElementById('chartTooltip');
+  if(!tip){ tip=document.createElement('div'); tip.id='chartTooltip'; tip.className='chart-tooltip'; document.body.appendChild(tip); }
+  tip.textContent=text;
+  tip.style.display='block';
+  const touch=evt.touches&&evt.touches[0];
+  const cx=touch?touch.clientX:evt.clientX, cy=touch?touch.clientY:evt.clientY;
+  let left=cx+14;
+  if(typeof window!=='undefined'&&window.innerWidth&&left+150>window.innerWidth) left=cx-164;
+  tip.style.left=left+'px';
+  tip.style.top=(cy-32)+'px';
+  if(_chartTipHideTimer){ clearTimeout(_chartTipHideTimer); _chartTipHideTimer=null; }
+  if(touch){ _chartTipHideTimer=setTimeout(hideChartTip,2500); } // no touchend-elsewhere listener, so auto-hide
+}
+function hideChartTip(){ const tip=document.getElementById('chartTooltip'); if(tip) tip.style.display='none'; }
+
+/* points: [{xFrac:0..1, y:number, tip:string, color?}]. xTickLabels:
+   [{xFrac:0..1, label}]. Renders gridlines, an optional connecting line, and a
+   hoverable/tappable dot per point -- a point's color can be overridden
+   individually (used by the Elevation chart to flag a skill needing attention). */
+function svgXYChart(cfg){
+  const{points=[],width=560,height=170,yMin=0,yMax=100,yTicks=[0,25,50,75,100],yFmt=v=>v+'%',
+    color='var(--accent)',xTickLabels=[],emptyLabel='No data yet.',connectLine=true,stems=false,
+    xLabelRotate=false}=cfg;
+  if(!points.length) return `<div class="section-sub" style="padding:8px 0 2px">${esc(emptyLabel)}</div>`;
+  const padL=32,padR=10,padT=8,padB=xLabelRotate?46:22;
+  const plotW=width-padL-padR,plotH=height-padT-padB;
+  const xAt=f=>padL+plotW*Math.max(0,Math.min(1,f));
+  const yAt=v=>padT+plotH*(1-((v-yMin)/((yMax-yMin)||1)));
+  const gridLines=yTicks.map(t=>{
+    const y=yAt(t).toFixed(1);
+    return `<line x1="${padL}" y1="${y}" x2="${(width-padR).toFixed(1)}" y2="${y}" stroke="var(--border)" stroke-width="1"/><text x="${(padL-6).toFixed(1)}" y="${(parseFloat(y)+3).toFixed(1)}" text-anchor="end" style="font-family:var(--font-mono);font-size:9px;fill:var(--ink-faint)">${esc(yFmt(t))}</text>`;
   }).join('');
-  return `<div style="display:flex;flex-direction:column;gap:6px">${rowsHtml}</div>`;
+  const xLabelsHtml=xTickLabels.map(t=>{
+    const x=xAt(t.xFrac).toFixed(1);
+    if(xLabelRotate){
+      const ly=(height-padB+14).toFixed(1);
+      return `<text x="${x}" y="${ly}" text-anchor="end" transform="rotate(-40 ${x} ${ly})" style="font-family:var(--font-mono);font-size:9px;fill:var(--ink-faint)">${esc(t.label)}</text>`;
+    }
+    return `<text x="${x}" y="${(height-6).toFixed(1)}" text-anchor="middle" style="font-family:var(--font-mono);font-size:9px;fill:var(--ink-faint)">${esc(t.label)}</text>`;
+  }).join('');
+  const sorted=points.slice().sort((a,b)=>a.xFrac-b.xFrac);
+  const linePath=(connectLine&&sorted.length>1)?sorted.map((p,i)=>`${i===0?'M':'L'}${xAt(p.xFrac).toFixed(1)} ${yAt(p.y).toFixed(1)}`).join(' '):'';
+  const stemsHtml=stems?sorted.map(p=>{
+    const x=xAt(p.xFrac).toFixed(1);
+    return `<line x1="${x}" y1="${yAt(yMin).toFixed(1)}" x2="${x}" y2="${yAt(p.y).toFixed(1)}" stroke="${p.color||color}" stroke-width="2" opacity=".4"/>`;
+  }).join(''):'';
+  const dots=sorted.map(p=>{
+    const cx=xAt(p.xFrac).toFixed(1),cy=yAt(p.y).toFixed(1);
+    const tip=chartTipEscape(p.tip||'');
+    const dotColor=p.color||color;
+    return `<circle cx="${cx}" cy="${cy}" r="4.5" fill="${dotColor}" stroke="var(--surface)" stroke-width="1.5" style="cursor:pointer" onmouseenter="showChartTip(event,'${tip}')" onmousemove="showChartTip(event,'${tip}')" onmouseleave="hideChartTip()" ontouchstart="showChartTip(event,'${tip}');event.preventDefault();"/>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${width} ${height}" width="100%" style="display:block;max-width:${width}px;overflow:visible">
+    ${gridLines}
+    ${linePath?`<path d="${linePath}" fill="none" stroke="${color}" stroke-width="2"/>`:''}
+    ${stemsHtml}
+    ${dots}
+    ${xLabelsHtml}
+  </svg>`;
 }
+
+/* ---- date-window helpers for the per-skill accuracy charts ---- */
+function daysAgoStr(n){ const d=new Date(); d.setUTCDate(d.getUTCDate()-n); return d.toISOString().slice(0,10); }
+function dateDiffDays(aStr,bStr){ return Math.round((Date.parse(bStr+'T00:00:00Z')-Date.parse(aStr+'T00:00:00Z'))/86400000); }
+function fmtDateShort(dateStr){ const d=new Date(dateStr+'T00:00:00Z'); return (d.getUTCMonth()+1)+'/'+d.getUTCDate(); }
+function fmtMonthShort(dateStr){ const d=new Date(dateStr+'T00:00:00Z'); return d.toLocaleDateString('en-US',{month:'short',timeZone:'UTC'}); }
+
+const CAMP_RANGES=[{id:'7d',label:'7 Days',days:7},{id:'30d',label:'Month',days:30},{id:'365d',label:'Year',days:365}];
+function setCampLogRange(rangeId){ if(!CAMP_RANGES.some(r=>r.id===rangeId))return; APP.campLogRange=rangeId; render(); }
+
+/* Per-day, per-skill accuracy from sessionLog, scaled to true calendar position
+   within the selected window -- so a day with no practice shows as a real gap in
+   the line rather than just a missing row in a list. */
+function skillDailySeries(learner,skillId,windowDays){
+  const startStr=daysAgoStr(windowDays-1);
+  const buckets={};
+  (learner.sessionLog||[]).forEach(s=>{
+    if(s.skillId!==skillId||s.date<startStr)return;
+    if(!buckets[s.date])buckets[s.date]={correct:0,total:0};
+    buckets[s.date].correct+=s.correct; buckets[s.date].total+=s.total;
+  });
+  return Object.keys(buckets).sort().map(d=>{
+    const b=buckets[d]; const acc=b.total>0?Math.round(b.correct/b.total*100):0;
+    return{date:d,xFrac:windowDays<=1?0:dateDiffDays(startStr,d)/(windowDays-1),acc,correct:b.correct,total:b.total};
+  });
+}
+function windowXTicks(windowDays){
+  const count=windowDays<=7?windowDays:6;
+  const ticks=[];
+  for(let k=0;k<count;k++){
+    const frac=count===1?0:k/(count-1);
+    const dayIdx=Math.round(frac*(windowDays-1));
+    const d=daysAgoStr(windowDays-1-dayIdx);
+    ticks.push({xFrac:frac,label:windowDays>90?fmtMonthShort(d):fmtDateShort(d)});
+  }
+  return ticks;
+}
+function renderSkillAccuracyChart(learner,skill,windowDays,av){
+  const series=skillDailySeries(learner,skill.id,windowDays);
+  const points=series.map(pt=>({xFrac:pt.xFrac,y:pt.acc,tip:`${fmtDateShort(pt.date)}: ${pt.correct}/${pt.total} (${pt.acc}%)`}));
+  const chart=svgXYChart({points,xTickLabels:windowXTicks(windowDays),color:av.c,emptyLabel:'No sessions in this range yet.'});
+  const latest=series.length?series[series.length-1]:null;
+  return `<div class="card" style="padding:14px 16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:2px">
+      <b style="font-size:.86rem">${esc(skill.label)}</b>
+      ${latest?`<span class="section-sub" style="margin:0">Last: ${latest.correct}/${latest.total} (${latest.acc}%)</span>`:''}
+    </div>
+    ${chart}
+  </div>`;
+}
+function renderDailyProgressCharts(learner,meta,av){
+  const rangeId=CAMP_RANGES.some(r=>r.id===APP.campLogRange)?APP.campLogRange:'7d';
+  const range=CAMP_RANGES.find(r=>r.id===rangeId);
+  const toggle=`<div class="range-toggle">${CAMP_RANGES.map(r=>`<button class="range-btn" data-active="${r.id===range.id}" onclick="setCampLogRange('${r.id}')">${esc(r.label)}</button>`).join('')}</div>`;
+  const cards=meta.skills.map(s=>renderSkillAccuracyChart(learner,s,range.days,av)).join('');
+  return `${toggle}<div class="grid" style="grid-template-columns:1fr">${cards}</div>`;
+}
+
 /* Groups the days into Monday-starting weeks and totals up answered/correct
-   questions and average route-completion for each of the last few weeks. */
+   questions and average route-completion for each recent week, shown as one
+   accuracy-over-time chart (request: "weekly summary也用圖表呈現"). */
 function weekStartStr(dateStr){
   const d=new Date(dateStr+'T00:00:00');
   const dow=(d.getDay()+6)%7; // 0=Mon .. 6=Sun
   d.setDate(d.getDate()-dow);
   return d.toISOString().slice(0,10);
 }
-function renderWeeklySummary(learner){
+function allStatsRows(learner){
+  const t=learner.todayLog;
+  const todayRow=t?{date:t.date,routeDone:[t.mathDone,t.readingDone,t.workshopDone,t.journalDone].filter(Boolean).length,answeredCount:t.answeredCount||0,correctCount:t.correctCount||0,isToday:true}:null;
+  const past=(learner.history||[]).slice().reverse(); // most recent first
+  return (todayRow?[todayRow]:[]).concat(past);
+}
+function renderWeeklySummaryChart(learner,av){
   const rows=allStatsRows(learner);
   if(!rows.length) return `<div class="section-sub">No sessions logged yet.</div>`;
   const buckets={};
@@ -2663,19 +2766,41 @@ function renderWeeklySummary(learner){
     const b=buckets[wk];
     b.answered+=r.answeredCount; b.correct+=r.correctCount; b.routeSum+=r.routeDone; b.days++;
   });
-  const weeks=Object.keys(buckets).sort((a,b)=>b.localeCompare(a)).slice(0,4); // most recent 4 weeks
-  const weekRows=weeks.map(wk=>{
-    const b=buckets[wk];
-    const acc=b.answered>0?Math.round(b.correct/b.answered*100):null;
+  const weeks=Object.keys(buckets).sort().slice(-12); // oldest..newest, most recent 12 weeks
+  if(!weeks.length) return `<div class="section-sub">No sessions logged yet.</div>`;
+  const n=weeks.length;
+  const points=weeks.map((wk,i)=>{
+    const b=buckets[wk]; const acc=b.answered>0?Math.round(b.correct/b.answered*100):0;
     const avgRoute=(b.routeSum/b.days).toFixed(1);
-    return `<div class="card" style="padding:10px 16px;display:flex;align-items:center;gap:14px">
-      <div style="flex:1"><b class="mono">Week of ${esc(wk)}</b></div>
-      <div style="width:120px">Avg route ${avgRoute}/4</div>
-      <div style="width:140px">${acc===null?'No questions':`Accuracy ${acc}%`}</div>
-      <div class="mono" style="width:100px;text-align:right">${b.answered} answered</div>
-    </div>`;
-  }).join('');
-  return `<div style="display:flex;flex-direction:column;gap:6px">${weekRows}</div>`;
+    return{xFrac:n===1?0:i/(n-1),y:acc,tip:`Week of ${fmtDateShort(wk)}: ${b.correct}/${b.answered} (${acc}%) · Route avg ${avgRoute}/4`};
+  });
+  const every=Math.max(1,Math.ceil(n/6));
+  const xTickLabels=weeks.map((wk,i)=>({xFrac:n===1?0:i/(n-1),label:fmtDateShort(wk)})).filter((_,i)=>i%every===0||i===n-1);
+  return svgXYChart({points,xTickLabels,color:av.c,emptyLabel:'No sessions logged yet.'});
+}
+
+/* Elevation Map as an XY chart: X = each subject/skill, Y = its current
+   Elevation level (1-10) -- per the parent's own choice when asked which axes
+   made sense here (request: "Elevation map也用XY圖表呈現"). A skill flagged
+   "needs attention" (low recent accuracy, not yet mastered) is colored with the
+   warning color instead of the learner's usual accent; a mastered skill uses the
+   "good" color -- same signal the old progress-bar list used to convey. */
+function renderElevationChart(id,meta,av){
+  const skills=meta.skills;
+  const n=skills.length;
+  const points=skills.map((s,i)=>{
+    const state=APP.skillStates[id][s.id];
+    const asc=ascentBar(state);
+    const needsAttention=(!state.mastered&&state.totalAnswered>=6&&asc.pct<60);
+    const color=state.mastered?'var(--good)':(needsAttention?'var(--warn)':av.c);
+    const tierLabel=state.mastered?MASTERY_TIER_LABELS[state.masteryTier||1]:`Elev. ${state.difficulty}`;
+    const tip=`${s.label}: Elevation ${state.difficulty}/${MAX_DIFFICULTY} \u00b7 ${state.totalCorrect}/${state.totalAnswered} correct all-time \u00b7 ${tierLabel}${needsAttention?' \u00b7 Needs attention':''}`;
+    return{xFrac:n===1?0:i/(n-1),y:state.difficulty,tip,color};
+  });
+  const xTickLabels=skills.map((s,i)=>({xFrac:n===1?0:i/(n-1),label:s.label}));
+  return svgXYChart({points,xTickLabels,yMin:1,yMax:MAX_DIFFICULTY,yTicks:[1,2,4,6,8,10],yFmt:v=>String(v),
+    color:av.c,connectLine:false,stems:true,xLabelRotate:true,height:210,
+    emptyLabel:'No skills tracked yet.'});
 }
 /* Token Sources: where a child's tokens came from (request: "家長帳戶能統計小孩
    token從哪個session獲得的分布"). */
@@ -2730,15 +2855,6 @@ function renderCampLog(){
       <div style="flex:1"><b>${esc(l.name)}</b> · Lvl ${l.level} · ${l.tokens} tokens · ${l.streakDays}-day streak</div>
     </div>`;
   }).join('');
-  const elevRows=meta.skills.map(s=>{
-    const state=APP.skillStates[id][s.id]; const asc=ascentBar(state);
-    const flag=(!state.mastered && state.totalAnswered>=6 && asc.pct<60)?`<span class="pill pill-warn">Needs attention</span>`:'';
-    return `<div class="card" style="padding:12px 16px;display:flex;align-items:center;gap:12px">
-      <div style="flex:1"><b style="font-size:.88rem">${s.label}</b><div class="skill-meta">Elevation ${state.difficulty}/${MAX_DIFFICULTY} · ${state.totalCorrect}/${state.totalAnswered} correct all-time</div></div>
-      <div style="width:110px" class="ascent"><div class="ascent-track"><div class="ascent-fill" style="width:${asc.pct}%;background:${av.c}"></div></div></div>
-      ${state.mastered?`<span class="pill pill-good">${MASTERY_TIER_LABELS[state.masteryTier||1]}</span>`:''} ${flag}
-    </div>`;
-  }).join('');
   const badgeGallery=BADGE_DEFS.map(b=>{
     const earned=learner.badges.includes(b.id);
     return `<div class="badge-tile ${earned?'':'locked'}" title="${esc(b.desc)}"><div class="badge-shape" style="background:${earned?av.soft:'var(--surface-2)'}">${icon(b.icon,earned?av.c:'var(--ink-faint)',28)}</div>${b.label}</div>`;
@@ -2764,15 +2880,16 @@ function renderCampLog(){
   <div class="grid" style="grid-template-columns:1fr 1fr;margin-bottom:22px">${overviewRows}</div>
 
   <div class="section-title" style="font-size:1.1rem">Daily Progress</div>
-  <div class="section-sub">Route completion (out of Today's 4 stops) and answer accuracy, by day — expand each day to see every individual session's own score.</div>
-  <div style="margin-bottom:22px">${renderDailyProgress(learner)}</div>
+  <div class="section-sub">Answer accuracy by day, one chart per session — hover (or tap) a dot for that day's correct/total.</div>
+  <div style="margin-bottom:22px">${renderDailyProgressCharts(learner,meta,av)}</div>
 
   <div class="section-title" style="font-size:1.1rem">Weekly Summary</div>
-  <div class="section-sub">The last few weeks, rolled up (weeks start Monday).</div>
-  <div style="margin-bottom:22px">${renderWeeklySummary(learner)}</div>
+  <div class="section-sub">The last few weeks, rolled up (weeks start Monday) — hover (or tap) a dot for that week's correct/total.</div>
+  <div class="card" style="padding:14px 16px;margin-bottom:22px">${renderWeeklySummaryChart(learner,av)}</div>
 
   <div class="section-title" style="font-size:1.1rem">Elevation Map</div>
-  <div class="grid" style="grid-template-columns:1fr;margin-bottom:22px">${elevRows}</div>
+  <div class="section-sub">Current Elevation level (1–${MAX_DIFFICULTY}) across every subject — hover (or tap) a dot for the full picture.</div>
+  <div class="card" style="padding:14px 16px 8px;margin-bottom:22px">${renderElevationChart(id,meta,av)}</div>
 
   <div class="section-title" style="font-size:1.1rem">Trail Badges</div>
   <div class="badge-row" style="margin-bottom:22px">${badgeGallery}</div>
