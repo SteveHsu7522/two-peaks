@@ -980,7 +980,7 @@ const BADGE_DEFS=[
 {id:'level-20',label:'Level 20 Trailblazer',icon:'badge',desc:'Reach Level 20.',check:(l)=>l.level>=20},
 {id:'level-30',label:'Level 30 Pathfinder',icon:'badge',desc:'Reach Level 30.',check:(l)=>l.level>=30},
 {id:'token-saver',label:'Token Saver',icon:'token',desc:'Save up 200 Trail Tokens at once.',check:(l)=>l.tokens>=200},
-{id:'bookworm',label:'Bookworm',icon:'book',desc:'Finish every Reading Comprehension passage at least once.',check:(l,ss,passageCount)=>{const c=ss.comprehension2||ss.comprehension4;return c&&c.passagesCompleted&&c.passagesCompleted.filter(Boolean).length>=passageCount;}}
+{id:'bookworm',label:'Bookworm',icon:'book',desc:'Finish every Reading Comprehension passage at least once.',check:(l,ss,passageCount)=>{const c=ss.comprehension2||ss.comprehension4;return c&&Array.isArray(c.passagesCompleted)&&c.passagesCompleted.filter(Boolean).length>=passageCount;}}
 ];
 
 /* ================= SKILL REGISTRY ================= */
@@ -1065,7 +1065,7 @@ function computeMasteryTier(state){
   for(let i=0;i<MASTERY_TIER_THRESHOLDS.length;i++){ if(state.totalAnswered>=MASTERY_TIER_THRESHOLDS[i]) tier=i+1; }
   return Math.max(prior,tier);
 }
-function makeSkillState(){return{difficulty:1,streakCorrect:0,streakWrong:0,history:[],totalAnswered:0,totalCorrect:0,mastered:false,masteryTier:0,lastPracticed:null,passageIndex:0,passagesCompleted:[false,false,false,false,false,false]};}
+function makeSkillState(){return{difficulty:1,streakCorrect:0,streakWrong:0,history:[],totalAnswered:0,totalCorrect:0,mastered:false,masteryTier:0,lastPracticed:null,passageIndex:0,passagesCompleted:[],passagePoolOrder:null,passagePoolPos:0};}
 function applyAnswer(state,correct){
   state.totalAnswered++; if(correct)state.totalCorrect++;
   state.history.push(correct?1:0); if(state.history.length>20)state.history.shift();
@@ -2122,7 +2122,7 @@ function renderSkillTrail(subject){
     const tier=state.masteryTier||0;
     const masteredPill=state.mastered?`<span class="pill pill-good">${icon('star','var(--good)',12)} ${MASTERY_TIER_LABELS[tier]}</span>`:'';
     const nextTierNote=state.mastered&&tier<MASTERY_TIER_THRESHOLDS.length?`<div class="skill-meta" style="opacity:.75">Next: ${MASTERY_TIER_LABELS[tier+1]} at ${MASTERY_TIER_THRESHOLDS[tier]} questions (${state.totalAnswered} so far)</div>`:'';
-    const extra=s.isComprehension?`<div class="skill-meta">Passages read: ${state.passagesCompleted.filter(Boolean).length}/${meta.passages.length}</div>`:`<div class="skill-meta">Last practiced: ${state.lastPracticed||'—'}</div>`;
+    const extra=s.isComprehension?`<div class="skill-meta">Passages read: ${(Array.isArray(state.passagesCompleted)?state.passagesCompleted:[]).filter(Boolean).length}/${meta.passages.length}</div>`:`<div class="skill-meta">Last practiced: ${state.lastPracticed||'—'}</div>`;
     const elInfo=SUBJECT_ELEMENTS[subject];
     const elementChip=elInfo?`<span class="element-chip" style="background:color-mix(in srgb, ${elInfo.color} 18%, transparent);color:${elInfo.color}">${elInfo.glyph} ${elInfo.label}</span>`:'';
     return `<div class="card skill-card">
@@ -2378,12 +2378,39 @@ function renderSummary(leveledUp,newBadges,tokenAwarded,alreadyEarnedToday,evolv
 
 /* ================= COMPREHENSION FLOW ================= */
 let comp=null;
+/* ================= READING COMPREHENSION: DAILY PASSAGE PICKER =================
+   Request: "oliver每天只會做一篇 Reading Comprehension, 但現在每次打開都是同一篇文章 請協助
+   調整成隨機文章且每天不重複" (Oliver only does one Reading Comprehension passage a day,
+   but every time he opens it it's the same article -- please make it random and not
+   repeat each day). Passages are drawn from a shuffled "bag" -- a random order of every
+   passage in the pool -- so the sequence is random but nothing repeats until the whole
+   pool has been used once, and a fresh bag never starts on the passage that just
+   finished the last one. Every time Reading Comprehension is opened it draws the NEXT
+   card from the bag, so reopening it later the same day shows a different passage too
+   (not the same one pinned to that day) -- while still guaranteeing no repeats until
+   every passage in the pool has come up once. */
+function drawNextPassage(state,meta){
+  const n=meta.passages.length;
+  let order=Array.isArray(state.passagePoolOrder)?state.passagePoolOrder:null;
+  let pos=typeof state.passagePoolPos==='number'?state.passagePoolPos:0;
+  if(!order || !order.length || pos>=order.length){
+    const prevIdx=typeof state.passageIndex==='number'?state.passageIndex:null;
+    do{ order=shuffle(Array.from({length:n},(_,i)=>i)); }while(n>1 && prevIdx!==null && order[0]===prevIdx);
+    pos=0;
+  }
+  state.passageIndex=order[pos];
+  state.passagePoolOrder=order;
+  state.passagePoolPos=pos+1;
+  return state.passageIndex;
+}
 function openComprehension(skillId){
   const learnerId=APP.currentLearnerId;
   const meta=LEARNERS_META[learnerId];
   const state=APP.skillStates[learnerId][skillId];
-  const passage=meta.passages[state.passageIndex%meta.passages.length];
+  const idx=drawNextPassage(state,meta);
+  const passage=meta.passages[idx];
   comp={learnerId,skillId,passage,stage:'read',qIndex:0,correctCount:0,xpEarned:0,answered:false,selected:null};
+  saveSkill(learnerId,skillId); // persist this draw right away so reopening (or another device) picks up from here
   openModal(renderComprehensionModal());
 }
 function renderComprehensionModal(){
@@ -2438,10 +2465,9 @@ function advanceComp(){
 }
 function finishComprehension(){
   const state=APP.skillStates[comp.learnerId][comp.skillId];
-  const meta=LEARNERS_META[comp.learnerId];
-  const idx=state.passageIndex%meta.passages.length;
+  const idx=state.passageIndex; // this session's passage, already drawn by drawNextPassage() in openComprehension
+  if(!Array.isArray(state.passagesCompleted)) state.passagesCompleted=[];
   state.passagesCompleted[idx]=true;
-  state.passageIndex=(state.passageIndex+1)%meta.passages.length;
   saveSkill(comp.learnerId,comp.skillId);
   const compTotal=comp.passage.questions.length;
   const{leveledUp,newBadges,tokenAwarded,alreadyEarnedToday,evolved,stageAfter}=finalizeCommon(comp.learnerId,'readingDone',comp.xpEarned,comp.correctCount,compTotal,comp.skillId);
