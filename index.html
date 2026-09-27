@@ -3572,6 +3572,16 @@ function renderTimeBackBanner(id){
 }
 /* ---- Weekly goal (set by the child, for ownership) ---- */
 const WEEKLY_GOAL_OPTIONS=[5,10,15,20];
+/* Goal choices always sit ABOVE what's already done this week (reported: a child who had
+   already finished 60 sessions saw 5/10/15/20 all greyed out and could not pick anything).
+   Offers the next four "round" targets past the current count. */
+function weeklyGoalOptions(done){
+  const ladder=[5,10,15,20,25,30,40,50,60,75,100,125,150,200,250,300];
+  const opts=ladder.filter(n=>n>done).slice(0,4);
+  let next=Math.max(done,opts.length?opts[opts.length-1]:0);
+  while(opts.length<4){ next=(Math.floor(next/50)+1)*50; opts.push(next); }
+  return opts;
+}
 function currentWeekKey(){ return weekStartStr(todayStr()); }
 function thisWeekSessions(learner){ const wk=currentWeekKey(); return (learner.sessionLog||[]).filter(s=>weekStartStr(s.date)===wk).length; }
 function currentWeeklyGoal(learner){ const g=learner.weeklyGoal; return (g&&g.week===currentWeekKey())?g:null; }
@@ -3611,7 +3621,7 @@ function renderWeeklyGoalCard(id){
       <div class="route-sub">You're the boss of your learning. How many sessions will you finish this week? (${done} done so far)</div>
       <div class="field" style="margin:10px 0 8px"><input type="text" id="weeklyGoalText" maxlength="120" placeholder="My big goal (optional) — e.g. unlock Grade 3 Multiplication" value="${esc(g?g.text:'')}"></div>
       ${renderMyWhy(l)}
-      <div class="row" style="gap:8px;margin-top:10px">${WEEKLY_GOAL_OPTIONS.map(n=>`<button class="btn ${g&&g.target===n?'btn-primary':'btn-secondary'}" ${n<=done?'disabled':''} onclick="setWeeklyGoal(${n})">${n} sessions</button>`).join('')}</div>
+      <div class="row" style="gap:8px;margin-top:10px">${weeklyGoalOptions(done).map(n=>`<button class="btn ${g&&g.target===n?'btn-primary':'btn-secondary'}" onclick="setWeeklyGoal(${n})">${n} sessions</button>`).join('')}</div>
     </div>`;
   }
   const pct=Math.min(100,Math.round(done/g.target*100));
