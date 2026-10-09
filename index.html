@@ -435,11 +435,11 @@ function gWordProblems2(level){const lvl=diffTier(level),bo=diffBoost(level);con
       :{prompt:`${n1} has ${a+b} stickers and gives away ${b}. How many are left?`,mode:'numeric',correctAnswer:a,visual:{type:'takeaway',total:a+b,removed:b},explanation:`${a+b} - ${b} = ${a}.`};}
   if(lvl===2){const a=randInt(20,70+bo*20),b=randInt(10,40+bo*15);
     return{prompt:`${n1} read ${a} pages on Monday and ${b} pages on Tuesday. How many pages in all?`,mode:'numeric',correctAnswer:a+b,explanation:`${a} + ${b} = ${a+b}.`};}
-  if(lvl===3){const a=randInt(10,40+bo*15),b=randInt(5,20+bo*10),c=randInt(5,15+bo*8);
+  if(lvl===3){const a=randInt(10,40+bo*15),b=randInt(5,20+bo*10),c=randInt(5,Math.min(15+bo*8,a+b-1));
     return{prompt:`${n1} had ${a} marbles, found ${b} more, then lost ${c}. How many marbles now?`,mode:'numeric',correctAnswer:a+b-c,explanation:`${a} + ${b} - ${c} = ${a+b-c}.`};}
   if(lvl===4){const base=randInt(6,20+bo*10),more=randInt(2,10+bo*8);
     return{prompt:`${n1} has ${base} stickers. ${n2} has ${more} more than ${n1}. How many stickers does ${n2} have?`,mode:'numeric',correctAnswer:base+more,explanation:`${base} + ${more} = ${base+more}.`};}
-  const priceCents=randInt(150,400+bo*150),coins=randInt(500,900+bo*300);
+  const priceCents=randInt(150,400+bo*150);let coins=randInt(500,900+bo*300);if(coins<=priceCents)coins=priceCents+randInt(25,300); // never spend more than you have
   return{prompt:`${n1} has ${fmtMoney(coins)} and spends ${fmtMoney(priceCents)} on a toy. How much money (in cents) is left?`,mode:'numeric',correctAnswer:coins-priceCents,explanation:`${coins} - ${priceCents} = ${coins-priceCents} cents.`};}
 
 /* ================= MATH GENERATORS: GRADE 4 (Voyager) ================= */
@@ -479,7 +479,8 @@ function gDecimals4(level){const lvl=diffTier(level),bo=diffBoost(level);
     return{prompt:`${a.toFixed(bo?2:1)} + ${b.toFixed(bo?2:1)} = ?`,mode:'numeric',correctAnswer:sum,explanation:`${a.toFixed(bo?2:1)} + ${b.toFixed(bo?2:1)} = ${sum}.`};}
   if(lvl===4){const hundredths=randInt(1,99);const val=parseFloat((hundredths/100).toFixed(2));
     return{prompt:`Write "${hundredths} hundredths" as a decimal.`,mode:'numeric',correctAnswer:val,explanation:`${hundredths} hundredths = ${val}.`};}
-  const a=randInt(10,80+bo*15)/100,b=randInt(5,19+bo*60)/100;const sum=parseFloat((a-b).toFixed(2));
+  let ai=randInt(10,80+bo*15),bi=randInt(5,19+bo*60);if(bi>ai)[ai,bi]=[bi,ai];if(ai===bi)ai+=randInt(1,9); // bigger number first: no negative answers below Grade 6
+  const a=ai/100,b=bi/100;const sum=(ai-bi)/100;
   return{prompt:`${a.toFixed(2)} - ${b.toFixed(2)} = ?`,mode:'numeric',correctAnswer:sum,explanation:`${a.toFixed(2)} - ${b.toFixed(2)} = ${sum}.`};}
 function gFactors4(level){const lvl=diffTier(level),bo=diffBoost(level);
   if(lvl===1){const n=randInt(12,36+bo*12);const facs=factorsOf(n);const correct=pick(facs);let wrong=randInt(2,n-1);while(facs.includes(wrong))wrong=randInt(2,n-1);
@@ -514,7 +515,8 @@ function gWordProblems4(level){const lvl=diffTier(level),bo=diffBoost(level);con
     const visual={type:'groups',total,groups};
     if(leftover===0)return{prompt:`${total} apples are shared equally among ${groups} baskets. How many apples in each basket?`,mode:'numeric',correctAnswer:perGroup,visual,explanation:`${total} ÷ ${groups} = ${perGroup}.`};
     return{prompt:`${total} apples are shared equally among ${groups} baskets. How many apples in each basket, and how many are left over?`,mode:'divmod',correctAnswer:{q:perGroup,r:leftover},visual,explanation:`${total} ÷ ${groups} = ${perGroup} remainder ${leftover}.`};}
-  if(lvl===4){const priceCents=randInt(150,600+bo*300),qty=randInt(2,5+bo*3),paidDollars=randInt(10,30+bo*20);const totalCents=priceCents*qty;const change=paidDollars*100-totalCents;
+  if(lvl===4){const priceCents=randInt(150,600+bo*300),qty=randInt(2,5+bo*3);const totalCents=priceCents*qty;const paidDollars=Math.ceil((totalCents+randInt(50,1000))/500)*5; // always pay enough: a round $5 amount above the total
+    const change=paidDollars*100-totalCents;
     return{prompt:`${n1} buys ${qty} notebooks at ${fmtMoney(priceCents)} each, paying with $${paidDollars}. How much change (in cents)?`,mode:'numeric',correctAnswer:change,explanation:`${qty} x ${priceCents} = ${totalCents} cents. $${paidDollars} = ${paidDollars*100} cents. Change = ${change} cents.`};}
   const den=pick(bo?[4,5,8,10,12]:[4,5,8]);const num=randInt(1,den-1);const total=randInt(2,6+bo*3)*den;
   return{prompt:`${n1} read ${num}/${den} of a ${total}-page book. How many pages did ${n1} read?`,mode:'numeric',correctAnswer:total*num/den,visual:{type:'fractionbar',num,den},explanation:`${total} x ${num}/${den} = ${total*num/den} pages.`};}
@@ -562,12 +564,12 @@ function gRound3(level){const lvl=diffTier(level),bo=diffBoost(level);
   if(lvl===2){const n=randInt(101,999);const r=roundTo(n,10);return{prompt:`Round ${n} to the nearest ten.`,mode:'numeric',correctAnswer:r,explanation:`The ones digit is ${n%10}, so ${n} rounds to ${r}.`};}
   if(lvl===3){const n=bo?randInt(1001,9999):randInt(101,999);const r=roundTo(n,100);const tensDigit=Math.floor(n/10)%10;return{prompt:`Round ${n} to the nearest hundred.`,mode:'numeric',correctAnswer:r,explanation:`The tens digit is ${tensDigit}: ${tensDigit>=5?'5 or more rounds up':'less than 5 rounds down'}, so ${n} → ${r}.`};}
   if(lvl===4){const a=randInt(12,89),b=randInt(12,89);const ra=roundTo(a,10),rb=roundTo(b,10);const est=ra+rb;
-    const choices=shuffle([...new Set([est,est+10,est-10,a+b])]);while(choices.length<4)uniqPush(choices,est+20);
+    const choices=shuffle([...new Set([est,est+10,est-10,a+b])]);for(let k=2;choices.length<4;k++)uniqPush(choices,est+10*k); // always terminates (each pad value is new)
     return{prompt:`Estimate ${a} + ${b} by rounding each number to the nearest ten.`,mode:'mc',choices:choices.map(String),correctAnswer:String(est),explanation:`${a} → ${ra} and ${b} → ${rb}, so the estimate is ${ra} + ${rb} = ${est}.`};}
-  const a=randInt(120,880),b=randInt(120,880);const ra=roundTo(a,100),rb=roundTo(b,100);const isAdd=bo||Math.random()<0.5;
+  const a=randInt(120,880);let b=randInt(120,880);while(b===a)b=randInt(120,880);const ra=roundTo(a,100),rb=roundTo(b,100);const isAdd=bo||Math.random()<0.5;
   const big=Math.max(ra,rb),small=Math.min(ra,rb);const est=isAdd?ra+rb:big-small;
   const expr=isAdd?`${a} + ${b}`:`${Math.max(a,b)} - ${Math.min(a,b)}`;
-  const choices=shuffle([...new Set([est,est+100,Math.max(0,est-100),isAdd?a+b:Math.abs(a-b)])]);while(choices.length<4)uniqPush(choices,est+200);
+  const choices=shuffle([...new Set([est,est+100,Math.max(0,est-100),isAdd?a+b:Math.abs(a-b)])]);for(let k=2;choices.length<4;k++)uniqPush(choices,est+100*k); // was an endless loop when est=0 and the exact answer was 0 (equal numbers): padding with the same est+200 never grew the list
   return{prompt:`Estimate ${expr} by rounding each number to the nearest hundred.`,mode:'mc',choices:choices.map(String),correctAnswer:String(est),explanation:`Round first: ${isAdd?`${ra} + ${rb}`:`${big} - ${small}`} = ${est}.`};}
 function gFrac3(level){const lvl=diffTier(level),bo=diffBoost(level);
   if(lvl===1){const den=pick(bo?[2,3,4,6,8]:[2,3,4]);return{prompt:`A shape is cut into ${den} equal parts and 1 part is shaded. What fraction is shaded?`,mode:'fraction',correctAnswer:{n:1,d:den},visual:{type:'fractionbar',num:1,den},explanation:`1 of ${den} equal parts is 1/${den}.`};}
