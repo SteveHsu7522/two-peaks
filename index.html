@@ -3,38 +3,45 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Two Peaks</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Libre+Franklin:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<title>Oliliminmin</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22100%2070%20336%20245%22%3E%3Ccircle%20cx%3D%22191%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%232F6FC4%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22343%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%23F3B431%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22219%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Ccircle%20cx%3D%22316%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Cpath%20d%3D%22M200%20271%20Q268%20318%20336%20271%22%20fill%3D%22none%22%20stroke%3D%22%231C2A3E%22%20stroke-width%3D%2220%22%20stroke-linecap%3D%22round%22/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
 :root{
-  --bg:#FBF7EF; --surface:#FFFFFF; --surface-2:#F3ECDC; --surface-3:#EAE1CC;
-  --ink:#232A3D; --ink-soft:#5B6178; --ink-faint:#8C90A3; --border:#E1D6BE;
-  --accent:#E8912E; --accent-strong:#C97417; --accent-soft:#FBEBD3;
-  --teal:#1F8A82; --teal-strong:#146760; --teal-soft:#DCF0EC;
+  /* Oliliminmin palette — from the family logo: blue O (Oliver), yellow O (Osmand), navy smile, white page.
+     (The variable names --accent/--teal are kept from the original theme: --accent is now the logo
+     yellow, --teal is now the logo blue, so every component picks up the new colors automatically.) */
+  --bg:#F5F8FC; --surface:#FFFFFF; --surface-2:#EEF3F9; --surface-3:#E0E8F2;
+  --ink:#1C2A3E; --ink-soft:#4B5A72; --ink-faint:#8693A8; --border:#DCE4EE;
+  --accent:#F3B431; --accent-strong:#C98A08; --accent-soft:#FDF2D6;
+  --teal:#2F6FC4; --teal-strong:#1F4F94; --teal-soft:#DDE8F8;
   --plum:#8B5FBF; --plum-strong:#6F3FA0; --plum-soft:#EFE4F7;
   --sky:#2F86C9; --sky-strong:#1F63A0; --sky-soft:#DDEEFA;
-  --good:#3D8F5B; --good-soft:#E1F3E6; --warn:#C9791A; --warn-soft:#FBE9D2;
+  --good:#2E8B57; --good-soft:#E0F2E7; --warn:#C9791A; --warn-soft:#FBE9D2;
   --bad:#C6435A; --bad-soft:#FAE1E5;
-  --shadow-sm:0 1px 2px rgba(35,30,15,.08); --shadow-md:0 6px 20px rgba(35,30,15,.10);
+  --on-accent:#1C2A3E; --logo-blue:#2F6FC4; --logo-yellow:#F3B431;
+  --shadow-sm:0 1px 2px rgba(28,42,62,.08); --shadow-md:0 8px 22px rgba(28,42,62,.10);
   --radius-sm:10px; --radius-md:16px; --radius-lg:24px;
-  --font-display:'Fraunces',Georgia,serif; --font-body:'Libre Franklin',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; --font-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  --font-display:'Outfit','Nunito Sans',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; --font-body:'Nunito Sans',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; --font-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#141826; --surface:#1D2338; --surface-2:#242B45; --surface-3:#323A58;
-  --ink:#EDEFF7; --ink-soft:#B7BCD3; --ink-faint:#7D839C; --border:#333D5C;
-  --accent:#F0A63E; --accent-strong:#FFC670; --accent-soft:#3A2C14;
-  --teal:#3FC2B7; --teal-strong:#7EDDD4; --teal-soft:#123230;
+  --bg:#111827; --surface:#1A2335; --surface-2:#222D44; --surface-3:#2E3A55;
+  --ink:#EEF2F8; --ink-soft:#B5C0D3; --ink-faint:#7C889E; --border:#2F3B57;
+  --accent:#F5C04A; --accent-strong:#FFD77A; --accent-soft:#3A2E10;
+  --teal:#5B95E0; --teal-strong:#9CC0F0; --teal-soft:#15284A;
   --good:#5FC486; --good-soft:#173322; --warn:#E2A24C; --warn-soft:#3A2A10;
   --bad:#F2748A; --bad-soft:#3A1B22;
+  --on-accent:#1C2A3E;
   --shadow-sm:0 1px 2px rgba(0,0,0,.4); --shadow-md:0 10px 30px rgba(0,0,0,.45);
 }}
 :root[data-theme="dark"]{
-  --bg:#141826; --surface:#1D2338; --surface-2:#242B45; --surface-3:#323A58;
-  --ink:#EDEFF7; --ink-soft:#B7BCD3; --ink-faint:#7D839C; --border:#333D5C;
-  --accent:#F0A63E; --accent-strong:#FFC670; --accent-soft:#3A2C14;
-  --teal:#3FC2B7; --teal-strong:#7EDDD4; --teal-soft:#123230;
+  --bg:#111827; --surface:#1A2335; --surface-2:#222D44; --surface-3:#2E3A55;
+  --ink:#EEF2F8; --ink-soft:#B5C0D3; --ink-faint:#7C889E; --border:#2F3B57;
+  --accent:#F5C04A; --accent-strong:#FFD77A; --accent-soft:#3A2E10;
+  --teal:#5B95E0; --teal-strong:#9CC0F0; --teal-soft:#15284A;
   --good:#5FC486; --good-soft:#173322; --warn:#E2A24C; --warn-soft:#3A2A10;
   --bad:#F2748A; --bad-soft:#3A1B22;
+  --on-accent:#1C2A3E;
   --shadow-sm:0 1px 2px rgba(0,0,0,.4); --shadow-md:0 10px 30px rgba(0,0,0,.45);
 }
 *{box-sizing:border-box;}
@@ -46,7 +53,11 @@ button{font-family:inherit;cursor:pointer;}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 4px 10px;flex-wrap:wrap;}
 .brand{display:flex;align-items:center;gap:10px;}
 .brand-mark{width:34px;height:34px;flex:none;}
-.brand-name{font-family:var(--font-display);font-weight:700;font-size:1.35rem;letter-spacing:.2px;}
+.brand-name{font-family:var(--font-display);font-weight:700;font-size:1.35rem;letter-spacing:.04em;color:var(--ink);}
+.brand .logo-mark{flex:none;display:block;}
+.login-logo{display:flex;justify-content:center;margin-bottom:10px;}
+.login-wordmark{font-family:var(--font-display);font-weight:700;font-size:1.7rem;letter-spacing:.22em;color:var(--ink);margin-left:.22em;}
+.login-tagline{font-size:.74rem;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint);margin-top:4px;}
 .brand-sub{font-size:.72rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em;margin-top:-2px;}
 .learner-switch{display:flex;gap:8px;}
 .learner-btn{display:flex;align-items:center;gap:8px;padding:7px 12px 7px 7px;border-radius:999px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);transition:border-color .15s,background .15s;}
@@ -86,7 +97,7 @@ button{font-family:inherit;cursor:pointer;}
 .pill-good{background:var(--good-soft);color:var(--good);}
 .pill-warn{background:var(--warn-soft);color:var(--warn);}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:10px;border:none;font-weight:600;font-size:.86rem;}
-.btn-primary{background:var(--accent-color,var(--accent));color:#221602;}
+.btn-primary{background:var(--accent-color,var(--accent));color:var(--on-accent-color,var(--on-accent));}
 .btn-secondary{background:var(--surface-2);color:var(--ink);border:1px solid var(--border);}
 .btn-block{width:100%;}
 .btn:disabled{opacity:.5;cursor:default;}
@@ -124,7 +135,7 @@ button{font-family:inherit;cursor:pointer;}
 .session-row{display:flex;justify-content:space-between;gap:10px;font-size:.78rem;color:var(--ink-soft);}
 .range-toggle{display:flex;gap:6px;margin-bottom:14px;}
 .range-btn{font-family:var(--font-mono);font-size:.72rem;font-weight:600;padding:5px 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--ink-soft);cursor:pointer;}
-.range-btn[data-active="true"]{background:var(--accent);color:#221602;border-color:var(--accent);}
+.range-btn[data-active="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent);}
 .chart-tooltip{position:fixed;z-index:999;background:var(--ink);color:var(--surface);font-family:var(--font-mono);font-size:.72rem;padding:5px 9px;border-radius:7px;pointer-events:none;box-shadow:var(--shadow-sm);display:none;white-space:nowrap;}
 .feedback-box{margin-top:16px;padding:14px;border-radius:12px;font-size:.9rem;}
 .feedback-good{background:var(--good-soft);color:var(--good);}
@@ -316,6 +327,7 @@ label.flabel{font-size:.76rem;color:var(--ink-soft);font-weight:600;display:bloc
 .action-bar .btn-ico{display:inline-flex;flex:none;}
 .action-bar .btn-go .btn-ico svg{stroke-width:2.4;}
 @media (max-width:420px){.action-bar .btn-exit{min-width:0;}.action-bar .btn-go{font-size:.92rem;}}
+a{color:var(--teal-strong);font-weight:600;}
 </style>
 </head>
 <body>
@@ -2368,7 +2380,7 @@ function renderCompanionCard(learnerId){
   return `<div class="card companion-card">
     <div class="companion-art">${svgCompanion(stage,av.c,species)}</div>
     <div>
-      <div class="companion-name">${esc(learner.name)}'s Companion · <span style="color:${av.c}">${stageName}</span></div>
+      <div class="companion-name">${esc(learner.name)}'s Companion · <span style="color:${av.cs}">${stageName}</span></div>
       <div class="companion-note">${esc(note)}</div>
     </div>
   </div>`;
@@ -2471,7 +2483,7 @@ function burstConfettiBig(){
   canvas.width=window.innerWidth; canvas.height=window.innerHeight;
   document.body.appendChild(canvas);
   const ctx=canvas.getContext('2d'); if(!ctx){canvas.remove();return;}
-  const colors=['#E8912E','#1F8A82','#3D8F5B','#C6435A','#F2C94C','#7EDDD4'];
+  const colors=['#2F6FC4','#F3B431','#1C2A3E','#5B95E0','#FFD77A','#2E8B57']; // logo blue / yellow / navy
   const pieces=Array.from({length:90},()=>({
     x:canvas.width/2+randInt(-120,120), y:canvas.height*0.3+randInt(-30,30),
     vx:(Math.random()-0.5)*9, vy:Math.random()*-7-3,
@@ -2847,13 +2859,26 @@ function skillLabelMap(learnerId){
 }
 
 /* ================= TOP CHROME ================= */
+/* Oliliminmin logo mark: two O's (blue = Oliver, yellow = Osmand) looking at each other, one
+   smile — the family logo, redrawn as vector so it stays crisp at any size. The pupils and smile
+   use the ink color so the face still reads in dark mode. */
+function svgLogoMark(size){
+  return `<svg class="logo-mark" viewBox="100 70 336 245" width="${Math.round(size*336/245)}" height="${size}" role="img" aria-label="Oliliminmin logo">
+    <circle cx="191" cy="161" r="59" fill="none" style="stroke:var(--logo-blue)" stroke-width="27"/>
+    <circle cx="343" cy="161" r="59" fill="none" style="stroke:var(--logo-yellow)" stroke-width="27"/>
+    <circle cx="219" cy="167" r="15" style="fill:var(--ink)"/>
+    <circle cx="316" cy="167" r="15" style="fill:var(--ink)"/>
+    <path d="M200 271 Q268 318 336 271" fill="none" style="stroke:var(--ink)" stroke-width="20" stroke-linecap="round"/>
+  </svg>`;
+}
+function brandHtml(){ return `<div class="brand">${svgLogoMark(34)}<div><div class="brand-name">Oliliminmin</div><div class="brand-sub">Two O's, one smile</div></div></div>`; }
 function accentVars(color){ return color==='teal'?{c:'var(--teal)',cs:'var(--teal-strong)',soft:'var(--teal-soft)'}:{c:'var(--accent)',cs:'var(--accent-strong)',soft:'var(--accent-soft)'}; }
 
 function renderTopbar(){
   const el=document.getElementById('topbar');
   const u=APP.auth.currentUser;
   const soundOn=soundEnabled();
-  el.innerHTML=`<div class="brand">${icon('mountain','var(--accent)',34)}<div><div class="brand-name">Two Peaks</div><div class="brand-sub">Home Basecamp</div></div></div>
+  el.innerHTML=`${brandHtml()}
     <div class="row" style="align-items:center;gap:12px">
       <span style="font-size:.82rem;color:var(--ink-soft)">Signed in as <b>${esc(u.username)}</b>${u.isAdmin?' · Admin':''}</span>
       <button class="btn btn-secondary sound-toggle" title="${soundOn?'Mute sound effects':'Turn on sound effects'}" onclick="toggleSound()">${icon(soundOn?'sound-on':'sound-off','var(--ink)',18)}</button>
@@ -2918,7 +2943,7 @@ function render(){
   ensureCampPolling();
   ensureFocusTicker();
   if(!APP.auth.currentUser){
-    document.getElementById('topbar').innerHTML=`<div class="brand">${icon('mountain','var(--accent)',34)}<div><div class="brand-name">Two Peaks</div><div class="brand-sub">Home Basecamp</div></div></div>`;
+    document.getElementById('topbar').innerHTML=brandHtml();
     document.getElementById('statstrip').innerHTML='';
     document.getElementById('tabbar').innerHTML='';
     document.getElementById('view').innerHTML=renderAuthScreen();
@@ -3596,7 +3621,7 @@ function renderFocusCardInner(id){
   const sub=t.mode==='focus'?'Work on any Math, Reading or Life Skills session. When the ring fills, it\'s break time.'
     :(t.mode==='break'?'Stand up, stretch, get some water, look out the window. Your brain is saving what you learned.'
     :`${FOCUS_BLOCK_MIN} focused minutes, then a ${QBREAK_MIN}-minute move break — the rhythm behind a short, powerful learning day.`);
-  const btn=t.mode==='idle'?`<button class="btn btn-primary" onclick="startFocusBlock()">${icon('timer','#221602',16)} Start ${FOCUS_BLOCK_MIN}-min block</button>`
+  const btn=t.mode==='idle'?`<button class="btn btn-primary" onclick="startFocusBlock()">${icon('timer','currentColor',16)} Start ${FOCUS_BLOCK_MIN}-min block</button>`
     :`<button class="btn btn-secondary" onclick="stopFocusBlock()">${t.mode==='break'?'Skip break':'Stop'}</button>`;
   return `<div class="focus-ring-wrap">
       <svg viewBox="0 0 80 80" width="84" height="84"><circle cx="40" cy="40" r="34" fill="none" stroke="var(--surface-2)" stroke-width="7"/>
@@ -4354,8 +4379,10 @@ function renderAuthScreen(){
   if(s==='register')return renderRegisterScreen(err,notice);
   return `
   <div class="center" style="max-width:380px;margin:40px auto">
-    <div style="margin-bottom:14px">${icon('mountain','var(--accent)',54)}</div>
-    <div class="section-title">Two Peaks — Family Login</div>
+    <div class="login-logo">${svgLogoMark(92)}</div>
+    <div class="login-wordmark">OLILIMINMIN</div>
+    <div class="login-tagline">Two O's, one smile</div>
+    <div class="section-title" style="margin-top:18px">Family Login</div>
     <div class="section-sub">A private login for your household. This is a lightweight family gate, not secure authentication — it just keeps everyone's own trail separate.</div>
     ${err}${notice}
     <div class="card" style="padding:22px;text-align:left">
