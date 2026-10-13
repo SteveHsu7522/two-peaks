@@ -1,0 +1,16 @@
+# Olilimimi 版本注記 (CHANGELOG)
+
+版本規則:主版.次版.修正 (新功能 → 次版 +1;修正/小調整 → 修正號 +1;大改版 → 主版 +1)。
+退版方式：把 `versions/olilimimi-vX.Y.Z.html` 改名為 `index.html` 上傳到 GitHub 即可。學習資料存在雲端，不受退版影響。
+
+## v1.0.0 — 2026-10-13 · 起始版本 Baseline
+
+- 新增版本號：網頁右下角顯示版本，點擊可看版本注記，往後每次更新都會遞增版本號並保留存檔以便退版。
+- 品牌：Olilimimi · Brothers，藍黃雙 O 笑臉 Logo 與配色。
+- 中文 Chinese Trail：拼音、认字、阅读(簡體＋漢語拼音、🔊 普通話發音，優先使用婷婷等自然語音)。
+- 學科：數學、閱讀(Grade 2/4 起點，Next Peak 可解鎖 Grade 3/5),生活技能(理財、創業、表達)。
+- Trail Time 下午任務：6 個領域、觀眾階梯、Showcase 檢核表。
+- 專注計時 25+5、Time Back、每週目標、My Why、每日心情;家長 Coach Corner 與 XY 圖表。
+- Token 規則：每個 session 每天最多 1 個，做滿且錯少於 2 題才給。
+- 練習介面：Exit 在左、Next/Check 在右並附圖示，作答中離開需連按兩次。
+- 近期修正：題目不再出現負數、修正會卡住畫面的估算題、修正雲端同步覆蓋進度的問題。
