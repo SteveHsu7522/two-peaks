@@ -305,6 +305,17 @@ label.flabel{font-size:.76rem;color:var(--ink-soft);font-weight:600;display:bloc
 .why-set{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
 .linkish{background:none;border:none;color:var(--ink-faint);text-decoration:underline;font-size:.74rem;cursor:pointer;padding:0;}
 .coach-why{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 12px;border-radius:12px;background:var(--bad-soft);font-size:.88rem;}
+
+/* quiz modal bottom bar: small Exit left, big forward action right (never stacked) */
+.action-bar{display:flex;align-items:stretch;gap:14px;margin-top:14px;}
+.action-bar .btn-exit{flex:0 0 auto;min-width:92px;padding-left:14px;padding-right:14px;color:var(--ink-soft);}
+.action-bar .btn-exit[data-armed="true"]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad);font-weight:700;}
+.action-bar .btn-go{flex:1;min-height:48px;font-size:1rem;}
+.action-bar .action-spacer{flex:1;}
+.action-bar .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;}
+.action-bar .btn-ico{display:inline-flex;flex:none;}
+.action-bar .btn-go .btn-ico svg{stroke-width:2.4;}
+@media (max-width:420px){.action-bar .btn-exit{min-width:0;}.action-bar .btn-go{font-size:.92rem;}}
 </style>
 </head>
 <body>
@@ -1946,6 +1957,9 @@ function icon(name,color,size){
   if(name==='spark')return `<svg ${s}><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 1.8 1.8.7-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z"/></svg>`;
   if(name==='lock')return `<svg ${s}><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>`;
   if(name==='heart')return `<svg ${s}><path d="M12 20s-7-4.4-9-8.7C1.6 8 3.4 4.8 6.6 4.8c2 0 3.4 1.2 5.4 3.3 2-2.1 3.4-3.3 5.4-3.3 3.2 0 5 3.2 3.6 6.5C19 15.6 12 20 12 20z"/></svg>`;
+  if(name==='exit-door')return `<svg ${s}><path d="M13 4H6.5A1.5 1.5 0 005 5.5v13A1.5 1.5 0 006.5 20H13"/><path d="M10 12h11M17.5 8.5L21 12l-3.5 3.5"/></svg>`;
+  if(name==='arrow-right')return `<svg ${s}><path d="M4 12h15M13 6l6 6-6 6"/></svg>`;
+  if(name==='check')return `<svg ${s}><path d="M4.5 12.5l5 5L19.5 7"/></svg>`;
   if(name==='sound-on')return `<svg ${s}><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9a5 5 0 010 6"/><path d="M19.5 6.5a9 9 0 010 11"/></svg>`;
   if(name==='sound-off')return `<svg ${s}><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9l5 6M21 9l-5 6"/></svg>`;
   return `<svg ${s}></svg>`;
@@ -3156,8 +3170,7 @@ function renderCompoundAnswerUI(q,av){
     <div class="keypad">
       ${['7','8','9','4','5','6','1','2','3','→','0','⌫'].map(k=>`<button class="key-btn" ${session.answered?'disabled':''} onclick="keypadPress('${k}')">${k}</button>`).join('')}
     </div>
-    <div style="height:10px"></div>
-    <button class="btn btn-primary btn-block" ${session.answered||!filled?'disabled':''} onclick="answerFields()">Check</button>`;
+    `;
 }
 function renderSessionModal(){
   const q=session.currentQuestion;
@@ -3178,20 +3191,56 @@ function renderSessionModal(){
     <div class="keypad">
       ${['7','8','9','4','5','6','1','2','3','.','0','⌫'].map(k=>`<button class="key-btn" ${session.answered?'disabled':''} onclick="keypadPress('${k}')">${k}</button>`).join('')}
     </div>
-    <div style="height:10px"></div>
-    <button class="btn btn-primary btn-block" ${session.answered||session.numericInput===''?'disabled':''} onclick="answerNumeric()">Check</button>`;
+    `;
   }
-  const feedback=session.answered?`<div class="feedback-box ${session.lastCorrect?'feedback-good':'feedback-bad'}">${session.lastCorrect?'✓ '+esc(session.lastPhrase)+' ':esc(session.lastPhrase)+' '}${esc(q.explanation)}</div>
-    <button class="btn btn-primary btn-block" style="margin-top:12px" onclick="advanceSession()">${session.qIndex+1>=session.total?'See Results':'Next Question'}</button>`:'';
+  const feedback=session.answered?`<div class="feedback-box ${session.lastCorrect?'feedback-good':'feedback-bad'}">${session.lastCorrect?'✓ '+esc(session.lastPhrase)+' ':esc(session.lastPhrase)+' '}${esc(q.explanation)}</div>`:'';
+  let primary='';
+  if(session.answered) primary=goButton('advanceSession()',session.qIndex+1>=session.total?'results':'next');
+  else if(q.mode==='numeric') primary=goButton('answerNumeric()','check',session.numericInput==='');
+  else if(q.mode==='divmod'||q.mode==='fraction'){ const filled=fieldDefsFor(q.mode).every(f=>session.fields[f]!==''&&session.fields[f]!=null); primary=goButton('answerFields()','check',!filled); }
   return `<div class="modal-card" onclick="stopProp(event)">
     <div class="qhead"><span>${meta.label}${session.currentIsReview?' · 🔁 Review':''}</span><span style="display:flex;align-items:center;gap:8px">${session.comboStreak>0?flameRow(session.comboStreak,av.c):''}Question ${session.qIndex+1} / ${session.total}</span></div>
     ${visual?`<div class="center">${visual}</div>`:''}
     <div class="qprompt">${renderPrompt(q.prompt)}</div>
     ${body}
     ${feedback}
-    <div style="height:6px"></div>
-    <button class="btn btn-secondary btn-block" onclick="quitSession()">Exit Session</button>
+    ${renderActionBar('session',primary)}
   </div>`;
+}
+/* Bottom action bar for the quiz/passage modals: a small Exit on the LEFT and the big
+   forward action (Check / Next Question / See Results) on the RIGHT, side by side —
+   they used to be stacked, Next directly above Exit, and kids tapped Exit by mistake
+   mid-session (reported: "Next Question跟Exit Session是上下排列,孩子容易誤按"). Mid-way
+   through, Exit also needs a second tap within 3 seconds to actually leave. */
+// Each forward action gets its own icon so kids can tell them apart at a glance.
+const GO_BUTTONS={check:{label:'Check',icon:'check'},next:{label:'Next Question',icon:'arrow-right'},results:{label:'See Results',icon:'star'},startq:{label:"I'm Done Reading — Start Questions",icon:'book'}};
+function goButton(onclick,kind,disabled){ const b=GO_BUTTONS[kind];
+  return `<button class="btn btn-primary btn-go" ${disabled?'disabled':''} onclick="${onclick}"><span class="btn-ico">${icon(b.icon,'currentColor',20)}</span><span>${b.label}</span></button>`; }
+function exitArmed(){ return !!APP.exitArmedAt&&(Date.now()-APP.exitArmedAt)<3000; }
+function renderActionBar(kind,primaryHtml){
+  const armed=exitArmed();
+  const label=armed?'Tap again to exit':'Exit';
+  return `<div class="action-bar">
+    <button class="btn btn-secondary btn-exit" data-armed="${armed}" onclick="tapExit('${kind}')"><span class="btn-ico">${icon('exit-door','currentColor',18)}</span><span>${label}</span></button>
+    ${primaryHtml||'<span class="action-spacer"></span>'}
+  </div>`;
+}
+function exitIsMidway(kind){
+  if(kind==='session') return !!session&&(session.qIndex>0||session.answered);
+  return !!comp&&comp.stage==='questions'&&(comp.qIndex>0||comp.answered);
+}
+function rerenderQuizModal(kind){
+  if(kind==='session'&&session&&session.currentQuestion) openModal(renderSessionModal());
+  else if(kind==='comp'&&comp) openModal(renderComprehensionModal());
+}
+function tapExit(kind){
+  if(exitIsMidway(kind)&&!exitArmed()){
+    APP.exitArmedAt=Date.now(); rerenderQuizModal(kind);
+    if(typeof setTimeout==='function') setTimeout(()=>{ if(!exitArmed()) rerenderQuizModal(kind); },3100);
+    return;
+  }
+  APP.exitArmedAt=0;
+  if(kind==='session') quitSession(); else quitComp();
 }
 function setActiveField(key){
   if(session.answered)return;
@@ -3259,13 +3308,14 @@ function submitAnswer(value){
   openModal(renderSessionModal());
 }
 function advanceSession(){
+  APP.exitArmedAt=0;
   tickFocus(session,60000);
   session.qIndex++;
   if(session.qIndex>=session.total){ finishPracticeSession(); return; }
   nextQuestionInSession();
   openModal(renderSessionModal());
 }
-function quitSession(){ closeModal(); render(); }
+function quitSession(){ APP.exitArmedAt=0; closeModal(); render(); }
 /* A completed session (math/reading practice, or a reading comprehension
    passage) earns a flat +1 Trail Token, as long as (a) the session was played
    all the way through -- for a math/reading practice session that always
@@ -3392,9 +3442,7 @@ function renderComprehensionModal(){
       <div class="qhead"><span>Reading Comprehension</span><span>Passage</span></div>
       <div class="section-title" style="font-size:1.15rem">${esc(comp.passage.title)}</div>
       <div class="passage-text">${esc(comp.passage.text)}</div>
-      <button class="btn btn-primary btn-block" onclick="startCompQuestions()">I'm Done Reading — Start Questions</button>
-      <div style="height:6px"></div>
-      <button class="btn btn-secondary btn-block" onclick="quitComp()">Exit</button>
+      ${renderActionBar('comp',goButton('startCompQuestions()','startq'))}
     </div>`;
   }
   const q=comp.passage.questions[comp.qIndex];
@@ -3403,15 +3451,14 @@ function renderComprehensionModal(){
     let state=''; if(comp.answered){ if(c===q.correct) state='correct'; else if(c===comp.selected) state='wrong'; }
     return `<button class="choice-btn" data-state="${state}" ${comp.answered?'disabled':''} onclick="answerComp(${JSON.stringify(c).replace(/"/g,'&quot;')})">${esc(c)}</button>`;
   }).join('')}</div>`;
-  const feedback=comp.answered?`<div class="feedback-box ${comp.lastCorrect?'feedback-good':'feedback-bad'}">${comp.lastCorrect?'✓ '+esc(pick(CORRECT_PHRASES)):esc(pick(WRONG_PHRASES))+' Correct answer: '+esc(q.correct)}</div>
-    <button class="btn btn-primary btn-block" style="margin-top:12px" onclick="advanceComp()">${comp.qIndex+1>=comp.passage.questions.length?'See Results':'Next Question'}</button>`:'';
+  const feedback=comp.answered?`<div class="feedback-box ${comp.lastCorrect?'feedback-good':'feedback-bad'}">${comp.lastCorrect?'✓ '+esc(pick(CORRECT_PHRASES)):esc(pick(WRONG_PHRASES))+' Correct answer: '+esc(q.correct)}</div>`:'';
+  const primary=comp.answered?goButton('advanceComp()',comp.qIndex+1>=comp.passage.questions.length?'results':'next'):'';
   return `<div class="modal-card" onclick="stopProp(event)">
     <div class="qhead"><span>${esc(comp.passage.title)}</span><span>Question ${comp.qIndex+1} / ${comp.passage.questions.length}</span></div>
     <div class="qprompt">${esc(q.q)}</div>
     ${choicesHtml}
     ${feedback}
-    <div style="height:6px"></div>
-    <button class="btn btn-secondary btn-block" onclick="quitComp()">Exit</button>
+    ${renderActionBar('comp',primary)}
   </div>`;
 }
 function startCompQuestions(){ tickFocus(comp,600000); comp.stage='questions'; openModal(renderComprehensionModal()); } // reading the passage counts as focus too (capped at 10 min)
@@ -3433,6 +3480,7 @@ function answerComp(value){
   openModal(renderComprehensionModal());
 }
 function advanceComp(){
+  APP.exitArmedAt=0;
   tickFocus(comp,60000);
   comp.qIndex++;
   if(comp.qIndex>=comp.passage.questions.length){ finishComprehension(); return; }
@@ -3451,7 +3499,7 @@ function finishComprehension(){
   session={correctCount:comp.correctCount,total:compTotal,xpEarned:comp.xpEarned,focusSec};
   openModal(renderSummary(leveledUp,newBadges,tokenAwarded,alreadyEarnedToday,evolved,stageAfter,goalHit));
 }
-function quitComp(){ closeModal(); comp=null; render(); }
+function quitComp(){ APP.exitArmedAt=0; closeModal(); comp=null; render(); }
 
 /* ================= FOCUS BLOCKS, TIME BACK, WEEKLY GOALS, MOOD =================
    From the Alpha School video ("Reimagining AI"): core academics happen in short,
