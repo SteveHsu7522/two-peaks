@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Olilimimi</title>
-<meta name="app-version" content="1.0.1">
+<meta name="app-version" content="1.0.2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22100%2070%20336%20245%22%3E%3Ccircle%20cx%3D%22191%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%232F6FC4%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22343%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%23F3B431%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22219%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Ccircle%20cx%3D%22316%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Cpath%20d%3D%22M200%20271%20Q268%20318%20336%20271%22%20fill%3D%22none%22%20stroke%3D%22%231C2A3E%22%20stroke-width%3D%2220%22%20stroke-linecap%3D%22round%22/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
@@ -383,7 +383,7 @@ body{padding-bottom:36px;}
 </div>
 <div id="modalRoot"></div>
 <div id="toastRoot"></div>
-<button id="versionBadge" class="version-badge" type="button" onclick="openChangelog()" title="版本注記 / Release notes">v1.0.1</button>
+<button id="versionBadge" class="version-badge" type="button" onclick="openChangelog()" title="版本注記 / Release notes">v1.0.2</button>
 
 <!-- Firebase (cloud sync across devices). If this ever fails to load (offline,
      ad-blocker, etc.) the app quietly falls back to this browser's own
@@ -2004,23 +2004,36 @@ function gZhHanzi(level){
     explanation:`${c.hz} (${c.py}, ${c.en}) has the ${r} radical — ${ZH_RADICAL_NAMES[r]}.`};
 }
 /* 🔊 Mandarin text-to-speech with the browser's built-in voices (no network, no audio files). */
-/* Prefer natural standard-Mandarin voices: Apple 婷婷/Tingting, 語舒/Yu-shu, Li-Mu; Microsoft
-   Xiaoxiao/Huihui/Yunxi; Google 普通话. Apple also ships novelty voices (Eddy, Grandpa, Rocko...)
-   that sound robotic — use those only if nothing better exists. */
+/* Prefer Taiwan Mandarin (國語, zh-TW) voices: Apple 美佳/Meijia; Microsoft 曉臻 HsiaoChen, 曉雨 HsiaoYu,
+   雲哲 YunJhe, 雅婷 Yating, 涵涵 Hanhan, 志偉 Zhiwei; Google 國語（臺灣）. If the device has no Taiwan
+   voice, fall back to a natural standard-Mandarin (zh-CN) voice (Apple 婷婷 etc.). Never use a
+   Cantonese (zh-HK / yue) voice, and avoid Apple's novelty voices (Eddy, Grandpa, Rocko...). */
+const ZH_NOVELTY_VOICE=/Eddy|Flo|Grandma|Grandpa|Reed|Rocko|Sandy|Shelley/i;
+function zhVoiceRegion(v){
+  const lang=String(v&&v.lang||''), name=String(v&&v.name||'');
+  if(/yue|zh[-_]HK|zh[-_]MO|Cantonese|粵|粤|廣東|广东|香港/i.test(lang+' '+name)) return 'hk';
+  if(/zh[-_](TW|Hant)|cmn[-_](TW|Hant)/i.test(lang)||/臺灣|台灣|Taiwan/i.test(name)) return 'tw';
+  if(/zh[-_](CN|Hans|SG)|cmn/i.test(lang)) return 'cn';
+  if(/^zh$/i.test(lang)) return 'cn';
+  return '';
+}
 function pickZhVoice(){
   const vs=(window.speechSynthesis&&window.speechSynthesis.getVoices())||[];
-  const cn=vs.filter(v=>/zh[-_]CN|cmn/i.test(v.lang));
-  const pref=[/婷婷|Ting-?Ting/i,/語舒|语舒|Yu-?shu/i,/Li-?Mu/i,/Xiaoxiao|晓晓/i,/Huihui|慧慧/i,/Yunxi|云希/i,/Google.*(普通话|Mandarin|中国)/i];
-  for(const re of pref){ const v=cn.find(v=>re.test(v.name)); if(v) return v; }
-  const novelty=/Eddy|Flo|Grandma|Grandpa|Reed|Rocko|Sandy|Shelley/i;
-  return cn.find(v=>!novelty.test(v.name))||cn[0]||vs.find(v=>/^zh/i.test(v.lang))||null;
+  const tw=vs.filter(v=>zhVoiceRegion(v)==='tw'), cn=vs.filter(v=>zhVoiceRegion(v)==='cn');
+  const twPref=[/美佳|Mei-?Jia/i,/曉臻|晓臻|HsiaoChen/i,/曉雨|晓雨|HsiaoYu/i,/雲哲|云哲|YunJhe/i,/雅婷|Yating/i,/涵涵|Hanhan/i,/志偉|志伟|Zhiwei/i,/Google/i];
+  for(const re of twPref){ const v=tw.find(v=>re.test(v.name)&&!ZH_NOVELTY_VOICE.test(v.name)); if(v) return v; }
+  const twAny=tw.find(v=>!ZH_NOVELTY_VOICE.test(v.name)); if(twAny) return twAny;
+  const cnPref=[/婷婷|Ting-?Ting/i,/語舒|语舒|Yu-?shu/i,/Li-?Mu/i,/Xiaoxiao|晓晓/i,/Huihui|慧慧/i,/Yunxi|云希/i,/Google.*(普通话|Mandarin|中国)/i];
+  for(const re of cnPref){ const v=cn.find(v=>re.test(v.name)); if(v) return v; }
+  return cn.find(v=>!ZH_NOVELTY_VOICE.test(v.name))||tw[0]||cn[0]||null;
 }
 if(typeof window!=='undefined'&&window.speechSynthesis&&typeof window.speechSynthesis.getVoices==='function'){ try{ window.speechSynthesis.getVoices(); }catch(e){} } // warm up the voice list (Chrome loads it lazily)
 function speakZh(text){
   try{
     if(typeof window==='undefined'||!window.speechSynthesis||typeof SpeechSynthesisUtterance==='undefined'){ toast('This browser can’t read Chinese aloud.'); return; }
-    const u=new SpeechSynthesisUtterance(String(text)); u.lang='zh-CN'; u.rate=0.8;
-    u.voice=pickZhVoice()||null;
+    const u=new SpeechSynthesisUtterance(String(text)); u.rate=0.8;
+    const v=pickZhVoice(); u.voice=v||null; u.lang=String((v&&v.lang)||'zh-TW').replace('_','-');
+    if(v&&zhVoiceRegion(v)!=='tw'&&!APP.zhVoiceNoted){ APP.zhVoiceNoted=true; toast('這台裝置沒有台灣國語語音，暫用普通话語音。'); }
     window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
   }catch(e){}
 }
@@ -5161,8 +5174,12 @@ function rejectUser(username){
    notes live in CHANGELOG.md, and each release is also archived as olilimimi-vX.Y.Z.html so any
    version can be restored by uploading that file as index.html. The version shows in the bottom-right
    corner; tapping it opens these notes. */
-const APP_VERSION='1.0.1';
+const APP_VERSION='1.0.2';
 const APP_CHANGELOG=[
+  {v:'1.0.2',date:'2026-10-13',title:'中文發音改用台灣國語',items:[
+    '🔊 發音優先使用台灣國語語音(Apple 美佳、Microsoft 曉臻/曉雨/雲哲、Google 國語(臺灣))。',
+    '裝置上沒有台灣語音時，自動改用普通话語音並提示一次；絕不會選到粵語語音。'
+  ]},
   {v:'1.0.1',date:'2026-10-13',title:'版本標籤不擋按鈕',items:[
     '右下角版本標籤遇到底下有按鈕時會自動變淡並讓點擊穿透，孩子點到的一定是按鈕本身，不會誤開版本注記。',
     '頁面底部多留一點空白，捲到最底時最後一排按鈕不會被版本標籤蓋住。'
