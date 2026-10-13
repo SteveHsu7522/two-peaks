@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Oliliminmin</title>
+<title>Olilimimi</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22100%2070%20336%20245%22%3E%3Ccircle%20cx%3D%22191%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%232F6FC4%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22343%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%23F3B431%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22219%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Ccircle%20cx%3D%22316%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Cpath%20d%3D%22M200%20271%20Q268%20318%20336%20271%22%20fill%3D%22none%22%20stroke%3D%22%231C2A3E%22%20stroke-width%3D%2220%22%20stroke-linecap%3D%22round%22/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
 :root{
-  /* Oliliminmin palette — from the family logo: blue O (Oliver), yellow O (Osmand), navy smile, white page.
+  /* Olilimimi palette — from the family logo: blue O (Oliver), yellow O (Osmand), navy smile, white page.
      (The variable names --accent/--teal are kept from the original theme: --accent is now the logo
      yellow, --teal is now the logo blue, so every component picks up the new colors automatically.) */
   --bg:#F5F8FC; --surface:#FFFFFF; --surface-2:#EEF3F9; --surface-3:#E0E8F2;
@@ -57,8 +57,15 @@ button{font-family:inherit;cursor:pointer;}
 .brand .logo-mark{flex:none;display:block;}
 .login-logo{display:flex;justify-content:center;margin-bottom:10px;}
 .login-wordmark{font-family:var(--font-display);font-weight:700;font-size:1.7rem;letter-spacing:.22em;color:var(--ink);margin-left:.22em;}
-.login-tagline{font-size:.74rem;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint);margin-top:4px;}
+.login-tagline{font-size:1rem;font-weight:800;letter-spacing:.34em;margin-left:.34em;text-transform:uppercase;color:var(--ink-faint);margin-top:6px;}
 .brand-sub{font-size:.72rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em;margin-top:-2px;}
+/* "Brothers" tagline: the logo's blue and yellow alternating as a gradient across the letters */
+.brand-sub.brand-gradient{font-size:.86rem;font-weight:800;letter-spacing:.12em;text-transform:none;}
+.login-tagline.brand-gradient{text-transform:none;font-size:1.15rem;letter-spacing:.2em;margin-left:.2em;}
+.brand-gradient{display:inline-block;font-family:var(--font-display);}
+.brand-gradient span{-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
+.brand-gradient .bg-b{background-image:linear-gradient(180deg,#6FA3EA 0%,var(--logo-blue) 55%,#1F4F94 100%);}
+.brand-gradient .bg-y{background-image:linear-gradient(180deg,#FFD978 0%,var(--logo-yellow) 55%,#D99410 100%);}
 .learner-switch{display:flex;gap:8px;}
 .learner-btn{display:flex;align-items:center;gap:8px;padding:7px 12px 7px 7px;border-radius:999px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);transition:border-color .15s,background .15s;}
 .learner-btn .dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-display);font-weight:700;font-size:.85rem;overflow:hidden;flex:none;}
@@ -2859,11 +2866,11 @@ function skillLabelMap(learnerId){
 }
 
 /* ================= TOP CHROME ================= */
-/* Oliliminmin logo mark: two O's (blue = Oliver, yellow = Osmand) looking at each other, one
+/* Olilimimi logo mark: two O's (blue = Oliver, yellow = Osmand) looking at each other, one
    smile — the family logo, redrawn as vector so it stays crisp at any size. The pupils and smile
    use the ink color so the face still reads in dark mode. */
 function svgLogoMark(size){
-  return `<svg class="logo-mark" viewBox="100 70 336 245" width="${Math.round(size*336/245)}" height="${size}" role="img" aria-label="Oliliminmin logo">
+  return `<svg class="logo-mark" viewBox="100 70 336 245" width="${Math.round(size*336/245)}" height="${size}" role="img" aria-label="Olilimimi logo">
     <circle cx="191" cy="161" r="59" fill="none" style="stroke:var(--logo-blue)" stroke-width="27"/>
     <circle cx="343" cy="161" r="59" fill="none" style="stroke:var(--logo-yellow)" stroke-width="27"/>
     <circle cx="219" cy="167" r="15" style="fill:var(--ink)"/>
@@ -2871,7 +2878,11 @@ function svgLogoMark(size){
     <path d="M200 271 Q268 318 336 271" fill="none" style="stroke:var(--ink)" stroke-width="20" stroke-linecap="round"/>
   </svg>`;
 }
-function brandHtml(){ return `<div class="brand">${svgLogoMark(34)}<div><div class="brand-name">Oliliminmin</div><div class="brand-sub">Two O's, one smile</div></div></div>`; }
+/* "Brothers" tagline: letters alternate the logo's blue and yellow, each letter with its own
+   light-to-deep gradient (a single blue->yellow gradient across the word turns muddy grey-green
+   where the two colors blend, so the alternation is done per letter instead). */
+function brodersHtml(){ return [...'Brothers'].map((c,i)=>`<span class="${i%2?'bg-y':'bg-b'}">${c}</span>`).join(''); }
+function brandHtml(){ return `<div class="brand">${svgLogoMark(34)}<div><div class="brand-name">Olilimimi</div><div class="brand-sub brand-gradient">${brodersHtml()}</div></div></div>`; }
 function accentVars(color){ return color==='teal'?{c:'var(--teal)',cs:'var(--teal-strong)',soft:'var(--teal-soft)'}:{c:'var(--accent)',cs:'var(--accent-strong)',soft:'var(--accent-soft)'}; }
 
 function renderTopbar(){
@@ -4380,8 +4391,8 @@ function renderAuthScreen(){
   return `
   <div class="center" style="max-width:380px;margin:40px auto">
     <div class="login-logo">${svgLogoMark(92)}</div>
-    <div class="login-wordmark">OLILIMINMIN</div>
-    <div class="login-tagline">Two O's, one smile</div>
+    <div class="login-wordmark">OLILIMIMI</div>
+    <div class="login-tagline brand-gradient">${brodersHtml()}</div>
     <div class="section-title" style="margin-top:18px">Family Login</div>
     <div class="section-sub">A private login for your household. This is a lightweight family gate, not secure authentication — it just keeps everyone's own trail separate.</div>
     ${err}${notice}
