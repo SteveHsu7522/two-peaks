@@ -1989,11 +1989,23 @@ function gZhHanzi(level){
     explanation:`${c.hz} (${c.py}, ${c.en}) has the ${r} radical — ${ZH_RADICAL_NAMES[r]}.`};
 }
 /* 🔊 Mandarin text-to-speech with the browser's built-in voices (no network, no audio files). */
+/* Prefer natural standard-Mandarin voices: Apple 婷婷/Tingting, 語舒/Yu-shu, Li-Mu; Microsoft
+   Xiaoxiao/Huihui/Yunxi; Google 普通话. Apple also ships novelty voices (Eddy, Grandpa, Rocko...)
+   that sound robotic — use those only if nothing better exists. */
+function pickZhVoice(){
+  const vs=(window.speechSynthesis&&window.speechSynthesis.getVoices())||[];
+  const cn=vs.filter(v=>/zh[-_]CN|cmn/i.test(v.lang));
+  const pref=[/婷婷|Ting-?Ting/i,/語舒|语舒|Yu-?shu/i,/Li-?Mu/i,/Xiaoxiao|晓晓/i,/Huihui|慧慧/i,/Yunxi|云希/i,/Google.*(普通话|Mandarin|中国)/i];
+  for(const re of pref){ const v=cn.find(v=>re.test(v.name)); if(v) return v; }
+  const novelty=/Eddy|Flo|Grandma|Grandpa|Reed|Rocko|Sandy|Shelley/i;
+  return cn.find(v=>!novelty.test(v.name))||cn[0]||vs.find(v=>/^zh/i.test(v.lang))||null;
+}
+if(typeof window!=='undefined'&&window.speechSynthesis&&typeof window.speechSynthesis.getVoices==='function'){ try{ window.speechSynthesis.getVoices(); }catch(e){} } // warm up the voice list (Chrome loads it lazily)
 function speakZh(text){
   try{
     if(typeof window==='undefined'||!window.speechSynthesis||typeof SpeechSynthesisUtterance==='undefined'){ toast('This browser can’t read Chinese aloud.'); return; }
     const u=new SpeechSynthesisUtterance(String(text)); u.lang='zh-CN'; u.rate=0.8;
-    const vs=window.speechSynthesis.getVoices()||[]; const v=vs.find(v=>/zh[-_]CN|cmn/i.test(v.lang))||vs.find(v=>/^zh/i.test(v.lang)); if(v)u.voice=v;
+    u.voice=pickZhVoice()||null;
     window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
   }catch(e){}
 }
