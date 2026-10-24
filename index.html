@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Olilimimi</title>
-<meta name="app-version" content="1.4.2">
+<meta name="app-version" content="1.4.3">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22100%2070%20336%20245%22%3E%3Ccircle%20cx%3D%22191%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%232F6FC4%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22343%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%23F3B431%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22219%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Ccircle%20cx%3D%22316%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Cpath%20d%3D%22M200%20271%20Q268%20318%20336%20271%22%20fill%3D%22none%22%20stroke%3D%22%231C2A3E%22%20stroke-width%3D%2220%22%20stroke-linecap%3D%22round%22/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
@@ -484,7 +484,7 @@ body{padding-bottom:36px;}
 </div>
 <div id="modalRoot"></div>
 <div id="toastRoot"></div>
-<button id="versionBadge" class="version-badge" type="button" onclick="openChangelog()" title="版本注記 / Release notes">v1.4.2</button>
+<button id="versionBadge" class="version-badge" type="button" onclick="openChangelog()" title="版本注記 / Release notes">v1.4.3</button>
 
 <!-- Firebase (cloud sync across devices). If this ever fails to load (offline,
      ad-blocker, etc.) the app quietly falls back to this browser's own
@@ -4167,6 +4167,7 @@ function renderTopbar(){
     <div class="row" style="align-items:center;gap:12px">
       <span style="font-size:.82rem;color:var(--ink-soft)">Signed in as <b>${esc(u.username)}</b>${u.isAdmin?' · Admin':''}</span>
       <button class="btn btn-secondary sound-toggle" title="${soundOn?'Mute sound effects':'Turn on sound effects'}" onclick="toggleSound()">${icon(soundOn?'sound-on':'sound-off','var(--ink)',18)}</button>
+      ${u.role!=='student'?`<button class="btn btn-secondary" onclick="openChangePassword()" title="Change password 更改密碼">🔑 Password 密碼</button>`:''}
       <button class="btn btn-secondary" onclick="logout()">Log Out</button>
     </div>`;
 }
@@ -5758,6 +5759,52 @@ function logout(){
   Store.lsSet(SESSION_STORE_KEY,null);
   render();
 }
+/* ---- change password (v1.4.3) ----
+   Parent accounts can change their own password, and reset the password of the children linked to them
+   (handy when a child forgets). The parent must type their CURRENT password first. Only the one
+   password field is written to the cloud (auth/users/<name>/password), after re-reading the user list,
+   so a device with an old copy of the user list can't overwrite other accounts.
+   NOTE: like the rest of the app, passwords are stored as plain text in Firebase — use a password
+   that isn't used anywhere else. */
+function passwordTargets(){
+  const me=APP.auth.currentUser; if(!me||me.role==='student')return [];
+  const ids=visibleLearnerIds();
+  const kids=Object.values(APP.auth.users).filter(x=>x.role==='student'&&ids.includes(x.learnerId)).map(x=>x.username);
+  return [me.username,...kids.filter(k=>k!==me.username)];
+}
+function openChangePassword(){
+  const me=APP.auth.currentUser; if(!me||me.role==='student')return;
+  const t=passwordTargets();
+  openModal(`<div class="modal-card" onclick="stopProp(event)">
+    <div class="qhead"><span>🔑 Change password 更改密碼</span><span></span></div>
+    <div class="field"><label class="flabel">Account 帳號</label>
+      <select id="pwTarget">${t.map((n,i)=>`<option value="${esc(n)}">${esc(n)}${i===0?' (me 我自己)':' (child 孩子)'}</option>`).join('')}</select></div>
+    <div class="field"><label class="flabel">Your current password 你目前的密碼 (${esc(me.username)})</label><input type="password" id="pwCurrent" autocomplete="current-password"></div>
+    <div class="field"><label class="flabel">New password 新密碼 (4+ characters)</label><input type="password" id="pwNew" autocomplete="new-password"></div>
+    <div class="field"><label class="flabel">New password again 再輸入一次</label><input type="password" id="pwNew2" autocomplete="new-password"></div>
+    <div class="bank-msg" id="pwMsg"></div>
+    <div class="section-sub" style="font-size:.76rem;margin:0 0 12px">Passwords are stored without encryption — don't reuse a password from your bank or email. 密碼未加密儲存，請勿使用其他重要服務的密碼。</div>
+    <div class="row"><button class="btn btn-secondary" style="flex:1" onclick="closeModal()">Cancel 取消</button><button class="btn btn-primary" style="flex:2;padding:13px" onclick="changePassword()">Save 儲存</button></div>
+  </div>`);
+}
+async function changePassword(){
+  const me=APP.auth.currentUser; if(!me||me.role==='student')return;
+  const say=t=>{ const el=document.getElementById('pwMsg'); if(el)el.textContent=t; };
+  const target=document.getElementById('pwTarget').value;
+  const cur=document.getElementById('pwCurrent').value, n1=document.getElementById('pwNew').value, n2=document.getElementById('pwNew2').value;
+  if(!passwordTargets().includes(target)){ say('You can only change your own or your linked children\'s password.'); return; }
+  if(Store.db){ try{ const remote=await Store.dbGet(AUTH_STORE_KEY); if(remote&&Object.keys(remote).length){ APP.auth.users=remote; Store.lsSet(AUTH_STORE_KEY,remote); } }catch(e){} }
+  const meRec=APP.auth.users[me.username];
+  if(!meRec||meRec.password!==cur){ say('Your current password is not correct. 目前的密碼不對。'); return; }
+  if(!n1||n1.length<4){ say('New password must be at least 4 characters. 新密碼至少 4 個字元。'); return; }
+  if(n1!==n2){ say('The two new passwords do not match. 兩次輸入的新密碼不一樣。'); return; }
+  const rec=APP.auth.users[target]; if(!rec){ say('Account not found.'); return; }
+  rec.password=n1;
+  Store.lsSet(AUTH_STORE_KEY,APP.auth.users);
+  Store.dbSet(`${AUTH_STORE_KEY}/${target}/password`,n1);
+  if(target===me.username) APP.auth.currentUser=rec;
+  closeModal(); toast(`🔑 Password changed for ${target}. 密碼已更新。`,3200);
+}
 function doRegister(){
   const uEl=document.getElementById('regUsername'), pEl=document.getElementById('regPassword'), p2El=document.getElementById('regPassword2');
   const links=[...document.querySelectorAll('.reg-link:checked')].map(b=>b.value);
@@ -6509,8 +6556,13 @@ function bankClearGoal(){
    notes live in CHANGELOG.md, and each release is also archived as olilimimi-vX.Y.Z.html so any
    version can be restored by uploading that file as index.html. The version shows in the bottom-right
    corner; tapping it opens these notes. */
-const APP_VERSION='1.4.2';
+const APP_VERSION='1.4.3';
 const APP_CHANGELOG=[
+  {v:'1.4.3',date:'2026-10-24',title:'家長可更改密碼',items:[
+    '家長帳號右上角新增「🔑 Password 密碼」按鈕：可更改自己的密碼，也能重設連結孩子的密碼(孩子忘記密碼時使用)。',
+    '更改前必須輸入家長自己目前的密碼；新密碼至少 4 個字元、需輸入兩次確認。',
+    '只更新該帳號的密碼欄位，不會覆蓋其他帳號資料。提醒：密碼未加密儲存，請勿使用其他重要服務的密碼。'
+  ]},
   {v:'1.4.2',date:'2026-10-24',title:'儲蓄利率：1 個月 1%、1 年 20%',items:[
     '儲蓄利率改成：存 1 個月 +1%、存 1 年 +20%,中間依月數直線內插(3 個月 +4.45%、6 個月 +9.64%)。',
     '之前已存成 1 年 2% 的設定會自動改成 20%;家長仍可在家長專區自行調整。'
