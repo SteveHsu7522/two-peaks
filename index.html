@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Olilimimi</title>
-<meta name="app-version" content="1.1.1">
+<meta name="app-version" content="1.2.0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22100%2070%20336%20245%22%3E%3Ccircle%20cx%3D%22191%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%232F6FC4%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22343%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%23F3B431%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22219%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Ccircle%20cx%3D%22316%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Cpath%20d%3D%22M200%20271%20Q268%20318%20336%20271%22%20fill%3D%22none%22%20stroke%3D%22%231C2A3E%22%20stroke-width%3D%2220%22%20stroke-linecap%3D%22round%22/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
@@ -393,6 +393,61 @@ body{padding-bottom:36px;}
 .cl-date{font-size:.75rem;color:var(--ink-faint);}
 .cl-title{font-weight:700;margin:2px 0 4px;}
 .cl-list{margin:0 0 0 18px;padding:0;font-size:.86rem;line-height:1.6;color:var(--ink-soft);}
+
+/* ================= OLILIMIMI BANK (v1.2.0) ================= */
+.bank-hero{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:20px 22px;background:linear-gradient(135deg,var(--teal-soft),var(--accent-soft));border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:18px;}
+.bank-brand{display:flex;align-items:center;gap:12px;}
+.bank-title{font-family:var(--font-display);font-weight:700;font-size:1.4rem;letter-spacing:.04em;color:var(--ink);line-height:1.1;}
+.bank-mascot{width:64px;height:64px;flex:none;}
+.bank-mascot svg{width:100%;height:100%;}
+.bank-total{margin-left:auto;text-align:right;}
+.bank-total .cap{font-size:.74rem;color:var(--ink-soft);font-weight:700;}
+.bank-total .amt{font-family:var(--font-display);font-weight:700;font-size:2.3rem;color:var(--ink);line-height:1.05;}
+.bank-switch{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.jar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;}
+.jar-card{padding:14px 8px 12px;text-align:center;border:2px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);box-shadow:var(--shadow-sm);}
+.jar-card svg{display:block;margin:0 auto 4px;max-width:100%;height:auto;}
+.jar-name{font-family:var(--font-display);font-weight:700;font-size:1.02rem;}
+.jar-zh{font-size:.72rem;color:var(--ink-faint);}
+.jar-amt{font-family:var(--font-display);font-weight:700;font-size:1.3rem;margin-top:4px;}
+.jar-pct{font-size:.7rem;color:var(--ink-faint);}
+.bank-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.bank-big{padding:16px 12px;border-radius:var(--radius-md);font-size:1.04rem;font-weight:800;border:2px solid var(--border);background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm);}
+.bank-big.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);}
+.bank-big small{display:block;font-size:.72rem;font-weight:600;opacity:.8;}
+.goal-card{padding:16px 18px;margin-bottom:18px;}
+.goal-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;font-weight:700;}
+.goal-track{height:18px;border-radius:999px;background:var(--surface-3);overflow:hidden;}
+.goal-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-strong));transition:width .5s;}
+.goal-note{font-size:.8rem;color:var(--ink-soft);margin-top:8px;}
+.tx-row{display:flex;align-items:center;gap:12px;padding:11px 14px;margin-bottom:8px;}
+.tx-emoji{width:42px;height:42px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex:none;}
+.tx-body{flex:1;min-width:0;}
+.tx-title{font-weight:700;font-size:.9rem;overflow:hidden;text-overflow:ellipsis;}
+.tx-sub{font-size:.72rem;color:var(--ink-faint);}
+.tx-amt{font-family:var(--font-mono);font-weight:700;font-size:.95rem;white-space:nowrap;}
+.tx-amt.pos{color:var(--good);}
+.tx-amt.neg{color:var(--bad);}
+.tx-row.voided{opacity:.5;}
+.tx-row.voided .tx-title{text-decoration:line-through;}
+.tx-undo{padding:6px 10px;font-size:.74rem;}
+.pick-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.pick-btn{flex:1;min-width:72px;padding:10px 8px;border-radius:14px;border:2px solid var(--border);background:var(--surface-2);font-weight:700;font-size:.88rem;color:var(--ink);}
+.pick-btn[data-on="true"]{border-color:var(--accent);background:var(--accent-soft);}
+.bank-amount{font-size:1.5rem !important;font-family:var(--font-mono) !important;text-align:center;padding:12px !important;}
+.bank-msg{color:var(--bad);font-size:.82rem;min-height:1.2em;margin-bottom:8px;font-weight:600;}
+.split-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.bank-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.bank-stat{padding:12px 16px;}
+.bank-stat .cap{font-size:.72rem;color:var(--ink-faint);font-weight:700;}
+.bank-stat .num{font-family:var(--font-display);font-weight:700;font-size:1.3rem;}
+.bank-hint{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 16px;margin-bottom:18px;background:var(--accent-soft);}
+.bank-hint .t{flex:1;min-width:180px;font-size:.86rem;}
+.stat-chip.bank-chip{cursor:pointer;}
+.coin-pop{animation:coinPop .7s ease-out;}
+@keyframes coinPop{0%{transform:translateY(-16px) scale(.8);opacity:0;}60%{transform:translateY(0) scale(1.1);opacity:1;}100%{transform:scale(1);}}
+@media (max-width:520px){.jar-grid{gap:8px;}.bank-total{margin-left:0;text-align:left;width:100%;}.bank-actions{grid-template-columns:1fr;}.bank-stats{grid-template-columns:1fr 1fr;}}
+@media (prefers-reduced-motion:reduce){.coin-pop{animation:none;}.goal-fill{transition:none;}}
 </style>
 </head>
 <body>
@@ -405,7 +460,7 @@ body{padding-bottom:36px;}
 </div>
 <div id="modalRoot"></div>
 <div id="toastRoot"></div>
-<button id="versionBadge" class="version-badge" type="button" onclick="openChangelog()" title="版本注記 / Release notes">v1.1.1</button>
+<button id="versionBadge" class="version-badge" type="button" onclick="openChangelog()" title="版本注記 / Release notes">v1.2.0</button>
 
 <!-- Firebase (cloud sync across devices). If this ever fails to load (offline,
      ad-blocker, etc.) the app quietly falls back to this browser's own
@@ -3145,6 +3200,7 @@ function icon(name,color,size){
   if(name==='calendar')return `<svg ${s}><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>`;
   if(name==='star')return `<svg ${s}><path d="M12 3l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z"/></svg>`;
   if(name==='flame')return `<svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M12 2c2 3-4 5-4 10a4 4 0 008 0c0-2-1-3-1-3s2 1 2 4a6 6 0 01-12 0c0-5 4-6 4-8 0-1.5-1-2.5 3-3z" fill="${color}"/></svg>`;
+  if(name==='coin')return `<svg ${s}><circle cx="12" cy="12" r="9"/><path d="M12 6.5v11M9.2 9.3c0-1.1 1.2-1.8 2.8-1.8s2.8.7 2.8 1.8-1.2 1.5-2.8 1.9-2.8.8-2.8 1.9 1.2 1.8 2.8 1.8 2.8-.7 2.8-1.8"/></svg>`;
   if(name==='plus')return `<svg ${s}><path d="M12 5v14M5 12h14"/></svg>`;
   if(name==='minus')return `<svg ${s}><path d="M5 12h14"/></svg>`;
   if(name==='multiply')return `<svg ${s}><path d="M6 6l12 12M18 6L6 18"/></svg>`;
@@ -3751,7 +3807,7 @@ const Store={
 
 const DEFAULT_REWARDS=[
 {id:'r1',label:'10 extra minutes of game time per day',cost:20,active:true},
-{id:'r2',label:'Gain $10 MYD',cost:40,active:true},
+{id:'r2',label:'Gain $10 MYD',cost:40,cash:10,active:true},
 {id:'r3',label:'Ice cream after dinner',cost:10,active:true},
 {id:'r4',label:'Stay up 20 minutes past bedtime',cost:20,active:true},
 {id:'r5',label:'Choose a weekend movie',cost:50,active:true}
@@ -3840,6 +3896,7 @@ async function loadAllData(){
   }
   APP.rewards=Store.lsGet('rewards/list')||{items:DEFAULT_REWARDS.slice()};
   migrateRewardsIfLegacy();
+  migrateRewardCash();
   render();
   if(await refreshCloudData()) render();
 }
@@ -3888,6 +3945,8 @@ async function refreshCloudData(){
   else if(remoteRewards){ const mergedRewards=Object.assign({items:DEFAULT_REWARDS.slice()},remoteRewards); APP.rewards=mergedRewards; Store.lsSet('rewards/list',mergedRewards); }
   else{ Store.dbSet('rewards/list',APP.rewards); }
   migrateRewardsIfLegacy();
+  migrateRewardCash();
+  try{ await refreshBankData(); }catch(e){ console.warn('bank refresh failed',e); }
   APP.lastCloudSyncAt=Date.now();
   return true;
 }
@@ -3903,9 +3962,11 @@ let campPollActive=false; // tracks "polling is arranged", independent of whethe
                            // this is what stops render() from re-firing a fetch on every single call
                            // while the viewer sits on Camp Log.
 async function pollCampLogOnce(){
-  if(!APP.auth.currentUser||APP.activeTab!=='camp'){ stopCampPolling(); return; }
+  if(!APP.auth.currentUser||(APP.activeTab!=='camp'&&APP.activeTab!=='wallet')){ stopCampPolling(); return; }
   const changed=await refreshCloudData();
-  if(changed && APP.auth.currentUser && APP.activeTab==='camp') render();
+  // On the Bank tab never redraw while a field is focused or filled in — it would wipe what a parent is typing.
+  if(APP.activeTab==='wallet'){ const a=document.activeElement; const busy=(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))||[...document.querySelectorAll('#view input[type=text]')].some(i=>i.value&&!i.id.startsWith('pct-')&&i.id!=='bankCurrency'); if(busy||document.getElementById('modalRoot').innerHTML)return; }
+  if(changed && APP.auth.currentUser && (APP.activeTab==='camp'||APP.activeTab==='wallet')) render();
 }
 function startCampPolling(){
   if(campPollActive)return;
@@ -3921,7 +3982,7 @@ function stopCampPolling(){
   if(campPollTimer){ if(typeof clearInterval==='function')clearInterval(campPollTimer); campPollTimer=null; }
 }
 function ensureCampPolling(){
-  const onCampLog=APP.auth.currentUser && APP.auth.currentUser.role!=='student' && APP.activeTab==='camp';
+  const onCampLog=APP.auth.currentUser && APP.auth.currentUser.role!=='student' && (APP.activeTab==='camp'||APP.activeTab==='wallet');
   if(onCampLog){ if(!campPollActive) startCampPolling(); }
   else stopCampPolling();
 }
@@ -4097,17 +4158,18 @@ function renderStatStrip(){
       <div class="xpbar-track"><div class="xpbar-fill" style="width:${pct}%"></div></div>
     </div>
     <div class="stat-chip">${icon('token',av.c,18)}<div><div class="num mono">${learner.tokens}</div><div class="cap">Trail Tokens</div></div></div>
+    <div class="stat-chip bank-chip" onclick="setTab('wallet')">${icon('coin',av.c,18)}<div><div class="num mono">${esc(fmtMoney(bankBalances(id).total,bankSettings(id).currency))}</div><div class="cap">My Bank</div></div></div>
     <div class="stat-chip">${icon('flag',av.c,18)}<div><div class="num mono">${learner.streakDays}</div><div class="cap">Day Streak</div></div></div>
     <div class="stat-chip">${icon('badge',av.c,18)}<div><div class="num mono">${learner.badges.length}</div><div class="cap">Trail Badges</div></div></div>
     ${(()=>{const t=getFocusTimer(id); if(t.mode==='idle')return ''; return `<div class="stat-chip focus-chip" data-mode="${t.mode}" onclick="setTab('today')">${icon('timer',t.mode==='break'?'var(--good)':av.c,18)}<div><div class="num mono" id="focusChipClock">${fmtMMSS(t.endsAt-Date.now())}</div><div class="cap">${t.mode==='break'?'Q-Break':'Focus'}</div></div></div>`;})()}
   `;
 }
-const TABS=[{id:'today',label:"Today's Route",icon:'compass'},{id:'math',label:'Math Trail',icon:'mountain'},{id:'reading',label:'Reading Trail',icon:'book'},{id:'chinese',label:'中文 Chinese',icon:'zh'},{id:'life',label:'Life Skills',icon:'build'},{id:'workshop',label:'Trail Time',icon:'flag'},{id:'camp',label:'Camp Log',icon:'badge'},{id:'admin',label:'Admin',icon:'grid'}];
+const TABS=[{id:'today',label:"Today's Route",icon:'compass'},{id:'math',label:'Math Trail',icon:'mountain'},{id:'reading',label:'Reading Trail',icon:'book'},{id:'chinese',label:'中文 Chinese',icon:'zh'},{id:'life',label:'Life Skills',icon:'build'},{id:'workshop',label:'Trail Time',icon:'flag'},{id:'wallet',label:'Bank 小銀行',icon:'coin'},{id:'camp',label:'Camp Log',icon:'badge'},{id:'admin',label:'Admin',icon:'grid'}];
 /* ================= AUTH / RBAC ================= */
 function allowedTabsFor(u){
   if(!u)return[];
-  if(u.role==='student')return['today','math','reading','chinese','life','workshop'];
-  return u.isAdmin?['camp','admin']:['camp'];
+  if(u.role==='student')return['today','math','reading','chinese','life','workshop','wallet'];
+  return u.isAdmin?['camp','wallet','admin']:['camp','wallet'];
 }
 function visibleLearnerIds(){
   const u=APP.auth.currentUser; if(!u)return[];
@@ -4159,6 +4221,7 @@ function render(){
   else if(APP.activeTab==='life') view.innerHTML=renderSkillTrail('life');
   else if(APP.activeTab==='chinese') view.innerHTML=renderSkillTrail('chinese');
   else if(APP.activeTab==='workshop') view.innerHTML=renderTrailTime();
+  else if(APP.activeTab==='wallet') view.innerHTML=renderWallet();
   else if(APP.activeTab==='camp') view.innerHTML=renderCampLog();
   else if(APP.activeTab==='admin') view.innerHTML=renderAdmin();
   if(APP.activeTab==='workshop' && APP.workshopFocus){
@@ -4200,7 +4263,7 @@ function renderToday(){
   const allActiveRewards=(APP.rewards.items||[]).filter(r=>r.active);
   const rewardsExpanded=!!APP.rewardsExpanded;
   const shownRewards=rewardsExpanded?allActiveRewards:allActiveRewards.slice(0,3);
-  const rewardRows=shownRewards.map(r=>`<div class="card reward-row"><span class="rlbl">${esc(r.label)}</span><span class="reward-cost mono">${r.cost} ⛁</span>
+  const rewardRows=shownRewards.map(r=>`<div class="card reward-row"><span class="rlbl">${esc(r.label)}</span><span class="reward-cost mono">${r.cost} ⛁</span>${Number(r.cash)>0?`<span class="pill pill-good">💰 +${esc(fmtMoney(Math.round(r.cash*100),bankSettings(id).currency))}</span>`:''}
       <button class="btn btn-primary" ${learner.tokens<r.cost?'disabled':''} onclick="redeemReward('${r.id}')">Redeem</button></div>`).join('');
   const rewardToggleHtml=allActiveRewards.length>3?`<button class="btn btn-secondary btn-block" onclick="toggleRewardsExpanded()">${rewardsExpanded?'Show fewer ▲':`Show all ${allActiveRewards.length} rewards ▾`}</button>`:'';
   return `
@@ -4236,9 +4299,14 @@ function redeemReward(rid){
   const r=(APP.rewards.items||[]).find(x=>x.id===rid); if(!r||learner.tokens<r.cost)return;
   learner.tokens-=r.cost;
   learner.redemptions=learner.redemptions||[];
-  learner.redemptions.unshift({label:r.label,cost:r.cost,date:todayStr()});
+  const entry={label:r.label,cost:r.cost,date:todayStr()};
+  if(Number(r.cash)>0)entry.cash=Number(r.cash);
+  learner.redemptions.unshift(entry);
   learner.redemptions=learner.redemptions.slice(0,20);
-  saveLearner(id); toast(`Redeemed: ${r.label}!`); render();
+  saveLearner(id);
+  const parts=Number(r.cash)>0?bankDepositFromReward(id,r):null; // money goes straight into the Bank jars
+  toast(parts?`💰 +${fmtMoney(Math.round(r.cash*100),bankSettings(id).currency)} is in your jars! Check My Bank.`:`Redeemed: ${r.label}!`,parts?3600:undefined);
+  render();
 }
 function toast(msg,ms){
   const el=document.getElementById('toastRoot');
@@ -5338,7 +5406,7 @@ function renderCampLog(){
     const m=LEARNERS_META[sid]; const l=APP.learners[sid]; const a2=accentVars(m.color);
     return `<div class="card" style="padding:14px;display:flex;align-items:center;gap:14px">
       <span class="dot" style="width:34px;height:34px;border-radius:50%;background:${a2.c};display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-display);font-weight:700">${l.name.charAt(0)}</span>
-      <div style="flex:1"><b>${esc(l.name)}</b> · Lvl ${l.level} · ${l.tokens} tokens · ${l.streakDays}-day streak</div>
+      <div style="flex:1"><b>${esc(l.name)}</b> · Lvl ${l.level} · ${l.tokens} tokens · 💰 ${esc(fmtMoney(bankBalances(sid).total,bankSettings(sid).currency))} · ${l.streakDays}-day streak</div>
     </div>`;
   }).join('');
   const badgeGallery=BADGE_DEFS.map(b=>{
@@ -5346,12 +5414,12 @@ function renderCampLog(){
     return `<div class="badge-tile ${earned?'':'locked'}" title="${esc(b.desc)}"><div class="badge-shape" style="background:${earned?av.soft:'var(--surface-2)'}">${icon(b.icon,earned?av.c:'var(--ink-faint)',28)}</div>${b.label}</div>`;
   }).join('');
   const rewardsList=(APP.rewards.items||[]).map(r=>`<div class="card reward-row">
-      <span class="rlbl">${esc(r.label)}${r.active?'':' <span class="tag">inactive</span>'}</span>
+      <span class="rlbl">${esc(r.label)}${Number(r.cash)>0?` <span class="pill pill-good">💰 ${esc(fmtMoney(Math.round(r.cash*100)))}</span>`:''}${r.active?'':' <span class="tag">inactive</span>'}</span>
       <span class="reward-cost mono">${r.cost} ⛁</span>
       <button class="btn btn-secondary" onclick="toggleReward('${r.id}')">${r.active?'Disable':'Enable'}</button>
       <button class="btn btn-secondary" onclick="deleteReward('${r.id}')">Delete</button>
     </div>`).join('');
-  const redemptions=(learner.redemptions||[]).slice(0,8).map(r=>`<div class="journal-entry"><div class="journal-date mono">${r.date}</div>${esc(r.label)} · ${r.cost} tokens</div>`).join('')||'<div class="section-sub">No redemptions yet.</div>';
+  const redemptions=(learner.redemptions||[]).slice(0,8).map(r=>`<div class="journal-entry"><div class="journal-date mono">${r.date}</div>${esc(r.label)} · ${r.cost} tokens${r.cash?' · 💰 +'+esc(String(r.cash)):''}</div>`).join('')||'<div class="section-sub">No redemptions yet.</div>';
   const syncLabel=Store.db?(APP.lastCloudSyncAt?('Last synced '+new Date(APP.lastCloudSyncAt).toLocaleTimeString()):'Syncing…'):'Local mode (no cloud sync)';
   return `
   <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
@@ -5403,6 +5471,7 @@ function renderCampLog(){
     <div class="row">
       <div class="field" style="flex:2"><input type="text" id="newRewardLabel" placeholder="Reward name"></div>
       <div class="field" style="flex:1"><input type="text" id="newRewardCost" placeholder="Cost (tokens)"></div>
+      <div class="field" style="flex:1"><input type="text" id="newRewardCash" inputmode="decimal" placeholder="Pays money 💰 (optional)"></div>
     </div>
     <button class="btn btn-primary" onclick="addReward()">Add Reward</button>
   </div>
@@ -5433,7 +5502,10 @@ function addReward(){
   const cost=parseInt(document.getElementById('newRewardCost').value,10);
   if(!label||isNaN(cost)||cost<=0)return;
   APP.rewards.items=APP.rewards.items||[];
-  APP.rewards.items.push({id:'r'+Date.now(),label,cost,active:true});
+  const cashEl=document.getElementById('newRewardCash'); const cashC=cashEl?parseMoney(cashEl.value):null;
+  const item={id:'r'+Date.now(),label,cost,active:true};
+  if(cashC)item.cash=cashC/100;
+  APP.rewards.items.push(item);
   saveRewards(); render();
 }
 function saveGuideNotes(){ APP.learners[APP.currentLearnerId].guideNotes=document.getElementById('guideNotesInput').value; saveLearner(APP.currentLearnerId); toast('Notes saved.'); }
@@ -5755,14 +5827,436 @@ function rejectUser(username){
   render();
 }
 
+/* ================= OLILIMIMI BANK (v1.2.0) =================
+   A play-money bank for each child. Trail Tokens redeemed for a cash reward (a reward with a
+   `cash` value, e.g. "Gain $10") are deposited straight into the child's three jars —
+   Spend / Save / Give — using the split the parent chose. Parents can add or take away money,
+   undo any entry and change the split; children can record what they spend, move money between
+   jars and set a savings goal.
+   Storage: bank/<learnerId>/tx/<key> = one immutable ledger entry per key (so two devices writing
+   at the same moment can never overwrite each other) and bank/<learnerId>/settings.
+   Amounts are whole cents (integers). A jar's balance is the sum of its entries; "undo" adds an
+   opposite entry, nothing is ever deleted. NOTE: like the rest of the app this is a lightweight
+   household gate — the parent-only rules are enforced in the app, not by Firebase security rules. */
+const JARS=[
+  {id:'spend',label:'Spend',zh:'花費',emoji:'🛍️',color:'var(--teal)'},
+  {id:'save',label:'Save',zh:'儲蓄',emoji:'🐷',color:'var(--accent)'},
+  {id:'give',label:'Give',zh:'分享',emoji:'💝',color:'var(--good)'}
+];
+const BANK_CATS=[
+  {id:'snack',emoji:'🍪',label:'Snacks 零食'},{id:'toy',emoji:'🧸',label:'Toys 玩具'},
+  {id:'book',emoji:'📚',label:'Books 書'},{id:'game',emoji:'🎮',label:'Games 遊戲'},
+  {id:'gift',emoji:'🎁',label:'Gifts 禮物'},{id:'other',emoji:'✨',label:'Other 其他'}
+];
+let bankUI={adjJar:'auto',spendJar:'spend',spendCat:'snack',from:'spend',to:'save',showAll:false};
+function jarById(id){ return JARS.find(j=>j.id===id)||JARS[0]; }
+function defaultBankSettings(){ return{currency:'MYR',split:{spend:50,save:30,give:20},goal:null,updated:0}; }
+function bankDate(d){ d=d||new Date(); const p=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
+function ensureBank(id){
+  if(!APP.bank)APP.bank={};
+  if(!APP.bank[id]){
+    const c=Store.lsGet('bank/'+id)||{};
+    APP.bank[id]={tx:c.tx||{},settings:Object.assign(defaultBankSettings(),c.settings||{})};
+  }
+  const b=APP.bank[id];
+  if(!b.tx)b.tx={};
+  if(!b.settings.split)b.settings.split=defaultBankSettings().split;
+  return b;
+}
+function bankSettings(id){ return ensureBank(id).settings; }
+function newBankKey(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function bankPersist(id){ Store.lsSet('bank/'+id,APP.bank[id]); }
+function bankSaveSettingsNow(id){
+  const s=bankSettings(id); s.updated=Date.now();
+  bankPersist(id);
+  Store.dbSet(`bank/${id}/settings`,JSON.parse(JSON.stringify(s)));
+}
+function bankAddEntries(id,entries){
+  const b=ensureBank(id); const ts=Date.now();
+  const user=(APP.auth.currentUser&&APP.auth.currentUser.username)||'';
+  const out=entries.map((e,i)=>{
+    const clean=JSON.parse(JSON.stringify(Object.assign({ts,date:bankDate(),by:user},e))); // JSON round-trip drops undefined (Firebase rejects it)
+    const k=newBankKey()+i; b.tx[k]=clean; Store.dbSet(`bank/${id}/tx/${k}`,clean);
+    return Object.assign({k},clean);
+  });
+  bankPersist(id);
+  return out;
+}
+function bankBalances(id){
+  const b=ensureBank(id); const bal={spend:0,save:0,give:0,total:0};
+  Object.values(b.tx).forEach(e=>{ if(bal[e.jar]!==undefined) bal[e.jar]+=(e.amt|0); });
+  bal.total=bal.spend+bal.save+bal.give;
+  return bal;
+}
+function fmtMoney(c,cur){
+  const v=Math.abs(c)/100; const s=Number.isInteger(v)?String(v):v.toFixed(2);
+  return (c<0?'-':'')+(cur?cur+' ':'')+s;
+}
+function parseMoney(s){
+  s=String(s||'').replace(/[^\d.]/g,'');
+  if(!/^\d+(\.\d{1,2})?$/.test(s))return null;
+  const c=Math.round(parseFloat(s)*100);
+  return (c>0&&c<=10000000)?c:null;
+}
+/* Splits an amount of cents across the jars by percent; leftover cents go to the biggest share. */
+function splitCents(cents,split){
+  const parts={}; let used=0, big=JARS[0].id;
+  JARS.forEach(j=>{ const p=Math.max(0,split[j.id]|0); parts[j.id]=Math.floor(cents*p/100); used+=parts[j.id]; if(p>(split[big]|0))big=j.id; });
+  parts[big]+=cents-used;
+  return parts;
+}
+/* Called by redeemReward(): a reward with a cash value pays its money into the jars. */
+function bankDepositFromReward(learnerId,reward){
+  const cents=Math.round((Number(reward.cash)||0)*100);
+  if(cents<=0)return null;
+  const parts=splitCents(cents,bankSettings(learnerId).split);
+  const grp=newBankKey();
+  const entries=JARS.filter(j=>parts[j.id]>0).map(j=>({jar:j.id,amt:parts[j.id],kind:'token',note:reward.label,grp}));
+  bankAddEntries(learnerId,entries);
+  return parts;
+}
+/* Rewards written before the Bank existed (e.g. "Gain $10 MYD") get their cash value once,
+   read from the label. Runs a single time per family (flag stored with the rewards). */
+function migrateRewardCash(){
+  if(!APP.rewards||APP.rewards.cashMigrated)return false;
+  let changed=false;
+  (APP.rewards.items||[]).forEach(r=>{
+    if(r.cash!==undefined)return;
+    const m=/(\d+(?:\.\d+)?)\s*(?:MYD|MYR|RM)\b/i.exec(r.label||'')||/(?:\$|RM)\s*(\d+(?:\.\d+)?)/i.exec(r.label||'');
+    if(m){ r.cash=parseFloat(m[1]); changed=true; }
+  });
+  APP.rewards.cashMigrated=true;
+  saveRewards();
+  return changed;
+}
+async function refreshBankData(){
+  for(const id of Object.keys(LEARNERS_META)){
+    const b=ensureBank(id);
+    const remote=await Store.dbGet('bank/'+id);
+    const rtx=(remote&&remote.tx)||{};
+    // Entries that only exist on this device (written offline) are pushed up; remote entries are merged in.
+    Object.keys(b.tx).forEach(k=>{ if(!rtx[k]) Store.dbSet(`bank/${id}/tx/${k}`,b.tx[k]); });
+    Object.keys(rtx).forEach(k=>{ b.tx[k]=rtx[k]; });
+    const rs=remote&&remote.settings;
+    if(rs&&(rs.updated||0)>=(b.settings.updated||0)) b.settings=Object.assign(defaultBankSettings(),rs);
+    else if(b.settings.updated) Store.dbSet(`bank/${id}/settings`,JSON.parse(JSON.stringify(b.settings)));
+    bankPersist(id);
+  }
+}
+
+/* ---- ledger views ---- */
+function bankHistory(id){
+  const b=ensureBank(id);
+  const list=Object.keys(b.tx).map(k=>Object.assign({k},b.tx[k]));
+  const voided=new Set(list.filter(e=>e.voids).map(e=>e.voids));
+  const groups={};
+  list.forEach(e=>{
+    const g=e.grp||e.k;
+    if(!groups[g])groups[g]={grp:g,ts:e.ts||0,kind:e.kind,note:e.note||'',cat:e.cat,by:e.by,date:e.date,entries:[]};
+    groups[g].entries.push(e);
+  });
+  return Object.values(groups).map(g=>{
+    g.total=g.entries.reduce((a,e)=>a+(e.amt|0),0);
+    g.voided=g.entries.every(e=>voided.has(e.k));
+    g.isVoid=g.kind==='void';
+    return g;
+  }).sort((a,b2)=>b2.ts-a.ts);
+}
+function bankMonthStats(id){
+  let inn=0,out=0; const month=bankDate().slice(0,7);
+  bankHistory(id).forEach(g=>{
+    if(g.voided||g.isVoid||g.kind==='move'||String(g.date||'').slice(0,7)!==month)return;
+    if(g.total>0)inn+=g.total; else out-=g.total;
+  });
+  return{inn,out};
+}
+function bankCan(id){ return visibleLearnerIds().includes(id); }
+function bankIsParent(){ const u=APP.auth.currentUser; return !!u&&u.role!=='student'; }
+function bankTargetId(){
+  const id=APP.currentLearnerId;
+  return id&&bankCan(id)?id:null;
+}
+function bankSetMsg(t){ const el=document.getElementById('bankMsg'); if(el)el.textContent=t||''; }
+
+/* ---- drawing ---- */
+function svgJar(jar,pct,uid){
+  const full=88, h=Math.round(full*Math.min(1,Math.max(0,pct)));
+  return `<svg viewBox="0 0 100 132" width="104" height="137" role="img" aria-label="${esc(jar.label)} jar">
+    <defs><clipPath id="jarclip-${uid}"><rect x="14" y="32" width="72" height="94" rx="20"/></clipPath></defs>
+    <rect x="14" y="32" width="72" height="94" rx="20" style="fill:var(--surface-2)"/>
+    <g clip-path="url(#jarclip-${uid})"><rect x="14" y="${126-h}" width="72" height="${h}" style="fill:${jar.color}" opacity=".85"/></g>
+    <rect x="14" y="32" width="72" height="94" rx="20" fill="none" style="stroke:var(--ink-soft)" stroke-width="3.5"/>
+    <rect x="26" y="14" width="48" height="16" rx="7" style="fill:var(--ink-soft)"/>
+    <circle cx="39" cy="78" r="5" style="fill:var(--ink)"/><circle cx="61" cy="78" r="5" style="fill:var(--ink)"/>
+    <path d="M37 92 Q50 104 63 92" fill="none" style="stroke:var(--ink)" stroke-width="4.5" stroke-linecap="round"/>
+  </svg>`;
+}
+
+/* ---- the Bank tab ---- */
+function bankSwitcherHtml(ids,id){
+  if(ids.length<2)return '';
+  return `<div class="bank-switch">${ids.map(sid=>{
+    const m=LEARNERS_META[sid]; const l=APP.learners[sid]; const a2=accentVars(m.color); const active=sid===id;
+    const t=fmtMoney(bankBalances(sid).total,bankSettings(sid).currency);
+    return `<button class="learner-btn" data-active="${active}" style="--accent-color:${a2.c};--accent-color-strong:${a2.cs};--accent-color-soft:${a2.soft}" onclick="setLearner('${sid}')">
+      <span class="dot">${svgMascot(m.mascot,a2.c,'happy')}</span>
+      <span class="lbl"><b>${esc(l.name)}</b><span>${esc(t)}</span></span>
+    </button>`;
+  }).join('')}</div>`;
+}
+function bankRowInfo(g,cur){
+  const jl=e=>jarById(e.jar).label;
+  if(g.kind==='token')return{emoji:'🪙',title:'Token reward: '+g.note,amt:g.total,sub:g.entries.map(e=>jl(e)+' '+fmtMoney(e.amt)).join(' · ')};
+  if(g.kind==='adjust')return{emoji:g.total>=0?'🎁':'➖',title:(g.total>=0?'Added: ':'Taken: ')+g.note,amt:g.total,sub:g.entries.map(e=>jl(e)+' '+fmtMoney(Math.abs(e.amt))).join(' · ')};
+  if(g.kind==='spend'){const c=BANK_CATS.find(x=>x.id===g.cat)||BANK_CATS[5]; return{emoji:c.emoji,title:g.note||c.label,amt:g.total,sub:jl(g.entries[0])+' jar'};}
+  if(g.kind==='move'){const from=g.entries.find(e=>e.amt<0)||g.entries[0], to=g.entries.find(e=>e.amt>0)||g.entries[0]; return{emoji:'🔁',title:'Moved '+jl(from)+' → '+jl(to),amt:Math.abs(from.amt),neutral:true,sub:''};}
+  if(g.kind==='void')return{emoji:'↩️',title:g.note||'Undo',amt:g.total,sub:g.entries.map(e=>jl(e)).join(' · ')};
+  return{emoji:'💰',title:g.note||'Entry',amt:g.total,sub:''};
+}
+function bankHistoryHtml(id,parent){
+  const cur=bankSettings(id).currency;
+  const all=bankHistory(id);
+  if(!all.length)return `<div class="section-sub">Nothing here yet — redeem a money reward with your tokens, and it lands in your jars! 還沒有紀錄。</div>`;
+  const shown=bankUI.showAll?all:all.slice(0,30);
+  const rows=shown.map(g=>{
+    const i=bankRowInfo(g,cur);
+    const cls=i.neutral?'':(i.amt>=0?'pos':'neg');
+    const amtTxt=i.neutral?fmtMoney(i.amt,cur):((i.amt>=0?'+':'')+fmtMoney(i.amt,cur));
+    const who=g.by&&g.by!==(APP.auth.currentUser&&APP.auth.currentUser.username)?` · ${esc(g.by)}`:'';
+    const undo=parent&&!g.voided&&!g.isVoid?`<button class="btn btn-secondary tx-undo" onclick="bankVoid('${esc(g.grp)}')">Undo 復原</button>`:'';
+    return `<div class="card tx-row${g.voided?' voided':''}">
+      <div class="tx-emoji">${i.emoji}</div>
+      <div class="tx-body"><div class="tx-title">${esc(i.title)}</div><div class="tx-sub">${esc(g.date||'')}${who}${i.sub?' · '+esc(i.sub):''}${g.voided?' · undone':''}</div></div>
+      <div class="tx-amt ${cls}">${esc(amtTxt)}</div>${undo}
+    </div>`;
+  }).join('');
+  const more=all.length>30?`<button class="btn btn-secondary btn-block" onclick="bankUI.showAll=!bankUI.showAll;render()">${bankUI.showAll?'Show fewer ▲':`Show all ${all.length} ▾`}</button>`:'';
+  return rows+more;
+}
+function bankGoalHtml(id,av){
+  const s=bankSettings(id); const bal=bankBalances(id); const cur=s.currency;
+  const g=s.goal;
+  if(!g||!g.target){
+    return `<div class="card goal-card"><div class="goal-head"><span>🎯 My savings goal 我的存錢目標</span></div>
+      <div class="section-sub" style="margin-bottom:10px">What do you want to save up for? 你想存錢買什麼？</div>
+      <div class="row"><div class="field" style="flex:2;min-width:150px"><input type="text" id="goalName" placeholder="e.g. LEGO set 樂高" maxlength="30"></div>
+      <div class="field" style="flex:1;min-width:110px"><input type="text" id="goalAmt" inputmode="decimal" placeholder="${esc(cur)} 0"></div></div>
+      <div class="bank-msg" id="bankMsgGoal"></div>
+      <button class="btn btn-primary" onclick="bankSaveGoal()">Set goal 設定目標</button></div>`;
+  }
+  const have=bal.save; const pct=Math.min(100,Math.round(have/g.target*100));
+  const done=have>=g.target;
+  return `<div class="card goal-card"><div class="goal-head"><span>🎯 ${esc(g.name)}</span><span class="mono">${esc(fmtMoney(have,cur))} / ${esc(fmtMoney(g.target,cur))}</span></div>
+    <div class="goal-track"><div class="goal-fill" style="width:${pct}%"></div></div>
+    <div class="goal-note">${done?'🎉 You did it! Tell Mom or Dad you reached your goal! 目標達成！':`Only ${esc(fmtMoney(g.target-have,cur))} to go — keep saving in your Save jar! 還差一點點，加油！`}</div>
+    <div style="margin-top:10px"><button class="btn btn-secondary" onclick="bankClearGoal()">Change goal 換目標</button></div></div>`;
+}
+function bankParentControlsHtml(id){
+  const s=bankSettings(id); const cur=s.currency;
+  const name=esc(APP.learners[id].name);
+  const pick=(grp,val,label,on)=>`<button class="pick-btn" data-on="${on}" onclick="bankPick('${grp}','${val}',this)">${label}</button>`;
+  return `<div class="section-title" style="font-size:1.1rem">Parent controls 家長專區</div>
+  <div class="card" style="padding:16px;margin-bottom:14px">
+    <label class="flabel">Add or take away money for ${name} 幫 ${name} 加錢／扣錢</label>
+    <div class="pick-row" id="adjJarRow">
+      ${pick('adjJar','auto','⚖️ Auto 自動分',bankUI.adjJar==='auto')}
+      ${JARS.map(j=>pick('adjJar',j.id,j.emoji+' '+j.label,bankUI.adjJar===j.id)).join('')}
+    </div>
+    <div class="row">
+      <div class="field" style="flex:1;min-width:130px"><input type="text" id="bankAdjAmt" class="bank-amount" inputmode="decimal" placeholder="${esc(cur)} 0"></div>
+      <div class="field" style="flex:2;min-width:180px"><input type="text" id="bankAdjNote" placeholder="Reason 原因 (e.g. weekly allowance 零用錢)" maxlength="40"></div>
+    </div>
+    <div class="bank-msg" id="bankMsg"></div>
+    <div class="row">
+      <button class="btn btn-primary" style="flex:1;padding:13px" onclick="bankAdjust(1)">➕ Add money 加錢</button>
+      <button class="btn btn-secondary" style="flex:1;padding:13px" onclick="bankAdjust(-1)">➖ Take away 扣錢</button>
+    </div>
+    <div class="section-sub" style="margin:10px 0 0;font-size:.78rem">Auto-split uses the percentages below. To take money away, pick the jar first. 扣錢請先選存錢罐。</div>
+  </div>
+  <div class="card" style="padding:16px;margin-bottom:18px">
+    <label class="flabel">How new money is split 新的錢怎麼分 (must add up to 100%)</label>
+    <div class="split-grid">
+      ${JARS.map(j=>`<div class="field"><label class="flabel">${j.emoji} ${j.label} %</label><input type="text" id="pct-${j.id}" inputmode="numeric" value="${s.split[j.id]|0}"></div>`).join('')}
+    </div>
+    <div class="row"><div class="field" style="flex:1;min-width:120px"><label class="flabel">Currency 貨幣</label><input type="text" id="bankCurrency" value="${esc(cur)}" maxlength="6"></div></div>
+    <div class="bank-msg" id="bankMsgSet"></div>
+    <button class="btn btn-primary" onclick="bankSaveSettings()">Save split 儲存比例</button>
+  </div>`;
+}
+function renderWallet(){
+  const ids=visibleLearnerIds();
+  if(!ids.length)return `<div class="section-title">Olilimimi Bank</div><div class="section-sub">No students are linked to your account yet.</div>`;
+  if(!ids.includes(APP.currentLearnerId)) APP.currentLearnerId=ids[0];
+  const id=APP.currentLearnerId; const meta=LEARNERS_META[id]; const learner=APP.learners[id]; const av=accentVars(meta.color);
+  const parent=bankIsParent();
+  const s=bankSettings(id); const cur=s.currency; const bal=bankBalances(id);
+  const scale=Math.max(1000,bal.spend,bal.save,bal.give);
+  const stats=bankMonthStats(id);
+  const jars=JARS.map(j=>`<div class="jar-card" style="border-color:${j.color}">
+      ${svgJar(j,bal[j.id]/scale,j.id)}
+      <div class="jar-name">${j.emoji} ${j.label}</div><div class="jar-zh">${j.zh}</div>
+      <div class="jar-amt">${esc(fmtMoney(bal[j.id],cur))}</div>
+      <div class="jar-pct">${s.split[j.id]|0}% of new money</div>
+    </div>`).join('');
+  const cashRewards=(APP.rewards.items||[]).filter(r=>r.active&&Number(r.cash)>0);
+  const hint=(!parent&&cashRewards.length)?`<div class="card bank-hint"><div class="t">🪙 <b>Earn money with your tokens!</b> ${cashRewards.map(r=>`${esc(r.label)} (${r.cost} tokens)`).join(' · ')}</div><button class="btn btn-primary" onclick="setTab('today')">Reward Store 獎勵商店</button></div>`:'';
+  return `
+  <div class="bank-hero">
+    <div class="bank-brand">${svgLogoMark(46)}<div><div class="bank-title">Olilimimi Bank</div><div class="brand-sub brand-gradient">${brodersHtml()}</div></div></div>
+    <div class="bank-mascot">${svgMascot(meta.mascot,av.c,'happy')}</div>
+    <div class="bank-total"><div class="cap">${esc(learner.name)}'s money 總共有</div><div class="amt" id="bankTotal">${esc(fmtMoney(bal.total,cur))}</div></div>
+  </div>
+  ${bankSwitcherHtml(ids,id)}
+  <div class="jar-grid">${jars}</div>
+  ${hint}
+  <div class="bank-actions">
+    <button class="bank-big primary" onclick="openBankSpend()">🛍️ I spent money<small>記一筆花費</small></button>
+    <button class="bank-big" onclick="openBankMove()">🔁 Move money<small>在存錢罐之間搬錢</small></button>
+  </div>
+  ${bankGoalHtml(id,av)}
+  <div class="bank-stats">
+    <div class="card bank-stat"><div class="cap">Money in this month 本月收入</div><div class="num" style="color:var(--good)">${esc(fmtMoney(stats.inn,cur))}</div></div>
+    <div class="card bank-stat"><div class="cap">Money out this month 本月支出</div><div class="num" style="color:var(--bad)">${esc(fmtMoney(stats.out,cur))}</div></div>
+  </div>
+  ${parent?bankParentControlsHtml(id):''}
+  <div class="section-title" style="font-size:1.1rem">My money diary 記帳本</div>
+  <div class="section-sub">Every coin that comes in or goes out. 每一筆錢的進出。</div>
+  <div style="margin-bottom:22px">${bankHistoryHtml(id,parent)}</div>`;
+}
+
+/* ---- actions ---- */
+function bankPick(group,value,btn){
+  bankUI[group]=value;
+  if(btn&&btn.parentNode) [...btn.parentNode.children].forEach(b=>{ b.dataset.on=String(b===btn); });
+}
+function bankJarPicker(group,current){
+  return `<div class="pick-row">${JARS.map(j=>`<button class="pick-btn" data-on="${current===j.id}" onclick="bankPick('${group}','${j.id}',this)">${j.emoji} ${j.label}</button>`).join('')}</div>`;
+}
+function openBankSpend(){
+  const id=bankTargetId(); if(!id)return;
+  bankUI.spendJar='spend'; bankUI.spendCat='snack';
+  const cur=bankSettings(id).currency;
+  openModal(`<div class="modal-card" onclick="stopProp(event)">
+    <div class="qhead"><span>🛍️ I spent money 記一筆花費</span><span></span></div>
+    <label class="flabel">Which jar? 從哪個罐子拿？</label>${bankJarPicker('spendJar','spend')}
+    <label class="flabel">What was it for? 買了什麼？</label>
+    <div class="pick-row">${BANK_CATS.map(c=>`<button class="pick-btn" data-on="${c.id==='snack'}" onclick="bankPick('spendCat','${c.id}',this)">${c.emoji}<br>${c.label}</button>`).join('')}</div>
+    <div class="field"><input type="text" id="bankSpendAmt" class="bank-amount" inputmode="decimal" placeholder="${esc(cur)} 0"></div>
+    <div class="field"><input type="text" id="bankSpendNote" placeholder="Note 備註 (optional)" maxlength="40"></div>
+    <div class="bank-msg" id="bankMsg"></div>
+    <div class="row"><button class="btn btn-secondary" style="flex:1" onclick="closeModal()">Cancel 取消</button><button class="btn btn-primary" style="flex:2;padding:13px" onclick="bankSpend()">Save 儲存</button></div>
+  </div>`);
+}
+function bankSpend(){
+  const id=bankTargetId(); if(!id)return;
+  const c=parseMoney(document.getElementById('bankSpendAmt').value);
+  if(!c){ bankSetMsg('Type an amount, like 5 or 2.50. 請輸入金額。'); return; }
+  const jar=bankUI.spendJar; const bal=bankBalances(id);
+  if(bal[jar]<c){ bankSetMsg(`Not enough in the ${jarById(jar).label} jar (${fmtMoney(bal[jar],bankSettings(id).currency)}). 這個罐子錢不夠。`); return; }
+  const cat=BANK_CATS.find(x=>x.id===bankUI.spendCat)||BANK_CATS[5];
+  const note=document.getElementById('bankSpendNote').value.trim()||cat.label.split(' ')[0];
+  bankAddEntries(id,[{jar,amt:-c,kind:'spend',cat:cat.id,note,grp:newBankKey()}]);
+  closeModal(); toast(`Saved! You spent ${fmtMoney(c,bankSettings(id).currency)} 🛍️`); render();
+}
+function openBankMove(){
+  const id=bankTargetId(); if(!id)return;
+  bankUI.from='spend'; bankUI.to='save';
+  const cur=bankSettings(id).currency;
+  openModal(`<div class="modal-card" onclick="stopProp(event)">
+    <div class="qhead"><span>🔁 Move money 搬錢</span><span></span></div>
+    <label class="flabel">From 從</label>${bankJarPicker('from','spend')}
+    <label class="flabel">To 到</label>${bankJarPicker('to','save')}
+    <div class="field"><input type="text" id="bankMoveAmt" class="bank-amount" inputmode="decimal" placeholder="${esc(cur)} 0"></div>
+    <div class="bank-msg" id="bankMsg"></div>
+    <div class="row"><button class="btn btn-secondary" style="flex:1" onclick="closeModal()">Cancel 取消</button><button class="btn btn-primary" style="flex:2;padding:13px" onclick="bankMove()">Move 搬</button></div>
+  </div>`);
+}
+function bankMove(){
+  const id=bankTargetId(); if(!id)return;
+  const from=bankUI.from, to=bankUI.to;
+  if(from===to){ bankSetMsg('Pick two different jars. 請選兩個不同的罐子。'); return; }
+  const c=parseMoney(document.getElementById('bankMoveAmt').value);
+  if(!c){ bankSetMsg('Type an amount, like 5 or 2.50. 請輸入金額。'); return; }
+  const bal=bankBalances(id);
+  if(bal[from]<c){ bankSetMsg(`Not enough in the ${jarById(from).label} jar. 這個罐子錢不夠。`); return; }
+  const grp=newBankKey();
+  bankAddEntries(id,[{jar:from,amt:-c,kind:'move',grp},{jar:to,amt:c,kind:'move',grp}]);
+  closeModal(); toast(`Moved ${fmtMoney(c,bankSettings(id).currency)} to ${jarById(to).label} 🔁`); render();
+}
+function bankAdjust(sign){
+  const id=bankTargetId(); if(!id||!bankIsParent())return;
+  const c=parseMoney(document.getElementById('bankAdjAmt').value);
+  if(!c){ bankSetMsg('Type an amount, like 10 or 2.50. 請輸入金額。'); return; }
+  const s=bankSettings(id); const jar=bankUI.adjJar;
+  const note=document.getElementById('bankAdjNote').value.trim()||(sign>0?'Allowance 零用錢':'Adjustment 調整');
+  const grp=newBankKey(); let entries;
+  if(sign>0){
+    if(jar==='auto'){ const parts=splitCents(c,s.split); entries=JARS.filter(j=>parts[j.id]>0).map(j=>({jar:j.id,amt:parts[j.id],kind:'adjust',note,grp})); }
+    else entries=[{jar,amt:c,kind:'adjust',note,grp}];
+  } else {
+    if(jar==='auto'){ bankSetMsg('Pick which jar to take money from. 扣錢請先選一個罐子。'); return; }
+    if(bankBalances(id)[jar]<c){ bankSetMsg(`The ${jarById(jar).label} jar only has ${fmtMoney(bankBalances(id)[jar],s.currency)}. 這個罐子錢不夠。`); return; }
+    entries=[{jar,amt:-c,kind:'adjust',note,grp}];
+  }
+  bankAddEntries(id,entries);
+  toast(`${sign>0?'Added':'Took away'} ${fmtMoney(c,s.currency)} ${sign>0?'for':'from'} ${APP.learners[id].name}`); render();
+}
+function bankVoid(grp){
+  const id=bankTargetId(); if(!id||!bankIsParent())return;
+  const g=bankHistory(id).find(x=>x.grp===grp);
+  if(!g||g.voided||g.isVoid)return;
+  const bal=bankBalances(id); const delta={};
+  g.entries.forEach(e=>{ delta[e.jar]=(delta[e.jar]||0)-(e.amt|0); });
+  for(const j of Object.keys(delta)){
+    if(bal[j]+delta[j]<0){ toast(`Can't undo this — the ${jarById(j).label} jar doesn't have enough money now.`,3600); return; }
+  }
+  bankAddEntries(id,g.entries.map(e=>({jar:e.jar,amt:-(e.amt|0),kind:'void',voids:e.k,note:'Undo: '+(g.note||''),grp:'v'+g.grp})));
+  toast('Undone ↩️'); render();
+}
+function bankSaveSettings(){
+  const id=bankTargetId(); if(!id||!bankIsParent())return;
+  const split={}; let sum=0;
+  for(const j of JARS){
+    const raw=String(document.getElementById('pct-'+j.id).value).trim();
+    if(!/^\d{1,3}$/.test(raw)){ const el=document.getElementById('bankMsgSet'); if(el)el.textContent='Use whole numbers 0–100. 請輸入 0–100 的整數。'; return; }
+    split[j.id]=parseInt(raw,10); sum+=split[j.id];
+  }
+  const msg=document.getElementById('bankMsgSet');
+  if(sum!==100){ if(msg)msg.textContent=`The three numbers add up to ${sum}, they must add up to 100. 三個數字加起來要是 100。`; return; }
+  const cur=document.getElementById('bankCurrency').value.trim().slice(0,6)||'MYR';
+  const s=bankSettings(id); s.split=split; s.currency=cur;
+  bankSaveSettingsNow(id); toast('Saved! 已儲存'); render();
+}
+function bankSaveGoal(){
+  const id=bankTargetId(); if(!id)return;
+  const name=document.getElementById('goalName').value.trim();
+  const c=parseMoney(document.getElementById('goalAmt').value);
+  const msg=document.getElementById('bankMsgGoal');
+  if(!name||!c){ if(msg)msg.textContent='Write what you want and how much it costs. 請寫下想買的東西和價錢。'; return; }
+  bankSettings(id).goal={name,target:c};
+  bankSaveSettingsNow(id); toast('Goal set! 🎯'); render();
+}
+function bankClearGoal(){
+  const id=bankTargetId(); if(!id)return;
+  bankSettings(id).goal=null; bankSaveSettingsNow(id); render();
+}
+
 /* ================= VERSION & RELEASE NOTES =================
    Every release bumps APP_VERSION (semantic versioning: MAJOR.MINOR.PATCH — new feature → MINOR,
    fix/tweak → PATCH, big redesign → MAJOR) and adds an entry to the TOP of APP_CHANGELOG. The same
    notes live in CHANGELOG.md, and each release is also archived as olilimimi-vX.Y.Z.html so any
    version can be restored by uploading that file as index.html. The version shows in the bottom-right
    corner; tapping it opens these notes. */
-const APP_VERSION='1.1.1';
+const APP_VERSION='1.2.0';
 const APP_CHANGELOG=[
+  {v:'1.2.0',date:'2026-10-24',title:'新增 Bank 小銀行：Token 兌換零用金、家長可加減錢',items:[
+    '新增「Bank 小銀行」分頁：每個孩子一本記帳本，三個笑臉存錢罐——花費 Spend、儲蓄 Save、分享 Give(沿用 Olilimimi 藍黃雙 O 笑臉風格)。',
+    'Token 兌換現金：獎勵商店的獎勵可設定「現金價值」，孩子兌換後 token 照扣，金額自動依比例存進三個罐子(既有的「Gain $10 MYD」自動帶入 10)。',
+    '家長帳號(steve／chenyi)可替每個孩子加錢、扣錢(附原因)、復原任何一筆，並設定新錢的分罐比例與貨幣(預設 MYR)。',
+    '孩子可記錄花費(零食／玩具／書…)、在罐子之間搬錢、設定存錢目標並看進度條。',
+    '記帳本每筆都是獨立紀錄(只新增、不覆蓋)，孩子和家長同時操作也不會互相蓋掉；復原是新增一筆相反紀錄，不會刪除歷史。',
+    '登入沿用學習軟體的同一組帳號密碼，不需另外註冊。'
+  ]},
   {v:'1.1.1',date:'2026-10-24',title:'修正 Android 平板／Safari 發音沒有聲音',items:[
     '🔊 發音避開 Safari 的已知問題：不再「先停止再立刻播放」(會被吞掉)、自動解除卡住的暫停、播放中不會被系統回收。',
     '依序嘗試：台灣語音 → 系統預設中文 → 普通话語音，並記住這台裝置可用的那一個(Android 平板常見台灣語音資料沒安裝)。',
