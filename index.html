@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Olilimimi</title>
-<meta name="app-version" content="1.2.0">
+<meta name="app-version" content="1.3.0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22100%2070%20336%20245%22%3E%3Ccircle%20cx%3D%22191%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%232F6FC4%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22343%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%23F3B431%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22219%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Ccircle%20cx%3D%22316%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Cpath%20d%3D%22M200%20271%20Q268%20318%20336%20271%22%20fill%3D%22none%22%20stroke%3D%22%231C2A3E%22%20stroke-width%3D%2220%22%20stroke-linecap%3D%22round%22/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
@@ -444,6 +444,8 @@ body{padding-bottom:36px;}
 .bank-hint{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 16px;margin-bottom:18px;background:var(--accent-soft);}
 .bank-hint .t{flex:1;min-width:180px;font-size:.86rem;}
 .stat-chip.bank-chip{cursor:pointer;}
+.bank-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.76rem;color:var(--ink-soft);margin-top:6px;}
+.bank-legend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle;}
 .coin-pop{animation:coinPop .7s ease-out;}
 @keyframes coinPop{0%{transform:translateY(-16px) scale(.8);opacity:0;}60%{transform:translateY(0) scale(1.1);opacity:1;}100%{transform:scale(1);}}
 @media (max-width:520px){.jar-grid{gap:8px;}.bank-total{margin-left:0;text-align:left;width:100%;}.bank-actions{grid-template-columns:1fr;}.bank-stats{grid-template-columns:1fr 1fr;}}
@@ -460,7 +462,7 @@ body{padding-bottom:36px;}
 </div>
 <div id="modalRoot"></div>
 <div id="toastRoot"></div>
-<button id="versionBadge" class="version-badge" type="button" onclick="openChangelog()" title="版本注記 / Release notes">v1.2.0</button>
+<button id="versionBadge" class="version-badge" type="button" onclick="openChangelog()" title="版本注記 / Release notes">v1.3.0</button>
 
 <!-- Firebase (cloud sync across devices). If this ever fails to load (offline,
      ad-blocker, etc.) the app quietly falls back to this browser's own
@@ -5848,7 +5850,7 @@ const BANK_CATS=[
   {id:'book',emoji:'📚',label:'Books 書'},{id:'game',emoji:'🎮',label:'Games 遊戲'},
   {id:'gift',emoji:'🎁',label:'Gifts 禮物'},{id:'other',emoji:'✨',label:'Other 其他'}
 ];
-let bankUI={adjJar:'auto',spendJar:'spend',spendCat:'snack',from:'spend',to:'save',showAll:false};
+let bankUI={range:'month',adjJar:'auto',spendJar:'spend',spendCat:'snack',from:'spend',to:'save',showAll:false};
 function jarById(id){ return JARS.find(j=>j.id===id)||JARS[0]; }
 function defaultBankSettings(){ return{currency:'MYR',split:{spend:50,save:30,give:20},goal:null,updated:0}; }
 function bankDate(d){ d=d||new Date(); const p=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
@@ -5962,13 +5964,78 @@ function bankHistory(id){
     return g;
   }).sort((a,b2)=>b2.ts-a.ts);
 }
-function bankMonthStats(id){
-  let inn=0,out=0; const month=bankDate().slice(0,7);
+/* ---- money in / out over time (Week · Month · Year) ----
+   Week = the last 7 days, Month = the last 30 days (both one point per day), Year = the last
+   12 months (one point per month). "In" = tokens cashed in + money a parent added; "Out" = spending
+   + money a parent took away. Moving money between jars and undone entries are left out. */
+const BANK_RANGES=[{id:'week',label:'Week 週'},{id:'month',label:'Month 月'},{id:'year',label:'Year 年'}];
+const BANK_RANGE_NOTE={week:'last 7 days 近7天',month:'last 30 days 近30天',year:'last 12 months 近12個月'};
+const MONTH_ABBR=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function setBankRange(r){ if(!BANK_RANGES.some(x=>x.id===r))return; bankUI.range=r; render(); }
+function bankRangeSeries(id,rangeId){
+  const now=new Date(); const p=n=>String(n).padStart(2,'0');
+  const buckets=[]; const idx={};
+  if(rangeId==='year'){
+    for(let k=11;k>=0;k--){
+      const d=new Date(now.getFullYear(),now.getMonth()-k,1); const key=d.getFullYear()+'-'+p(d.getMonth()+1);
+      idx[key]=buckets.length; buckets.push({key,label:MONTH_ABBR[d.getMonth()],full:MONTH_ABBR[d.getMonth()]+' '+d.getFullYear(),inn:0,out:0});
+    }
+  } else {
+    const n=rangeId==='week'?7:30;
+    for(let k=n-1;k>=0;k--){
+      const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-k); const key=bankDate(d);
+      const md=(d.getMonth()+1)+'/'+d.getDate();
+      idx[key]=buckets.length; buckets.push({key,label:md,full:md,inn:0,out:0});
+    }
+  }
   bankHistory(id).forEach(g=>{
-    if(g.voided||g.isVoid||g.kind==='move'||String(g.date||'').slice(0,7)!==month)return;
-    if(g.total>0)inn+=g.total; else out-=g.total;
+    if(g.voided||g.isVoid||g.kind==='move')return;
+    const key=rangeId==='year'?String(g.date||'').slice(0,7):g.date;
+    const i=idx[key]; if(i===undefined)return;
+    if(g.total>0)buckets[i].inn+=g.total; else buckets[i].out-=g.total;
   });
-  return{inn,out};
+  return buckets;
+}
+function svgBankChart(buckets,cur){
+  const width=560,height=230,padL=46,padR=14,padT=14,padB=32;
+  const plotW=width-padL-padR,plotH=height-padT-padB,n=buckets.length;
+  const maxV=Math.max(1,...buckets.map(b=>Math.max(b.inn,b.out)));
+  const steps=[100,200,500,1000,2000,5000,10000,20000,50000,100000,200000,500000,1000000,2000000,5000000];
+  let step=steps[steps.length-1]; for(const s of steps){ if(s*4>=maxV){ step=s; break; } }
+  const yMax=step*4;
+  const xAt=i=>padL+(n<2?plotW/2:plotW*i/(n-1));
+  const yAt=v=>padT+plotH*(1-v/yMax);
+  const yFmt=v=>{ const x=v/100; return Number.isInteger(x)?String(x):x.toFixed(1); };
+  const grid=[0,1,2,3,4].map(k=>{ const v=step*k, y=yAt(v).toFixed(1);
+    return `<line x1="${padL}" y1="${y}" x2="${width-padR}" y2="${y}" stroke="var(--border)" stroke-width="1"/><text x="${padL-6}" y="${(parseFloat(y)+3).toFixed(1)}" text-anchor="end" style="font-family:var(--font-mono);font-size:13px;fill:var(--ink-faint)">${esc(yFmt(v))}</text>`; }).join('');
+  const tickIdx=n<=12?buckets.map((b,i)=>i):[0,6,12,18,24,n-1].filter((v,i,a)=>a.indexOf(v)===i);
+  const xLabels=tickIdx.map(i=>`<text x="${xAt(i).toFixed(1)}" y="${height-9}" text-anchor="middle" style="font-family:var(--font-mono);font-size:13px;fill:var(--ink-faint)">${esc(buckets[i].label)}</text>`).join('');
+  const line=(key,color)=>`<path d="${buckets.map((b,i)=>`${i?'L':'M'}${xAt(i).toFixed(1)} ${yAt(b[key]).toFixed(1)}`).join(' ')}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  const r=n>12?3.5:4.8;
+  const dots=(key,color)=>buckets.map((b,i)=>{
+    const tip=chartTipEscape(`${b.full} · In ${fmtMoney(b.inn,cur)} · Out ${fmtMoney(b.out,cur)}`);
+    return `<circle cx="${xAt(i).toFixed(1)}" cy="${yAt(b[key]).toFixed(1)}" r="${r}" fill="${color}" stroke="var(--surface)" stroke-width="1.5" style="cursor:pointer" onmouseenter="showChartTip(event,'${tip}')" onmousemove="showChartTip(event,'${tip}')" onmouseleave="hideChartTip()" ontouchstart="showChartTip(event,'${tip}');event.preventDefault();"/>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${width} ${height}" width="100%" style="display:block;max-width:${width}px;overflow:visible" role="img" aria-label="Money in and out chart">
+    ${grid}${line('out','var(--bad)')}${line('inn','var(--good)')}${dots('out','var(--bad)')}${dots('inn','var(--good)')}${xLabels}</svg>`;
+}
+function bankChartHtml(id){
+  const cur=bankSettings(id).currency;
+  const rid=BANK_RANGES.some(r=>r.id===bankUI.range)?bankUI.range:'month';
+  const buckets=bankRangeSeries(id,rid);
+  const inn=buckets.reduce((a,b)=>a+b.inn,0), out=buckets.reduce((a,b)=>a+b.out,0);
+  const toggle=`<div class="range-toggle">${BANK_RANGES.map(r=>`<button class="range-btn" data-active="${r.id===rid}" onclick="setBankRange('${r.id}')">${esc(r.label)}</button>`).join('')}</div>`;
+  const chart=(inn||out)?svgBankChart(buckets,cur):`<div class="section-sub" style="padding:8px 0 2px">No money has come in or gone out in this time yet. 這段時間還沒有收入或支出。</div>`;
+  return `<div class="section-title" style="font-size:1.1rem">Money in &amp; out 收入與支出</div>
+  <div class="section-sub">${esc(BANK_RANGE_NOTE[rid])} — hover or tap a dot for the details. 點圓點看明細。</div>
+  ${toggle}
+  <div class="bank-stats">
+    <div class="card bank-stat"><div class="cap">Money in 收入</div><div class="num" style="color:var(--good)">${esc(fmtMoney(inn,cur))}</div></div>
+    <div class="card bank-stat"><div class="cap">Money out 支出</div><div class="num" style="color:var(--bad)">${esc(fmtMoney(out,cur))}</div></div>
+  </div>
+  <div class="card" style="padding:14px 16px 10px;margin-bottom:18px">${chart}
+    <div class="bank-legend"><span><i style="background:var(--good)"></i>Money in 收入</span><span><i style="background:var(--bad)"></i>Money out 支出</span></div>
+  </div>`;
 }
 function bankCan(id){ return visibleLearnerIds().includes(id); }
 function bankIsParent(){ const u=APP.auth.currentUser; return !!u&&u.role!=='student'; }
@@ -6091,7 +6158,6 @@ function renderWallet(){
   const parent=bankIsParent();
   const s=bankSettings(id); const cur=s.currency; const bal=bankBalances(id);
   const scale=Math.max(1000,bal.spend,bal.save,bal.give);
-  const stats=bankMonthStats(id);
   const jars=JARS.map(j=>`<div class="jar-card" style="border-color:${j.color}">
       ${svgJar(j,bal[j.id]/scale,j.id)}
       <div class="jar-name">${j.emoji} ${j.label}</div><div class="jar-zh">${j.zh}</div>
@@ -6114,10 +6180,7 @@ function renderWallet(){
     <button class="bank-big" onclick="openBankMove()">🔁 Move money<small>在存錢罐之間搬錢</small></button>
   </div>
   ${bankGoalHtml(id,av)}
-  <div class="bank-stats">
-    <div class="card bank-stat"><div class="cap">Money in this month 本月收入</div><div class="num" style="color:var(--good)">${esc(fmtMoney(stats.inn,cur))}</div></div>
-    <div class="card bank-stat"><div class="cap">Money out this month 本月支出</div><div class="num" style="color:var(--bad)">${esc(fmtMoney(stats.out,cur))}</div></div>
-  </div>
+  ${bankChartHtml(id)}
   ${parent?bankParentControlsHtml(id):''}
   <div class="section-title" style="font-size:1.1rem">My money diary 記帳本</div>
   <div class="section-sub">Every coin that comes in or goes out. 每一筆錢的進出。</div>
@@ -6247,8 +6310,14 @@ function bankClearGoal(){
    notes live in CHANGELOG.md, and each release is also archived as olilimimi-vX.Y.Z.html so any
    version can be restored by uploading that file as index.html. The version shows in the bottom-right
    corner; tapping it opens these notes. */
-const APP_VERSION='1.2.0';
+const APP_VERSION='1.3.0';
 const APP_CHANGELOG=[
+  {v:'1.3.0',date:'2026-10-24',title:'Bank 收入支出改成週／月／年折線圖',items:[
+    'Bank 小銀行的「本月收入／支出」改成動態折線圖：可切換「週／月／年」，綠線是收入、紅線是支出。',
+    '週＝最近 7 天、月＝最近 30 天(每天一個點)；年＝最近 12 個月(每月一個點)。',
+    '圖上方顯示所選期間的收入與支出合計；懸停或點圓點可看當天(當月)的收入與支出。',
+    '只計入 token 兌換、家長加減錢與孩子記的花費；罐子之間搬錢與已復原的紀錄不算收入或支出。'
+  ]},
   {v:'1.2.0',date:'2026-10-24',title:'新增 Bank 小銀行：Token 兌換零用金、家長可加減錢',items:[
     '新增「Bank 小銀行」分頁：每個孩子一本記帳本，三個笑臉存錢罐——花費 Spend、儲蓄 Save、分享 Give(沿用 Olilimimi 藍黃雙 O 笑臉風格)。',
     'Token 兌換現金：獎勵商店的獎勵可設定「現金價值」，孩子兌換後 token 照扣，金額自動依比例存進三個罐子(既有的「Gain $10 MYD」自動帶入 10)。',
