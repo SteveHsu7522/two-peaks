@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Olilimimi</title>
-<meta name="app-version" content="1.3.0">
+<meta name="app-version" content="1.4.0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22100%2070%20336%20245%22%3E%3Ccircle%20cx%3D%22191%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%232F6FC4%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22343%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%23F3B431%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22219%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Ccircle%20cx%3D%22316%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Cpath%20d%3D%22M200%20271%20Q268%20318%20336%20271%22%20fill%3D%22none%22%20stroke%3D%22%231C2A3E%22%20stroke-width%3D%2220%22%20stroke-linecap%3D%22round%22/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
@@ -404,12 +404,13 @@ body{padding-bottom:36px;}
 .bank-total .cap{font-size:.74rem;color:var(--ink-soft);font-weight:700;}
 .bank-total .amt{font-family:var(--font-display);font-weight:700;font-size:2.3rem;color:var(--ink);line-height:1.05;}
 .bank-switch{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
-.jar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;}
+.jar-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:18px;}
 .jar-card{padding:14px 8px 12px;text-align:center;border:2px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);box-shadow:var(--shadow-sm);}
 .jar-card svg{display:block;margin:0 auto 4px;max-width:100%;height:auto;}
 .jar-name{font-family:var(--font-display);font-weight:700;font-size:1.02rem;}
 .jar-zh{font-size:.72rem;color:var(--ink-faint);}
 .jar-amt{font-family:var(--font-display);font-weight:700;font-size:1.3rem;margin-top:4px;}
+.jar-rule{font-size:.74rem;color:var(--ink-soft);line-height:1.35;margin-top:2px;}
 .jar-pct{font-size:.7rem;color:var(--ink-faint);}
 .bank-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
 .bank-big{padding:16px 12px;border-radius:var(--radius-md);font-size:1.04rem;font-weight:800;border:2px solid var(--border);background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm);}
@@ -446,6 +447,26 @@ body{padding-bottom:36px;}
 .stat-chip.bank-chip{cursor:pointer;}
 .bank-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.76rem;color:var(--ink-soft);margin-top:6px;}
 .bank-legend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle;}
+/* v1.4.0: savings deposits, term picker, growth chart */
+.lot-card{padding:14px 16px;margin-bottom:10px;}
+.lot-card.ready{border:2px solid var(--good);background:var(--surface);}
+.lot-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;font-weight:800;font-size:1.05rem;margin-bottom:12px;}
+.lot-sub{font-size:.78rem;color:var(--ink-soft);line-height:1.45;}
+.lot-track{position:relative;height:16px;border-radius:999px;background:var(--surface-3);margin:6px 0 12px;}
+.lot-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--good));transition:width .5s;}
+.lot-plant{position:absolute;top:-13px;transform:translateX(-50%);font-size:1.6rem;line-height:1;}
+.lot-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.lot-actions .btn{padding:12px 8px;line-height:1.3;}
+.lot-actions small{font-weight:600;opacity:.85;font-size:.72rem;}
+.term-row{margin-bottom:10px;}
+.term-btn{font-size:.8rem;line-height:1.25;}
+.term-btn b{font-family:var(--font-display);font-size:1.5rem;}
+.growth-box{background:var(--surface-2);border-radius:var(--radius-md);padding:10px 8px 6px;margin-bottom:8px;}
+.growth-cap{font-size:.74rem;color:var(--ink-faint);text-align:center;min-height:1em;font-weight:700;}
+.growth-legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:.74rem;color:var(--ink-soft);margin-top:2px;}
+.growth-legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
+@media (max-width:520px){.lot-actions{grid-template-columns:1fr;}}
+@media (prefers-reduced-motion:reduce){.lot-fill{transition:none;}}
 .coin-pop{animation:coinPop .7s ease-out;}
 @keyframes coinPop{0%{transform:translateY(-16px) scale(.8);opacity:0;}60%{transform:translateY(0) scale(1.1);opacity:1;}100%{transform:scale(1);}}
 @media (max-width:520px){.jar-grid{gap:8px;}.bank-total{margin-left:0;text-align:left;width:100%;}.bank-actions{grid-template-columns:1fr;}.bank-stats{grid-template-columns:1fr 1fr;}}
@@ -462,7 +483,7 @@ body{padding-bottom:36px;}
 </div>
 <div id="modalRoot"></div>
 <div id="toastRoot"></div>
-<button id="versionBadge" class="version-badge" type="button" onclick="openChangelog()" title="版本注記 / Release notes">v1.3.0</button>
+<button id="versionBadge" class="version-badge" type="button" onclick="openChangelog()" title="版本注記 / Release notes">v1.4.0</button>
 
 <!-- Firebase (cloud sync across devices). If this ever fails to load (offline,
      ad-blocker, etc.) the app quietly falls back to this browser's own
@@ -5829,31 +5850,48 @@ function rejectUser(username){
   render();
 }
 
-/* ================= OLILIMIMI BANK (v1.2.0) =================
-   A play-money bank for each child. Trail Tokens redeemed for a cash reward (a reward with a
-   `cash` value, e.g. "Gain $10") are deposited straight into the child's three jars —
-   Spend / Save / Give — using the split the parent chose. Parents can add or take away money,
-   undo any entry and change the split; children can record what they spend, move money between
-   jars and set a savings goal.
-   Storage: bank/<learnerId>/tx/<key> = one immutable ledger entry per key (so two devices writing
-   at the same moment can never overwrite each other) and bank/<learnerId>/settings.
-   Amounts are whole cents (integers). A jar's balance is the sum of its entries; "undo" adds an
-   opposite entry, nothing is ever deleted. NOTE: like the rest of the app this is a lightweight
-   household gate — the parent-only rules are enforced in the app, not by Firebase security rules. */
+/* ================= OLILIMIMI BANK (v1.4.0) =================
+   A play-money bank for each child with two accounts:
+   • Spend 花費 — no interest, spend any time.
+   • Save 儲蓄 — every deposit is locked for a term the child picks: 1, 3, 6 or 12 months. It earns
+     simple interest of 1% for every month (a parent can change the rate). When it matures the child
+     chooses: keep saving (principal + interest is locked again for the same term) or move it all to Spend. Locked money can't be moved.
+   Trail Tokens redeemed for a cash reward are deposited straight into the accounts using the split the
+   parent chose. Parents can add or take away money, undo entries and change split / interest.
+   Storage: bank/<learnerId>/tx/<key> = one immutable ledger entry per key (two devices writing at the
+   same moment can never overwrite each other) and bank/<learnerId>/settings. Amounts are whole cents.
+   An account's balance is the sum of its entries; "undo" adds an opposite entry, nothing is deleted.
+   Savings deposits ("lots") are NOT stored separately — they are derived by replaying the ledger
+   (bankLots), so they can never disagree with the balance. Entries from before v1.4.0 that sit in the
+   removed Give jar are treated as Spend. NOTE: like the rest of the app this is a lightweight household
+   gate — the parent-only rules are enforced in the app, not by Firebase security rules. */
 const JARS=[
   {id:'spend',label:'Spend',zh:'花費',emoji:'🛍️',color:'var(--teal)'},
-  {id:'save',label:'Save',zh:'儲蓄',emoji:'🐷',color:'var(--accent)'},
-  {id:'give',label:'Give',zh:'分享',emoji:'💝',color:'var(--good)'}
+  {id:'save',label:'Save',zh:'儲蓄',emoji:'🐷',color:'var(--accent)'}
 ];
 const BANK_CATS=[
   {id:'snack',emoji:'🍪',label:'Snacks 零食'},{id:'toy',emoji:'🧸',label:'Toys 玩具'},
   {id:'book',emoji:'📚',label:'Books 書'},{id:'game',emoji:'🎮',label:'Games 遊戲'},
   {id:'gift',emoji:'🎁',label:'Gifts 禮物'},{id:'other',emoji:'✨',label:'Other 其他'}
 ];
-let bankUI={range:'month',adjJar:'auto',spendJar:'spend',spendCat:'snack',from:'spend',to:'save',showAll:false};
+const BANK_TERMS=[1,3,6,12];
+let bankUI={range:'month',adjJar:'auto',spendCat:'snack',showAll:false,moveTerm:1};
 function jarById(id){ return JARS.find(j=>j.id===id)||JARS[0]; }
-function defaultBankSettings(){ return{currency:'MYR',split:{spend:50,save:30,give:20},goal:null,updated:0}; }
+function jarOf(e){ return e.jar==='save'?'save':'spend'; } // the old Give jar no longer exists: its money counts as Spend
+function defaultBankSettings(){ return{currency:'MYR',split:{spend:70,save:30},rate:1,goal:null,updated:0}; }
+function normBankSettings(s){
+  if(!s.split)s.split={spend:70,save:30};
+  if(s.split.give!==undefined){ s.split.spend=(s.split.spend|0)+(s.split.give|0); delete s.split.give; }
+  if(typeof s.rate!=='number'||!(s.rate>=0))s.rate=1;
+}
 function bankDate(d){ d=d||new Date(); const p=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
+/* same day next month (clamped: Jan 31 + 1 month = Feb 28/29) */
+function addMonthsStr(ds,n){
+  const a=ds.split('-').map(Number); const t=new Date(a[0],a[1]-1+n,1);
+  const dim=new Date(t.getFullYear(),t.getMonth()+1,0).getDate(); t.setDate(Math.min(a[2],dim));
+  return bankDate(t);
+}
+function bankDaysBetween(a,b){ const p=s=>{const x=s.split('-').map(Number);return new Date(x[0],x[1]-1,x[2]).getTime();}; return Math.round((p(b)-p(a))/86400000); }
 function ensureBank(id){
   if(!APP.bank)APP.bank={};
   if(!APP.bank[id]){
@@ -5862,7 +5900,7 @@ function ensureBank(id){
   }
   const b=APP.bank[id];
   if(!b.tx)b.tx={};
-  if(!b.settings.split)b.settings.split=defaultBankSettings().split;
+  normBankSettings(b.settings);
   return b;
 }
 function bankSettings(id){ return ensureBank(id).settings; }
@@ -5877,7 +5915,7 @@ function bankAddEntries(id,entries){
   const b=ensureBank(id); const ts=Date.now();
   const user=(APP.auth.currentUser&&APP.auth.currentUser.username)||'';
   const out=entries.map((e,i)=>{
-    const clean=JSON.parse(JSON.stringify(Object.assign({ts,date:bankDate(),by:user},e))); // JSON round-trip drops undefined (Firebase rejects it)
+    const clean=JSON.parse(JSON.stringify(Object.assign({ts,date:bankDate(),by:user,seq:i},e))); // JSON round-trip drops undefined (Firebase rejects it); seq keeps entries of one action in order
     const k=newBankKey()+i; b.tx[k]=clean; Store.dbSet(`bank/${id}/tx/${k}`,clean);
     return Object.assign({k},clean);
   });
@@ -5885,9 +5923,9 @@ function bankAddEntries(id,entries){
   return out;
 }
 function bankBalances(id){
-  const b=ensureBank(id); const bal={spend:0,save:0,give:0,total:0};
-  Object.values(b.tx).forEach(e=>{ if(bal[e.jar]!==undefined) bal[e.jar]+=(e.amt|0); });
-  bal.total=bal.spend+bal.save+bal.give;
+  const b=ensureBank(id); const bal={spend:0,save:0,total:0};
+  Object.values(b.tx).forEach(e=>{ bal[jarOf(e)]+=(e.amt|0); });
+  bal.total=bal.spend+bal.save;
   return bal;
 }
 function fmtMoney(c,cur){
@@ -5900,14 +5938,14 @@ function parseMoney(s){
   const c=Math.round(parseFloat(s)*100);
   return (c>0&&c<=10000000)?c:null;
 }
-/* Splits an amount of cents across the jars by percent; leftover cents go to the biggest share. */
+/* Splits an amount of cents across the accounts by percent; leftover cents go to the biggest share. */
 function splitCents(cents,split){
   const parts={}; let used=0, big=JARS[0].id;
   JARS.forEach(j=>{ const p=Math.max(0,split[j.id]|0); parts[j.id]=Math.floor(cents*p/100); used+=parts[j.id]; if(p>(split[big]|0))big=j.id; });
   parts[big]+=cents-used;
   return parts;
 }
-/* Called by redeemReward(): a reward with a cash value pays its money into the jars. */
+/* Called by redeemReward(): a reward with a cash value pays its money into the accounts. */
 function bankDepositFromReward(learnerId,reward){
   const cents=Math.round((Number(reward.cash)||0)*100);
   if(cents<=0)return null;
@@ -5942,8 +5980,63 @@ async function refreshBankData(){
     const rs=remote&&remote.settings;
     if(rs&&(rs.updated||0)>=(b.settings.updated||0)) b.settings=Object.assign(defaultBankSettings(),rs);
     else if(b.settings.updated) Store.dbSet(`bank/${id}/settings`,JSON.parse(JSON.stringify(b.settings)));
+    normBankSettings(b.settings);
     bankPersist(id);
   }
+}
+
+/* ---- savings deposits (locked for 1 month) ----
+   Replays the ledger in time order. Every Save credit opens a deposit that matures one month after its
+   date. A negative Save entry (a parent taking money away) shrinks the earliest-maturing deposits first.
+   A "settle" action closes a deposit: part 'interest' adds the interest to it, then either part 'out'
+   (+ 'in' to Spend) closes it, or part 'keep' closes it and opens a new one for principal + interest.
+   An undone entry and its undo cancel out and are skipped. Returns the open deposits, soonest first. */
+function bankLots(id){
+  const b=ensureBank(id);
+  const list=Object.keys(b.tx).map(k=>Object.assign({k},b.tx[k])).sort((x,y)=>((x.ts||0)-(y.ts||0))||((x.seq||0)-(y.seq||0))||(x.k<y.k?-1:1));
+  const voided=new Set(list.filter(e=>e.voids).map(e=>e.voids));
+  const lots=[]; const byKey={};
+  const mk=(key,principal,start,term)=>{ const l={key,principal,start,term,maturity:addMonthsStr(start,term),closed:false}; lots.push(l); byKey[key]=l; return l; };
+  list.forEach(e=>{
+    if(e.voids||voided.has(e.k))return;
+    if(jarOf(e)!=='save')return;
+    if(e.kind==='settle'){
+      const l=byKey[e.lot]; if(!l||l.closed)return;
+      if(e.part==='interest') l.principal+=(e.amt|0);
+      else if(e.part==='out'){ l.principal+=(e.amt|0); l.closed=true; }
+      else if(e.part==='keep'){ l.closed=true; mk(e.k,l.principal,e.date||l.maturity,l.term); }
+      return;
+    }
+    const amt=e.amt|0;
+    if(amt>0) mk(e.k,amt,e.date||bankDate(),BANK_TERMS.includes(e.term|0)?(e.term|0):1);
+    else if(amt<0){
+      let need=-amt;
+      lots.filter(l=>!l.closed).sort((x,y)=>x.maturity<y.maturity?-1:(x.maturity>y.maturity?1:0)).forEach(l=>{
+        if(need<=0)return; const t=Math.min(l.principal,need); l.principal-=t; need-=t; if(l.principal<=0)l.closed=true;
+      });
+    }
+  });
+  return lots.filter(l=>!l.closed&&l.principal>0).sort((x,y)=>x.maturity<y.maturity?-1:(x.maturity>y.maturity?1:0));
+}
+/* simple interest: rate % for every month of the term (1% × 6 months = 6%) */
+function bankLotInterest(principal,rate,term){ return Math.round(principal*rate*(term||1)/100); }
+function bankTermName(n){ return n===12?'1 year 1年':n+(n===1?' month ':' months ')+n+'個月'; }
+/* The child (or a parent) chooses what happens to a matured deposit. */
+async function bankSettleLot(lotKey,action){
+  const id=bankTargetId(); if(!id)return;
+  if(Store.db){ try{ await refreshBankData(); }catch(e){} } // another device may have handled it a moment ago
+  const lot=bankLots(id).find(l=>l.key===lotKey);
+  if(!lot){ toast('This deposit was already handled. 這筆已經處理過了。'); render(); return; }
+  if(bankDate()<lot.maturity){ toast('Not ready yet — it is still locked! 還沒到期，還不能動喔。',3200); return; }
+  const s=bankSettings(id); const cur=s.currency;
+  const I=bankLotInterest(lot.principal,s.rate,lot.term); const total=lot.principal+I; const grp=newBankKey();
+  const base={kind:'settle',lot:lot.key,grp,note:'Savings matured 儲蓄到期'};
+  const entries=action==='keep'
+    ?[Object.assign({part:'interest',jar:'save',amt:I},base),Object.assign({part:'keep',jar:'save',amt:0},base)]
+    :[Object.assign({part:'interest',jar:'save',amt:I},base),Object.assign({part:'out',jar:'save',amt:-total},base),Object.assign({part:'in',jar:'spend',amt:total},base)];
+  bankAddEntries(id,entries);
+  toast(action==='keep'?`🌱 +${fmtMoney(I,cur)} interest! ${fmtMoney(total,cur)} is locked for another ${lot.term} month${lot.term===1?'':'s'}.`:`🌱 +${fmtMoney(I,cur)} interest! ${fmtMoney(total,cur)} moved to Spend.`,3800);
+  render();
 }
 
 /* ---- ledger views ---- */
@@ -5964,10 +6057,19 @@ function bankHistory(id){
     return g;
   }).sort((a,b2)=>b2.ts-a.ts);
 }
+function bankCan(id){ return visibleLearnerIds().includes(id); }
+function bankIsParent(){ const u=APP.auth.currentUser; return !!u&&u.role!=='student'; }
+function bankTargetId(){
+  const id=APP.currentLearnerId;
+  return id&&bankCan(id)?id:null;
+}
+function bankSetMsg(t){ const el=document.getElementById('bankMsg'); if(el)el.textContent=t||''; }
+
 /* ---- money in / out over time (Week · Month · Year) ----
    Week = the last 7 days, Month = the last 30 days (both one point per day), Year = the last
-   12 months (one point per month). "In" = tokens cashed in + money a parent added; "Out" = spending
-   + money a parent took away. Moving money between jars and undone entries are left out. */
+   12 months (one point per month). "In" = tokens cashed in + money a parent added + savings interest;
+   "Out" = spending + money a parent took away. Moving money between accounts and undone entries
+   are left out. */
 const BANK_RANGES=[{id:'week',label:'Week 週'},{id:'month',label:'Month 月'},{id:'year',label:'Year 年'}];
 const BANK_RANGE_NOTE={week:'last 7 days 近7天',month:'last 30 days 近30天',year:'last 12 months 近12個月'};
 const MONTH_ABBR=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -6007,7 +6109,7 @@ function svgBankChart(buckets,cur){
   const yAt=v=>padT+plotH*(1-v/yMax);
   const yFmt=v=>{ const x=v/100; return Number.isInteger(x)?String(x):x.toFixed(1); };
   const grid=[0,1,2,3,4].map(k=>{ const v=step*k, y=yAt(v).toFixed(1);
-    return `<line x1="${padL}" y1="${y}" x2="${width-padR}" y2="${y}" stroke="var(--border)" stroke-width="1"/><text x="${padL-6}" y="${(parseFloat(y)+3).toFixed(1)}" text-anchor="end" style="font-family:var(--font-mono);font-size:13px;fill:var(--ink-faint)">${esc(yFmt(v))}</text>`; }).join('');
+    return `<line x1="${padL}" y1="${y}" x2="${width-padR}" y2="${y}" stroke="var(--border)" stroke-width="1"/><text x="${padL-6}" y="${(parseFloat(y)+4).toFixed(1)}" text-anchor="end" style="font-family:var(--font-mono);font-size:13px;fill:var(--ink-faint)">${esc(yFmt(v))}</text>`; }).join('');
   const tickIdx=n<=12?buckets.map((b,i)=>i):[0,6,12,18,24,n-1].filter((v,i,a)=>a.indexOf(v)===i);
   const xLabels=tickIdx.map(i=>`<text x="${xAt(i).toFixed(1)}" y="${height-9}" text-anchor="middle" style="font-family:var(--font-mono);font-size:13px;fill:var(--ink-faint)">${esc(buckets[i].label)}</text>`).join('');
   const line=(key,color)=>`<path d="${buckets.map((b,i)=>`${i?'L':'M'}${xAt(i).toFixed(1)} ${yAt(b[key]).toFixed(1)}`).join(' ')}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
@@ -6037,13 +6139,6 @@ function bankChartHtml(id){
     <div class="bank-legend"><span><i style="background:var(--good)"></i>Money in 收入</span><span><i style="background:var(--bad)"></i>Money out 支出</span></div>
   </div>`;
 }
-function bankCan(id){ return visibleLearnerIds().includes(id); }
-function bankIsParent(){ const u=APP.auth.currentUser; return !!u&&u.role!=='student'; }
-function bankTargetId(){
-  const id=APP.currentLearnerId;
-  return id&&bankCan(id)?id:null;
-}
-function bankSetMsg(t){ const el=document.getElementById('bankMsg'); if(el)el.textContent=t||''; }
 
 /* ---- drawing ---- */
 function svgJar(jar,pct,uid){
@@ -6072,25 +6167,29 @@ function bankSwitcherHtml(ids,id){
   }).join('')}</div>`;
 }
 function bankRowInfo(g,cur){
-  const jl=e=>jarById(e.jar).label;
+  const jl=e=>jarById(jarOf(e)).label;
   if(g.kind==='token')return{emoji:'🪙',title:'Token reward: '+g.note,amt:g.total,sub:g.entries.map(e=>jl(e)+' '+fmtMoney(e.amt)).join(' · ')};
   if(g.kind==='adjust')return{emoji:g.total>=0?'🎁':'➖',title:(g.total>=0?'Added: ':'Taken: ')+g.note,amt:g.total,sub:g.entries.map(e=>jl(e)+' '+fmtMoney(Math.abs(e.amt))).join(' · ')};
-  if(g.kind==='spend'){const c=BANK_CATS.find(x=>x.id===g.cat)||BANK_CATS[5]; return{emoji:c.emoji,title:g.note||c.label,amt:g.total,sub:jl(g.entries[0])+' jar'};}
-  if(g.kind==='move'){const from=g.entries.find(e=>e.amt<0)||g.entries[0], to=g.entries.find(e=>e.amt>0)||g.entries[0]; return{emoji:'🔁',title:'Moved '+jl(from)+' → '+jl(to),amt:Math.abs(from.amt),neutral:true,sub:''};}
+  if(g.kind==='spend'){const c=BANK_CATS.find(x=>x.id===g.cat)||BANK_CATS[5]; return{emoji:c.emoji,title:g.note||c.label,amt:g.total,sub:'Spend jar'};}
+  if(g.kind==='move'){const from=g.entries.find(e=>e.amt<0)||g.entries[0], to=g.entries.find(e=>e.amt>0)||g.entries[0]; return{emoji:'🔒',title:'Moved '+jl(from)+' → '+jl(to),amt:Math.abs(from.amt),neutral:true,sub:jarOf(to)==='save'?'locked '+(to.term||1)+' month'+((to.term||1)===1?'':'s'):''};}
+  if(g.kind==='settle'){
+    const I=(g.entries.find(e=>e.part==='interest')||{amt:0}).amt; const out=g.entries.find(e=>e.part==='out');
+    return{emoji:'🌱',title:out?`Savings matured → ${fmtMoney(-out.amt,cur)} to Spend`:'Savings matured → kept saving',amt:I,sub:`interest +${fmtMoney(I)}`};
+  }
   if(g.kind==='void')return{emoji:'↩️',title:g.note||'Undo',amt:g.total,sub:g.entries.map(e=>jl(e)).join(' · ')};
   return{emoji:'💰',title:g.note||'Entry',amt:g.total,sub:''};
 }
 function bankHistoryHtml(id,parent){
   const cur=bankSettings(id).currency;
   const all=bankHistory(id);
-  if(!all.length)return `<div class="section-sub">Nothing here yet — redeem a money reward with your tokens, and it lands in your jars! 還沒有紀錄。</div>`;
+  if(!all.length)return `<div class="section-sub">Nothing here yet — redeem a money reward with your tokens, and it lands in your Bank! 還沒有紀錄。</div>`;
   const shown=bankUI.showAll?all:all.slice(0,30);
   const rows=shown.map(g=>{
     const i=bankRowInfo(g,cur);
     const cls=i.neutral?'':(i.amt>=0?'pos':'neg');
     const amtTxt=i.neutral?fmtMoney(i.amt,cur):((i.amt>=0?'+':'')+fmtMoney(i.amt,cur));
     const who=g.by&&g.by!==(APP.auth.currentUser&&APP.auth.currentUser.username)?` · ${esc(g.by)}`:'';
-    const undo=parent&&!g.voided&&!g.isVoid?`<button class="btn btn-secondary tx-undo" onclick="bankVoid('${esc(g.grp)}')">Undo 復原</button>`:'';
+    const undo=parent&&!g.voided&&!g.isVoid&&g.kind!=='settle'?`<button class="btn btn-secondary tx-undo" onclick="bankVoid('${esc(g.grp)}')">Undo 復原</button>`:'';
     return `<div class="card tx-row${g.voided?' voided':''}">
       <div class="tx-emoji">${i.emoji}</div>
       <div class="tx-body"><div class="tx-title">${esc(i.title)}</div><div class="tx-sub">${esc(g.date||'')}${who}${i.sub?' · '+esc(i.sub):''}${g.voided?' · undone':''}</div></div>
@@ -6099,6 +6198,59 @@ function bankHistoryHtml(id,parent){
   }).join('');
   const more=all.length>30?`<button class="btn btn-secondary btn-block" onclick="bankUI.showAll=!bankUI.showAll;render()">${bankUI.showAll?'Show fewer ▲':`Show all ${all.length} ▾`}</button>`:'';
   return rows+more;
+}
+function bankPlant(pct,ready){ return ready?'🍎':pct<34?'🌱':pct<67?'🌿':'🌳'; }
+function bankLotsHtml(id){
+  const s=bankSettings(id); const cur=s.currency; const lots=bankLots(id); const today=bankDate();
+  const head=`<div class="section-title" style="font-size:1.1rem">Savings deposits 儲蓄存款</div>
+    <div class="section-sub">Each deposit is locked for the time you picked and grows ${esc(String(s.rate))}% every month. 每筆存款鎖你選的時間，每個月長 ${esc(String(s.rate))}%。</div>`;
+  if(!lots.length)return head+`<div class="card" style="padding:14px 16px;margin-bottom:18px"><div class="lot-sub">Nothing locked yet. Tap “Move to Savings” to plant your first money seed! 還沒有存款，按「移到儲蓄罐」種下第一顆錢種子！</div></div>`;
+  const cards=lots.map(l=>{
+    const I=bankLotInterest(l.principal,s.rate,l.term); const ready=today>=l.maturity;
+    const left=Math.max(0,bankDaysBetween(today,l.maturity));
+    const total=Math.max(1,bankDaysBetween(l.start,l.maturity));
+    const pct=ready?100:Math.max(0,Math.min(100,Math.round(100*bankDaysBetween(l.start,today)/total)));
+    const term=`${l.term} month${l.term===1?'':'s'} ${l.term}個月`;
+    const bar=`<div class="lot-track"><div class="lot-fill" style="width:${pct}%"></div><span class="lot-plant" style="left:${Math.min(94,Math.max(2,pct))}%">${bankPlant(pct,ready)}</span></div>`;
+    if(ready)return `<div class="card lot-card ready">
+      <div class="lot-top"><span>🎉 ${esc(fmtMoney(l.principal,cur))} grew!</span><span class="mono" style="color:var(--good)">+${esc(fmtMoney(I,cur))}</span></div>
+      ${bar}
+      <div class="lot-sub">${esc(term)} × ${esc(String(s.rate))}% — you get ${esc(fmtMoney(l.principal+I,cur))} in total. 到期了！一共可拿到 ${esc(fmtMoney(l.principal+I,cur))}。</div>
+      <div class="lot-actions">
+        <button class="btn btn-primary" onclick="bankSettleLot('${esc(l.key)}','keep')">🌱 Keep saving 繼續儲蓄<br><small>lock ${esc(fmtMoney(l.principal+I,cur))} for ${l.term} more month${l.term===1?'':'s'}</small></button>
+        <button class="btn btn-secondary" onclick="bankSettleLot('${esc(l.key)}','spend')">🛍️ Move to Spend 移到花費<br><small>take ${esc(fmtMoney(l.principal+I,cur))} now</small></button>
+      </div></div>`;
+    return `<div class="card lot-card">
+      <div class="lot-top"><span>🔒 ${esc(fmtMoney(l.principal,cur))}</span><span class="lot-sub">${esc(term)} · unlocks ${esc(l.maturity)} · ${left} day${left===1?'':'s'} left</span></div>
+      ${bar}
+      <div class="lot-sub">Will grow +${esc(fmtMoney(I,cur))} → ${esc(fmtMoney(l.principal+I,cur))}. Locked money can’t be moved. 還沒到期，不能動。</div></div>`;
+  }).join('');
+  return head+`<div style="margin-bottom:18px">${cards}</div>`;
+}
+/* "Growth steps": one bar per term (1/3/6/12 months) — blue = money you put in, green = the interest it grows. */
+function svgGrowth(c,rate,sel,cur){
+  const width=560,height=250,padL=14,padR=14,padT=58,padB=58;
+  const plotH=height-padT-padB; const slot=(width-padL-padR)/BANK_TERMS.length; const bw=Math.min(96,slot*0.6);
+  const rows=BANK_TERMS.map(t=>({t,I:bankLotInterest(c,rate,t)}));
+  const maxI=Math.max(1,...rows.map(r=>r.I)); // the picture is NOT to scale: the money you put in is a fixed 40% block, the interest is drawn bigger so kids can see it grow
+  const base=padT+plotH;
+  const plants=['🌱','🌿','🌳','🍎'];
+  const bars=rows.map((r,k)=>{
+    const x=padL+slot*k+(slot-bw)/2, cx=x+bw/2;
+    const hp2=plotH*0.4; let hi=r.I>0?Math.max(8,plotH*0.6*r.I/maxI):0;
+    const top=base-hp2-hi; const on=r.t===sel;
+    return `<g style="cursor:pointer" onclick="bankPickTerm(${r.t})">
+      <rect x="${(x-6).toFixed(1)}" y="2" width="${(bw+12).toFixed(1)}" height="${height-4}" rx="14" fill="${on?'var(--accent-soft)':'transparent'}"/>
+      <rect x="${x.toFixed(1)}" y="${(base-hp2).toFixed(1)}" width="${bw.toFixed(1)}" height="${hp2.toFixed(1)}" rx="6" style="fill:var(--accent)" opacity="${on?1:.55}"/>
+      ${hi>0?`<rect x="${x.toFixed(1)}" y="${top.toFixed(1)}" width="${bw.toFixed(1)}" height="${hi.toFixed(1)}" rx="6" style="fill:var(--good)" opacity="${on?1:.6}"/>`:''}
+      <text x="${cx.toFixed(1)}" y="${(top-6).toFixed(1)}" text-anchor="middle" style="font-family:var(--font-mono);font-size:13px;font-weight:700;fill:var(--good)">+${esc(fmtMoney(r.I))}</text>
+      <text x="${cx.toFixed(1)}" y="${(top-24).toFixed(1)}" text-anchor="middle" style="font-size:${on?26:21}px">${plants[k]}</text>
+      <text x="${cx.toFixed(1)}" y="${base+19}" text-anchor="middle" style="font-family:var(--font-display);font-size:15px;font-weight:700;fill:var(--ink)">${r.t===12?'1 year':r.t+(r.t===1?' month':' months')}</text>
+      <text x="${cx.toFixed(1)}" y="${base+38}" text-anchor="middle" style="font-family:var(--font-mono);font-size:13px;fill:var(--ink-soft)">= ${esc(fmtMoney(c+r.I))}</text>
+    </g>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${width} ${height}" width="100%" style="display:block;max-width:${width}px" role="img" aria-label="How much your savings grow after 1, 3, 6 and 12 months">
+    <line x1="${padL}" y1="${base}" x2="${width-padR}" y2="${base}" stroke="var(--border)" stroke-width="2"/>${bars}</svg>`;
 }
 function bankGoalHtml(id,av){
   const s=bankSettings(id); const bal=bankBalances(id); const cur=s.currency;
@@ -6138,16 +6290,17 @@ function bankParentControlsHtml(id){
       <button class="btn btn-primary" style="flex:1;padding:13px" onclick="bankAdjust(1)">➕ Add money 加錢</button>
       <button class="btn btn-secondary" style="flex:1;padding:13px" onclick="bankAdjust(-1)">➖ Take away 扣錢</button>
     </div>
-    <div class="section-sub" style="margin:10px 0 0;font-size:.78rem">Auto-split uses the percentages below. To take money away, pick the jar first. 扣錢請先選存錢罐。</div>
+    <div class="section-sub" style="margin:10px 0 0;font-size:.78rem">Auto uses the split below. Money a parent adds to Save is locked for 1 month. To take money away, pick the account first. 家長加到儲蓄的錢鎖一個月；扣錢請先選帳戶。</div>
   </div>
   <div class="card" style="padding:16px;margin-bottom:18px">
-    <label class="flabel">How new money is split 新的錢怎麼分 (must add up to 100%)</label>
+    <label class="flabel">How new money is split 新的錢怎麼分 (Spend + Save must add up to 100%)</label>
     <div class="split-grid">
       ${JARS.map(j=>`<div class="field"><label class="flabel">${j.emoji} ${j.label} %</label><input type="text" id="pct-${j.id}" inputmode="numeric" value="${s.split[j.id]|0}"></div>`).join('')}
+      <div class="field"><label class="flabel">🌱 Interest % per month 每月利率</label><input type="text" id="bankRate" inputmode="decimal" value="${esc(String(s.rate))}"></div>
     </div>
     <div class="row"><div class="field" style="flex:1;min-width:120px"><label class="flabel">Currency 貨幣</label><input type="text" id="bankCurrency" value="${esc(cur)}" maxlength="6"></div></div>
     <div class="bank-msg" id="bankMsgSet"></div>
-    <button class="btn btn-primary" onclick="bankSaveSettings()">Save split 儲存比例</button>
+    <button class="btn btn-primary" onclick="bankSaveSettings()">Save settings 儲存</button>
   </div>`;
 }
 function renderWallet(){
@@ -6157,11 +6310,13 @@ function renderWallet(){
   const id=APP.currentLearnerId; const meta=LEARNERS_META[id]; const learner=APP.learners[id]; const av=accentVars(meta.color);
   const parent=bankIsParent();
   const s=bankSettings(id); const cur=s.currency; const bal=bankBalances(id);
-  const scale=Math.max(1000,bal.spend,bal.save,bal.give);
+  const scale=Math.max(1000,bal.spend,bal.save);
+  const rules={spend:'No interest · spend anytime<br>沒有利息，隨時可花',save:`🔒 Locked 1–12 months · +${esc(String(s.rate))}% every month<br>鎖 1–12 個月，每月利息 ${esc(String(s.rate))}%`};
   const jars=JARS.map(j=>`<div class="jar-card" style="border-color:${j.color}">
       ${svgJar(j,bal[j.id]/scale,j.id)}
       <div class="jar-name">${j.emoji} ${j.label}</div><div class="jar-zh">${j.zh}</div>
       <div class="jar-amt">${esc(fmtMoney(bal[j.id],cur))}</div>
+      <div class="jar-rule">${rules[j.id]}</div>
       <div class="jar-pct">${s.split[j.id]|0}% of new money</div>
     </div>`).join('');
   const cashRewards=(APP.rewards.items||[]).filter(r=>r.active&&Number(r.cash)>0);
@@ -6177,8 +6332,9 @@ function renderWallet(){
   ${hint}
   <div class="bank-actions">
     <button class="bank-big primary" onclick="openBankSpend()">🛍️ I spent money<small>記一筆花費</small></button>
-    <button class="bank-big" onclick="openBankMove()">🔁 Move money<small>在存錢罐之間搬錢</small></button>
+    <button class="bank-big" onclick="openBankMove()">🔒 Move to Savings<small>從花費存進儲蓄罐</small></button>
   </div>
+  ${bankLotsHtml(id)}
   ${bankGoalHtml(id,av)}
   ${bankChartHtml(id)}
   ${parent?bankParentControlsHtml(id):''}
@@ -6192,16 +6348,13 @@ function bankPick(group,value,btn){
   bankUI[group]=value;
   if(btn&&btn.parentNode) [...btn.parentNode.children].forEach(b=>{ b.dataset.on=String(b===btn); });
 }
-function bankJarPicker(group,current){
-  return `<div class="pick-row">${JARS.map(j=>`<button class="pick-btn" data-on="${current===j.id}" onclick="bankPick('${group}','${j.id}',this)">${j.emoji} ${j.label}</button>`).join('')}</div>`;
-}
 function openBankSpend(){
   const id=bankTargetId(); if(!id)return;
-  bankUI.spendJar='spend'; bankUI.spendCat='snack';
-  const cur=bankSettings(id).currency;
+  bankUI.spendCat='snack';
+  const s=bankSettings(id); const cur=s.currency; const bal=bankBalances(id);
   openModal(`<div class="modal-card" onclick="stopProp(event)">
     <div class="qhead"><span>🛍️ I spent money 記一筆花費</span><span></span></div>
-    <label class="flabel">Which jar? 從哪個罐子拿？</label>${bankJarPicker('spendJar','spend')}
+    <div class="section-sub" style="margin-bottom:12px">From your Spend jar 從花費罐拿 — you have <b class="mono">${esc(fmtMoney(bal.spend,cur))}</b></div>
     <label class="flabel">What was it for? 買了什麼？</label>
     <div class="pick-row">${BANK_CATS.map(c=>`<button class="pick-btn" data-on="${c.id==='snack'}" onclick="bankPick('spendCat','${c.id}',this)">${c.emoji}<br>${c.label}</button>`).join('')}</div>
     <div class="field"><input type="text" id="bankSpendAmt" class="bank-amount" inputmode="decimal" placeholder="${esc(cur)} 0"></div>
@@ -6214,37 +6367,62 @@ function bankSpend(){
   const id=bankTargetId(); if(!id)return;
   const c=parseMoney(document.getElementById('bankSpendAmt').value);
   if(!c){ bankSetMsg('Type an amount, like 5 or 2.50. 請輸入金額。'); return; }
-  const jar=bankUI.spendJar; const bal=bankBalances(id);
-  if(bal[jar]<c){ bankSetMsg(`Not enough in the ${jarById(jar).label} jar (${fmtMoney(bal[jar],bankSettings(id).currency)}). 這個罐子錢不夠。`); return; }
+  const bal=bankBalances(id);
+  if(bal.spend<c){ bankSetMsg(`Not enough in your Spend jar (${fmtMoney(bal.spend,bankSettings(id).currency)}). Savings are locked and can't be spent. 花費罐的錢不夠；儲蓄是鎖住的，不能直接花。`); return; }
   const cat=BANK_CATS.find(x=>x.id===bankUI.spendCat)||BANK_CATS[5];
   const note=document.getElementById('bankSpendNote').value.trim()||cat.label.split(' ')[0];
-  bankAddEntries(id,[{jar,amt:-c,kind:'spend',cat:cat.id,note,grp:newBankKey()}]);
+  bankAddEntries(id,[{jar:'spend',amt:-c,kind:'spend',cat:cat.id,note,grp:newBankKey()}]);
   closeModal(); toast(`Saved! You spent ${fmtMoney(c,bankSettings(id).currency)} 🛍️`); render();
 }
+/* Move money only goes one way: Spend → Save. The child picks how long to lock it (1/3/6/12 months);
+   savings can't be moved out until they mature. */
 function openBankMove(){
   const id=bankTargetId(); if(!id)return;
-  bankUI.from='spend'; bankUI.to='save';
-  const cur=bankSettings(id).currency;
+  const s=bankSettings(id); const cur=s.currency; const bal=bankBalances(id);
+  bankUI.moveTerm=1;
   openModal(`<div class="modal-card" onclick="stopProp(event)">
-    <div class="qhead"><span>🔁 Move money 搬錢</span><span></span></div>
-    <label class="flabel">From 從</label>${bankJarPicker('from','spend')}
-    <label class="flabel">To 到</label>${bankJarPicker('to','save')}
-    <div class="field"><input type="text" id="bankMoveAmt" class="bank-amount" inputmode="decimal" placeholder="${esc(cur)} 0"></div>
+    <div class="qhead"><span>🔒 Move to Savings 存進儲蓄罐</span><span></span></div>
+    <div class="howto-box">Pick how long to lock your money. It grows <b>${esc(String(s.rate))}% every month</b> — the longer you wait, the more it grows! You can’t take it out early.<br>選一個時間把錢鎖起來，<b>每個月長 ${esc(String(s.rate))}%</b>，等越久長越多！中途不能拿出來喔。</div>
+    <div class="section-sub" style="margin:12px 0 8px">From your Spend jar 從花費罐 — you have <b class="mono">${esc(fmtMoney(bal.spend,cur))}</b></div>
+    <div class="field"><input type="text" id="bankMoveAmt" class="bank-amount" inputmode="decimal" placeholder="${esc(cur)} 0" oninput="bankMovePreview()"></div>
+    <label class="flabel">How long? 存多久？</label>
+    <div class="pick-row term-row">${BANK_TERMS.map(t=>`<button class="pick-btn term-btn" data-t="${t}" data-on="${t===1}" onclick="bankPickTerm(${t})"><b>${t===12?'1':t}</b><br>${t===12?'year 年':t===1?'month 個月':'months 個月'}</button>`).join('')}</div>
+    <div class="growth-box"><div class="growth-cap" id="bankGrowthEx"></div><div id="bankGrowth"></div>
+      <div class="growth-legend"><span><i style="background:var(--accent)"></i>Your money 你存的</span><span><i style="background:var(--good)"></i>Interest it grows 長出來的利息</span></div>
+      <div class="growth-cap">Not to scale — tap a bar to pick! 圖僅示意，點長條可選時間</div></div>
+    <div class="goal-note" id="bankMovePreview" style="min-height:2.6em;margin:2px 0 10px"></div>
     <div class="bank-msg" id="bankMsg"></div>
-    <div class="row"><button class="btn btn-secondary" style="flex:1" onclick="closeModal()">Cancel 取消</button><button class="btn btn-primary" style="flex:2;padding:13px" onclick="bankMove()">Move 搬</button></div>
+    <div class="row"><button class="btn btn-secondary" style="flex:1" onclick="closeModal()">Cancel 取消</button><button class="btn btn-primary" style="flex:2;padding:13px" onclick="bankMove()">Lock it in 鎖起來</button></div>
   </div>`);
+  bankMovePreview();
+}
+function bankPickTerm(t){
+  if(!BANK_TERMS.includes(t))return;
+  bankUI.moveTerm=t;
+  document.querySelectorAll('.term-btn').forEach(b=>{ b.dataset.on=String(Number(b.dataset.t)===t); });
+  bankMovePreview();
+}
+function bankMovePreview(){
+  const id=bankTargetId(); if(!id)return;
+  const s=bankSettings(id); const cur=s.currency; const t=BANK_TERMS.includes(bankUI.moveTerm)?bankUI.moveTerm:1;
+  const amt=document.getElementById('bankMoveAmt'); const c=amt?parseMoney(amt.value):null;
+  const viz=document.getElementById('bankGrowth'); if(viz)viz.innerHTML=svgGrowth(c||1000,s.rate,t,cur);
+  const ex=document.getElementById('bankGrowthEx'); if(ex)ex.textContent=c?'':`Example with ${fmtMoney(1000,cur)} 範例`;
+  const el=document.getElementById('bankMovePreview'); if(!el)return;
+  if(!c){ el.textContent='Type an amount to see how much it grows. 輸入金額，看看會長多少。'; return; }
+  const I=bankLotInterest(c,s.rate,t);
+  el.textContent=`🔒 ${fmtMoney(c,cur)} for ${bankTermName(t)} → on ${addMonthsStr(bankDate(),t)} you get ${fmtMoney(c+I,cur)} (+${fmtMoney(I,cur)} interest 利息)`;
 }
 function bankMove(){
   const id=bankTargetId(); if(!id)return;
-  const from=bankUI.from, to=bankUI.to;
-  if(from===to){ bankSetMsg('Pick two different jars. 請選兩個不同的罐子。'); return; }
   const c=parseMoney(document.getElementById('bankMoveAmt').value);
   if(!c){ bankSetMsg('Type an amount, like 5 or 2.50. 請輸入金額。'); return; }
   const bal=bankBalances(id);
-  if(bal[from]<c){ bankSetMsg(`Not enough in the ${jarById(from).label} jar. 這個罐子錢不夠。`); return; }
+  if(bal.spend<c){ bankSetMsg(`Not enough in your Spend jar (${fmtMoney(bal.spend,bankSettings(id).currency)}). 花費罐的錢不夠。`); return; }
+  const term=BANK_TERMS.includes(bankUI.moveTerm)?bankUI.moveTerm:1;
   const grp=newBankKey();
-  bankAddEntries(id,[{jar:from,amt:-c,kind:'move',grp},{jar:to,amt:c,kind:'move',grp}]);
-  closeModal(); toast(`Moved ${fmtMoney(c,bankSettings(id).currency)} to ${jarById(to).label} 🔁`); render();
+  bankAddEntries(id,[{jar:'spend',amt:-c,kind:'move',grp},{jar:'save',amt:c,kind:'move',term,grp}]);
+  closeModal(); toast(`🔒 ${fmtMoney(c,bankSettings(id).currency)} is locked in Savings until ${addMonthsStr(bankDate(),term)}!`,3600); render();
 }
 function bankAdjust(sign){
   const id=bankTargetId(); if(!id||!bankIsParent())return;
@@ -6257,8 +6435,8 @@ function bankAdjust(sign){
     if(jar==='auto'){ const parts=splitCents(c,s.split); entries=JARS.filter(j=>parts[j.id]>0).map(j=>({jar:j.id,amt:parts[j.id],kind:'adjust',note,grp})); }
     else entries=[{jar,amt:c,kind:'adjust',note,grp}];
   } else {
-    if(jar==='auto'){ bankSetMsg('Pick which jar to take money from. 扣錢請先選一個罐子。'); return; }
-    if(bankBalances(id)[jar]<c){ bankSetMsg(`The ${jarById(jar).label} jar only has ${fmtMoney(bankBalances(id)[jar],s.currency)}. 這個罐子錢不夠。`); return; }
+    if(jar==='auto'){ bankSetMsg('Pick which account to take money from. 扣錢請先選一個帳戶。'); return; }
+    if(bankBalances(id)[jar]<c){ bankSetMsg(`The ${jarById(jar).label} jar only has ${fmtMoney(bankBalances(id)[jar],s.currency)}. 這個帳戶錢不夠。`); return; }
     entries=[{jar,amt:-c,kind:'adjust',note,grp}];
   }
   bankAddEntries(id,entries);
@@ -6266,28 +6444,34 @@ function bankAdjust(sign){
 }
 function bankVoid(grp){
   const id=bankTargetId(); if(!id||!bankIsParent())return;
+  const b=ensureBank(id);
   const g=bankHistory(id).find(x=>x.grp===grp);
-  if(!g||g.voided||g.isVoid)return;
+  if(!g||g.voided||g.isVoid||g.kind==='settle')return;
+  // a savings deposit that already went through a matured-savings decision can't be undone
+  const used=new Set(Object.values(b.tx).filter(e=>e.kind==='settle').map(e=>e.lot));
+  if(g.entries.some(e=>used.has(e.k))){ toast("Can't undo this — the savings money was already used when it matured. 這筆儲蓄已經在到期時處理過，無法復原。",4200); return; }
   const bal=bankBalances(id); const delta={};
-  g.entries.forEach(e=>{ delta[e.jar]=(delta[e.jar]||0)-(e.amt|0); });
+  g.entries.forEach(e=>{ const j=jarOf(e); delta[j]=(delta[j]||0)-(e.amt|0); });
   for(const j of Object.keys(delta)){
     if(bal[j]+delta[j]<0){ toast(`Can't undo this — the ${jarById(j).label} jar doesn't have enough money now.`,3600); return; }
   }
-  bankAddEntries(id,g.entries.map(e=>({jar:e.jar,amt:-(e.amt|0),kind:'void',voids:e.k,note:'Undo: '+(g.note||''),grp:'v'+g.grp})));
+  bankAddEntries(id,g.entries.map(e=>({jar:jarOf(e),amt:-(e.amt|0),kind:'void',voids:e.k,note:'Undo: '+(g.note||''),grp:'v'+g.grp})));
   toast('Undone ↩️'); render();
 }
 function bankSaveSettings(){
   const id=bankTargetId(); if(!id||!bankIsParent())return;
+  const msg=document.getElementById('bankMsgSet'); const say=t=>{ if(msg)msg.textContent=t; };
   const split={}; let sum=0;
   for(const j of JARS){
     const raw=String(document.getElementById('pct-'+j.id).value).trim();
-    if(!/^\d{1,3}$/.test(raw)){ const el=document.getElementById('bankMsgSet'); if(el)el.textContent='Use whole numbers 0–100. 請輸入 0–100 的整數。'; return; }
+    if(!/^\d{1,3}$/.test(raw)){ say('Use whole numbers 0–100. 請輸入 0–100 的整數。'); return; }
     split[j.id]=parseInt(raw,10); sum+=split[j.id];
   }
-  const msg=document.getElementById('bankMsgSet');
-  if(sum!==100){ if(msg)msg.textContent=`The three numbers add up to ${sum}, they must add up to 100. 三個數字加起來要是 100。`; return; }
+  if(sum!==100){ say(`The two numbers add up to ${sum}, they must add up to 100. 兩個數字加起來要是 100。`); return; }
+  const rateRaw=String(document.getElementById('bankRate').value).trim();
+  if(!/^\d{1,2}(\.\d{1,2})?$/.test(rateRaw)){ say('Interest must be a number like 1 or 1.5. 月利率請輸入像 1 或 1.5 的數字。'); return; }
   const cur=document.getElementById('bankCurrency').value.trim().slice(0,6)||'MYR';
-  const s=bankSettings(id); s.split=split; s.currency=cur;
+  const s=bankSettings(id); s.split=split; s.rate=parseFloat(rateRaw); s.currency=cur;
   bankSaveSettingsNow(id); toast('Saved! 已儲存'); render();
 }
 function bankSaveGoal(){
@@ -6310,8 +6494,15 @@ function bankClearGoal(){
    notes live in CHANGELOG.md, and each release is also archived as olilimimi-vX.Y.Z.html so any
    version can be restored by uploading that file as index.html. The version shows in the bottom-right
    corner; tapping it opens these notes. */
-const APP_VERSION='1.3.0';
+const APP_VERSION='1.4.0';
 const APP_CHANGELOG=[
+  {v:'1.4.0',date:'2026-10-24',title:'Bank 規則改版：儲蓄鎖定 1／3／6／12 個月、每月 1% 利息',items:[
+    '存錢罐改成兩個：花費 Spend(沒有利息、隨時可花)與儲蓄 Save；Give 分享罐已拿掉，舊的 Give 金額自動併入花費。',
+    '「Move money」改成只能把錢從花費存進儲蓄；存進儲蓄的錢要鎖定，孩子可選 1／3／6／12 個月，沒到期不能搬動，也不能直接花。',
+    '利息：每個月 1%(家長可調整)，單利計算——存 6 個月就是 6%。存入畫面有圖像化的「成長階梯」(🌱→🌿→🌳→🍎)，一次比較 1／3／6／12 個月會長出多少。',
+    '到期後孩子(或家長)選擇：繼續儲蓄(本金＋利息再鎖同樣時間)，或全部移到花費；儲蓄存款以進度條與小植物顯示距離到期還有幾天。',
+    '家長仍可替孩子加錢／扣錢(扣儲蓄時先扣最早到期的)；已經在到期時處理過的儲蓄無法復原。新錢預設分配改為花費 70%／儲蓄 30%，可在家長專區調整。'
+  ]},
   {v:'1.3.0',date:'2026-10-24',title:'Bank 收入支出改成週／月／年折線圖',items:[
     'Bank 小銀行的「本月收入／支出」改成動態折線圖：可切換「週／月／年」，綠線是收入、紅線是支出。',
     '週＝最近 7 天、月＝最近 30 天(每天一個點)；年＝最近 12 個月(每月一個點)。',
