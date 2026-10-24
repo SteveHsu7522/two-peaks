@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Olilimimi</title>
-<meta name="app-version" content="1.4.0">
+<meta name="app-version" content="1.4.1">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22100%2070%20336%20245%22%3E%3Ccircle%20cx%3D%22191%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%232F6FC4%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22343%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%23F3B431%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22219%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Ccircle%20cx%3D%22316%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Cpath%20d%3D%22M200%20271%20Q268%20318%20336%20271%22%20fill%3D%22none%22%20stroke%3D%22%231C2A3E%22%20stroke-width%3D%2220%22%20stroke-linecap%3D%22round%22/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
@@ -460,6 +460,7 @@ body{padding-bottom:36px;}
 .lot-actions small{font-weight:600;opacity:.85;font-size:.72rem;}
 .term-row{margin-bottom:10px;}
 .term-btn{font-size:.8rem;line-height:1.25;}
+.term-btn .term-pct{font-family:var(--font-mono);font-size:.78rem;color:var(--good);font-weight:800;}
 .term-btn b{font-family:var(--font-display);font-size:1.5rem;}
 .growth-box{background:var(--surface-2);border-radius:var(--radius-md);padding:10px 8px 6px;margin-bottom:8px;}
 .growth-cap{font-size:.74rem;color:var(--ink-faint);text-align:center;min-height:1em;font-weight:700;}
@@ -483,7 +484,7 @@ body{padding-bottom:36px;}
 </div>
 <div id="modalRoot"></div>
 <div id="toastRoot"></div>
-<button id="versionBadge" class="version-badge" type="button" onclick="openChangelog()" title="版本注記 / Release notes">v1.4.0</button>
+<button id="versionBadge" class="version-badge" type="button" onclick="openChangelog()" title="版本注記 / Release notes">v1.4.1</button>
 
 <!-- Firebase (cloud sync across devices). If this ever fails to load (offline,
      ad-blocker, etc.) the app quietly falls back to this browser's own
@@ -5854,8 +5855,10 @@ function rejectUser(username){
    A play-money bank for each child with two accounts:
    • Spend 花費 — no interest, spend any time.
    • Save 儲蓄 — every deposit is locked for a term the child picks: 1, 3, 6 or 12 months. It earns
-     simple interest of 1% for every month (a parent can change the rate). When it matures the child
-     chooses: keep saving (principal + interest is locked again for the same term) or move it all to Spend. Locked money can't be moved.
+     interest for the term it was locked (see below). When it matures the child
+     chooses: keep saving (principal + interest is locked again for the same term) or move it all to Spend.
+     Interest is for the whole term: 1 month = 1%, 12 months = 2%, terms in between are interpolated
+     (3 months 1.18%, 6 months 1.45%). A parent can change the 1-month and 12-month rates. Locked money can't be moved.
    Trail Tokens redeemed for a cash reward are deposited straight into the accounts using the split the
    parent chose. Parents can add or take away money, undo entries and change split / interest.
    Storage: bank/<learnerId>/tx/<key> = one immutable ledger entry per key (two devices writing at the
@@ -5878,11 +5881,12 @@ const BANK_TERMS=[1,3,6,12];
 let bankUI={range:'month',adjJar:'auto',spendCat:'snack',showAll:false,moveTerm:1};
 function jarById(id){ return JARS.find(j=>j.id===id)||JARS[0]; }
 function jarOf(e){ return e.jar==='save'?'save':'spend'; } // the old Give jar no longer exists: its money counts as Spend
-function defaultBankSettings(){ return{currency:'MYR',split:{spend:70,save:30},rate:1,goal:null,updated:0}; }
+function defaultBankSettings(){ return{currency:'MYR',split:{spend:70,save:30},rate:1,rateYear:2,goal:null,updated:0}; }
 function normBankSettings(s){
   if(!s.split)s.split={spend:70,save:30};
   if(s.split.give!==undefined){ s.split.spend=(s.split.spend|0)+(s.split.give|0); delete s.split.give; }
   if(typeof s.rate!=='number'||!(s.rate>=0))s.rate=1;
+  if(typeof s.rateYear!=='number'||!(s.rateYear>=0))s.rateYear=2;
 }
 function bankDate(d){ d=d||new Date(); const p=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
 /* same day next month (clamped: Jan 31 + 1 month = Feb 28/29) */
@@ -6018,8 +6022,15 @@ function bankLots(id){
   });
   return lots.filter(l=>!l.closed&&l.principal>0).sort((x,y)=>x.maturity<y.maturity?-1:(x.maturity>y.maturity?1:0));
 }
-/* simple interest: rate % for every month of the term (1% × 6 months = 6%) */
-function bankLotInterest(principal,rate,term){ return Math.round(principal*rate*(term||1)/100); }
+/* Interest for a whole term. 1 month earns s.rate % (default 1), 12 months earns s.rateYear % (default 2);
+   terms in between are interpolated in a straight line and rounded to 2 decimals:
+   1 → 1%, 3 → 1.18%, 6 → 1.45%, 12 → 2%. */
+function bankTermRate(s,term){
+  const t=Math.min(12,Math.max(1,term||1)); const a=Number(s.rate)||0, b=Number(s.rateYear)||0;
+  return Math.round((a+(b-a)*(t-1)/11)*100)/100;
+}
+function fmtPct(p){ return String(Math.round(p*100)/100); }
+function bankLotInterest(principal,s,term){ return Math.round(principal*bankTermRate(s,term)/100); }
 function bankTermName(n){ return n===12?'1 year 1年':n+(n===1?' month ':' months ')+n+'個月'; }
 /* The child (or a parent) chooses what happens to a matured deposit. */
 async function bankSettleLot(lotKey,action){
@@ -6029,7 +6040,7 @@ async function bankSettleLot(lotKey,action){
   if(!lot){ toast('This deposit was already handled. 這筆已經處理過了。'); render(); return; }
   if(bankDate()<lot.maturity){ toast('Not ready yet — it is still locked! 還沒到期，還不能動喔。',3200); return; }
   const s=bankSettings(id); const cur=s.currency;
-  const I=bankLotInterest(lot.principal,s.rate,lot.term); const total=lot.principal+I; const grp=newBankKey();
+  const I=bankLotInterest(lot.principal,s,lot.term); const total=lot.principal+I; const grp=newBankKey();
   const base={kind:'settle',lot:lot.key,grp,note:'Savings matured 儲蓄到期'};
   const entries=action==='keep'
     ?[Object.assign({part:'interest',jar:'save',amt:I},base),Object.assign({part:'keep',jar:'save',amt:0},base)]
@@ -6203,10 +6214,10 @@ function bankPlant(pct,ready){ return ready?'🍎':pct<34?'🌱':pct<67?'🌿':'
 function bankLotsHtml(id){
   const s=bankSettings(id); const cur=s.currency; const lots=bankLots(id); const today=bankDate();
   const head=`<div class="section-title" style="font-size:1.1rem">Savings deposits 儲蓄存款</div>
-    <div class="section-sub">Each deposit is locked for the time you picked and grows ${esc(String(s.rate))}% every month. 每筆存款鎖你選的時間，每個月長 ${esc(String(s.rate))}%。</div>`;
+    <div class="section-sub">Each deposit is locked for the time you picked. 1 month earns +${fmtPct(bankTermRate(s,1))}%, 1 year earns +${fmtPct(bankTermRate(s,12))}%. 每筆存款鎖你選的時間：存 1 個月 +${fmtPct(bankTermRate(s,1))}%,存 1 年 +${fmtPct(bankTermRate(s,12))}%。</div>`;
   if(!lots.length)return head+`<div class="card" style="padding:14px 16px;margin-bottom:18px"><div class="lot-sub">Nothing locked yet. Tap “Move to Savings” to plant your first money seed! 還沒有存款，按「移到儲蓄罐」種下第一顆錢種子！</div></div>`;
   const cards=lots.map(l=>{
-    const I=bankLotInterest(l.principal,s.rate,l.term); const ready=today>=l.maturity;
+    const I=bankLotInterest(l.principal,s,l.term); const ready=today>=l.maturity;
     const left=Math.max(0,bankDaysBetween(today,l.maturity));
     const total=Math.max(1,bankDaysBetween(l.start,l.maturity));
     const pct=ready?100:Math.max(0,Math.min(100,Math.round(100*bankDaysBetween(l.start,today)/total)));
@@ -6215,7 +6226,7 @@ function bankLotsHtml(id){
     if(ready)return `<div class="card lot-card ready">
       <div class="lot-top"><span>🎉 ${esc(fmtMoney(l.principal,cur))} grew!</span><span class="mono" style="color:var(--good)">+${esc(fmtMoney(I,cur))}</span></div>
       ${bar}
-      <div class="lot-sub">${esc(term)} × ${esc(String(s.rate))}% — you get ${esc(fmtMoney(l.principal+I,cur))} in total. 到期了！一共可拿到 ${esc(fmtMoney(l.principal+I,cur))}。</div>
+      <div class="lot-sub">${esc(term)} → +${fmtPct(bankTermRate(s,l.term))}% — you get ${esc(fmtMoney(l.principal+I,cur))} in total. 到期了！一共可拿到 ${esc(fmtMoney(l.principal+I,cur))}。</div>
       <div class="lot-actions">
         <button class="btn btn-primary" onclick="bankSettleLot('${esc(l.key)}','keep')">🌱 Keep saving 繼續儲蓄<br><small>lock ${esc(fmtMoney(l.principal+I,cur))} for ${l.term} more month${l.term===1?'':'s'}</small></button>
         <button class="btn btn-secondary" onclick="bankSettleLot('${esc(l.key)}','spend')">🛍️ Move to Spend 移到花費<br><small>take ${esc(fmtMoney(l.principal+I,cur))} now</small></button>
@@ -6228,10 +6239,10 @@ function bankLotsHtml(id){
   return head+`<div style="margin-bottom:18px">${cards}</div>`;
 }
 /* "Growth steps": one bar per term (1/3/6/12 months) — blue = money you put in, green = the interest it grows. */
-function svgGrowth(c,rate,sel,cur){
+function svgGrowth(c,s,sel,cur){
   const width=560,height=250,padL=14,padR=14,padT=58,padB=58;
   const plotH=height-padT-padB; const slot=(width-padL-padR)/BANK_TERMS.length; const bw=Math.min(96,slot*0.6);
-  const rows=BANK_TERMS.map(t=>({t,I:bankLotInterest(c,rate,t)}));
+  const rows=BANK_TERMS.map(t=>({t,I:bankLotInterest(c,s,t)}));
   const maxI=Math.max(1,...rows.map(r=>r.I)); // the picture is NOT to scale: the money you put in is a fixed 40% block, the interest is drawn bigger so kids can see it grow
   const base=padT+plotH;
   const plants=['🌱','🌿','🌳','🍎'];
@@ -6296,7 +6307,8 @@ function bankParentControlsHtml(id){
     <label class="flabel">How new money is split 新的錢怎麼分 (Spend + Save must add up to 100%)</label>
     <div class="split-grid">
       ${JARS.map(j=>`<div class="field"><label class="flabel">${j.emoji} ${j.label} %</label><input type="text" id="pct-${j.id}" inputmode="numeric" value="${s.split[j.id]|0}"></div>`).join('')}
-      <div class="field"><label class="flabel">🌱 Interest % per month 每月利率</label><input type="text" id="bankRate" inputmode="decimal" value="${esc(String(s.rate))}"></div>
+      <div class="field"><label class="flabel">🌱 1-month interest % 存1個月利率</label><input type="text" id="bankRate" inputmode="decimal" value="${esc(String(s.rate))}"></div>
+      <div class="field"><label class="flabel">🌳 12-month interest % 存1年利率</label><input type="text" id="bankRateYear" inputmode="decimal" value="${esc(String(s.rateYear))}"></div>
     </div>
     <div class="row"><div class="field" style="flex:1;min-width:120px"><label class="flabel">Currency 貨幣</label><input type="text" id="bankCurrency" value="${esc(cur)}" maxlength="6"></div></div>
     <div class="bank-msg" id="bankMsgSet"></div>
@@ -6311,7 +6323,7 @@ function renderWallet(){
   const parent=bankIsParent();
   const s=bankSettings(id); const cur=s.currency; const bal=bankBalances(id);
   const scale=Math.max(1000,bal.spend,bal.save);
-  const rules={spend:'No interest · spend anytime<br>沒有利息，隨時可花',save:`🔒 Locked 1–12 months · +${esc(String(s.rate))}% every month<br>鎖 1–12 個月，每月利息 ${esc(String(s.rate))}%`};
+  const rules={spend:'No interest · spend anytime<br>沒有利息，隨時可花',save:`🔒 Locked 1–12 months · +${fmtPct(bankTermRate(s,1))}% to +${fmtPct(bankTermRate(s,12))}%<br>鎖 1–12 個月，利息 ${fmtPct(bankTermRate(s,1))}%～${fmtPct(bankTermRate(s,12))}%`};
   const jars=JARS.map(j=>`<div class="jar-card" style="border-color:${j.color}">
       ${svgJar(j,bal[j.id]/scale,j.id)}
       <div class="jar-name">${j.emoji} ${j.label}</div><div class="jar-zh">${j.zh}</div>
@@ -6382,11 +6394,11 @@ function openBankMove(){
   bankUI.moveTerm=1;
   openModal(`<div class="modal-card" onclick="stopProp(event)">
     <div class="qhead"><span>🔒 Move to Savings 存進儲蓄罐</span><span></span></div>
-    <div class="howto-box">Pick how long to lock your money. It grows <b>${esc(String(s.rate))}% every month</b> — the longer you wait, the more it grows! You can’t take it out early.<br>選一個時間把錢鎖起來，<b>每個月長 ${esc(String(s.rate))}%</b>，等越久長越多！中途不能拿出來喔。</div>
+    <div class="howto-box">Pick how long to lock your money. 1 month earns <b>+${fmtPct(bankTermRate(s,1))}%</b>, 1 year earns <b>+${fmtPct(bankTermRate(s,12))}%</b> — the longer you wait, the more it grows! You can’t take it out early.<br>選一個時間把錢鎖起來：存 1 個月 <b>+${fmtPct(bankTermRate(s,1))}%</b>,存 1 年 <b>+${fmtPct(bankTermRate(s,12))}%</b>,等越久長越多！中途不能拿出來喔。</div>
     <div class="section-sub" style="margin:12px 0 8px">From your Spend jar 從花費罐 — you have <b class="mono">${esc(fmtMoney(bal.spend,cur))}</b></div>
     <div class="field"><input type="text" id="bankMoveAmt" class="bank-amount" inputmode="decimal" placeholder="${esc(cur)} 0" oninput="bankMovePreview()"></div>
     <label class="flabel">How long? 存多久？</label>
-    <div class="pick-row term-row">${BANK_TERMS.map(t=>`<button class="pick-btn term-btn" data-t="${t}" data-on="${t===1}" onclick="bankPickTerm(${t})"><b>${t===12?'1':t}</b><br>${t===12?'year 年':t===1?'month 個月':'months 個月'}</button>`).join('')}</div>
+    <div class="pick-row term-row">${BANK_TERMS.map(t=>`<button class="pick-btn term-btn" data-t="${t}" data-on="${t===1}" onclick="bankPickTerm(${t})"><b>${t===12?'1':t}</b><br>${t===12?'year 年':t===1?'month 個月':'months 個月'}<br><small class="term-pct">+${fmtPct(bankTermRate(s,t))}%</small></button>`).join('')}</div>
     <div class="growth-box"><div class="growth-cap" id="bankGrowthEx"></div><div id="bankGrowth"></div>
       <div class="growth-legend"><span><i style="background:var(--accent)"></i>Your money 你存的</span><span><i style="background:var(--good)"></i>Interest it grows 長出來的利息</span></div>
       <div class="growth-cap">Not to scale — tap a bar to pick! 圖僅示意，點長條可選時間</div></div>
@@ -6406,12 +6418,12 @@ function bankMovePreview(){
   const id=bankTargetId(); if(!id)return;
   const s=bankSettings(id); const cur=s.currency; const t=BANK_TERMS.includes(bankUI.moveTerm)?bankUI.moveTerm:1;
   const amt=document.getElementById('bankMoveAmt'); const c=amt?parseMoney(amt.value):null;
-  const viz=document.getElementById('bankGrowth'); if(viz)viz.innerHTML=svgGrowth(c||1000,s.rate,t,cur);
+  const viz=document.getElementById('bankGrowth'); if(viz)viz.innerHTML=svgGrowth(c||1000,s,t,cur);
   const ex=document.getElementById('bankGrowthEx'); if(ex)ex.textContent=c?'':`Example with ${fmtMoney(1000,cur)} 範例`;
   const el=document.getElementById('bankMovePreview'); if(!el)return;
   if(!c){ el.textContent='Type an amount to see how much it grows. 輸入金額，看看會長多少。'; return; }
-  const I=bankLotInterest(c,s.rate,t);
-  el.textContent=`🔒 ${fmtMoney(c,cur)} for ${bankTermName(t)} → on ${addMonthsStr(bankDate(),t)} you get ${fmtMoney(c+I,cur)} (+${fmtMoney(I,cur)} interest 利息)`;
+  const I=bankLotInterest(c,s,t);
+  el.textContent=`🔒 ${fmtMoney(c,cur)} for ${bankTermName(t)} → on ${addMonthsStr(bankDate(),t)} you get ${fmtMoney(c+I,cur)} (+${fmtMoney(I,cur)} = ${fmtPct(bankTermRate(s,t))}% interest 利息)`;
 }
 function bankMove(){
   const id=bankTargetId(); if(!id)return;
@@ -6469,9 +6481,11 @@ function bankSaveSettings(){
   }
   if(sum!==100){ say(`The two numbers add up to ${sum}, they must add up to 100. 兩個數字加起來要是 100。`); return; }
   const rateRaw=String(document.getElementById('bankRate').value).trim();
-  if(!/^\d{1,2}(\.\d{1,2})?$/.test(rateRaw)){ say('Interest must be a number like 1 or 1.5. 月利率請輸入像 1 或 1.5 的數字。'); return; }
+  const yearRaw=String(document.getElementById('bankRateYear').value).trim();
+  const okRate=x=>/^\d{1,2}(\.\d{1,2})?$/.test(x);
+  if(!okRate(rateRaw)||!okRate(yearRaw)){ say('Interest must be a number like 1 or 1.5. 利率請輸入像 1 或 1.5 的數字。'); return; }
   const cur=document.getElementById('bankCurrency').value.trim().slice(0,6)||'MYR';
-  const s=bankSettings(id); s.split=split; s.rate=parseFloat(rateRaw); s.currency=cur;
+  const s=bankSettings(id); s.split=split; s.rate=parseFloat(rateRaw); s.rateYear=parseFloat(yearRaw); s.currency=cur;
   bankSaveSettingsNow(id); toast('Saved! 已儲存'); render();
 }
 function bankSaveGoal(){
@@ -6494,8 +6508,13 @@ function bankClearGoal(){
    notes live in CHANGELOG.md, and each release is also archived as olilimimi-vX.Y.Z.html so any
    version can be restored by uploading that file as index.html. The version shows in the bottom-right
    corner; tapping it opens these notes. */
-const APP_VERSION='1.4.0';
+const APP_VERSION='1.4.1';
 const APP_CHANGELOG=[
+  {v:'1.4.1',date:'2026-10-24',title:'儲蓄利息：1 個月 1%、1 年 2%,中間遞增',items:[
+    '儲蓄利息改成依存款期限計算整段利息：存 1 個月 +1%、存 1 年 +2%,中間依月數直線內插遞增(3 個月 +1.18%、6 個月 +1.45%)。',
+    '存錢畫面的期限按鈕直接標出各自的利率，成長階梯圖與說明同步更新。',
+    '家長專區可分別設定「存 1 個月利率」與「存 1 年利率」(預設 1% 與 2%)。'
+  ]},
   {v:'1.4.0',date:'2026-10-24',title:'Bank 規則改版：儲蓄鎖定 1／3／6／12 個月、每月 1% 利息',items:[
     '存錢罐改成兩個：花費 Spend(沒有利息、隨時可花)與儲蓄 Save；Give 分享罐已拿掉，舊的 Give 金額自動併入花費。',
     '「Move money」改成只能把錢從花費存進儲蓄；存進儲蓄的錢要鎖定，孩子可選 1／3／6／12 個月，沒到期不能搬動，也不能直接花。',
