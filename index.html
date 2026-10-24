@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Olilimimi</title>
-<meta name="app-version" content="1.0.2">
+<meta name="app-version" content="1.1.0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22100%2070%20336%20245%22%3E%3Ccircle%20cx%3D%22191%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%232F6FC4%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22343%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%23F3B431%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22219%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Ccircle%20cx%3D%22316%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Cpath%20d%3D%22M200%20271%20Q268%20318%20336%20271%22%20fill%3D%22none%22%20stroke%3D%22%231C2A3E%22%20stroke-width%3D%2220%22%20stroke-linecap%3D%22round%22/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
@@ -340,6 +340,23 @@ a{color:var(--teal-strong);font-weight:600;}
 /* ---- Chinese Trail (中文) ---- */
 [lang="zh-Hans"],.zh-text,.hanzi-big{font-family:'PingFang SC','Hiragino Sans GB','Noto Sans SC','Source Han Sans SC','Noto Sans CJK SC','Microsoft YaHei',var(--font-body);}
 .zh-mode .choice-btn{font-family:'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',var(--font-body);}
+[lang="zh-Hant-TW"],[lang="zh-Hant-TW"] .zh-text,[lang="zh-Hant-TW"] .hanzi-big,.zh-mode[lang="zh-Hant-TW"] .choice-btn{font-family:'PingFang TC','Heiti TC','Noto Sans TC','Source Han Sans TC','Noto Sans CJK TC','Microsoft JhengHei',var(--font-body);}
+/* 注音 columns (Taiwan textbook layout) */
+.zyw{display:inline-flex;align-items:center;white-space:nowrap;vertical-align:middle;}
+.zyc{display:inline-flex;align-items:center;vertical-align:middle;margin:.08em .1em .08em 0;}
+.zyh{line-height:1.15;}
+.zyp{display:inline-flex;align-items:center;font-size:.44em;line-height:1.02;margin-left:.1em;color:var(--teal-strong);font-weight:500;font-family:'PingFang TC','Heiti TC','Noto Sans TC','Microsoft JhengHei',var(--font-body);}
+.zys{display:inline-flex;flex-direction:column;align-items:center;}
+.zyn{line-height:.55;}
+.zyt{margin-left:.04em;}
+.zh-passage[lang="zh-Hant-TW"] .zh-text{font-size:1.9rem;line-height:1.5;}
+[lang="zh-Hant-TW"] .hanzi-sentence .hanzi-big{font-size:2rem;}
+.has-zy .hanzi-big .zyp{font-size:.42em;}
+.zh-mode[lang="zh-Hant-TW"] .qprompt,.modal-card .qprompt[lang="zh-Hant-TW"]{font-size:1.5rem;line-height:1.5;}
+.zh-mode[lang="zh-Hant-TW"] .choice-btn{font-size:1.35rem;}
+.choice-btn .zyc{font-size:1.45rem;}
+.choice-btn .zyp{font-size:.46em;}
+.section-title[lang="zh-Hant-TW"]{font-size:1.5rem!important;}
 .hanzi-card{display:inline-flex;flex-direction:column;align-items:center;gap:4px;padding:14px 26px;border-radius:18px;background:var(--surface-2);border:1px solid var(--border);margin:4px 0 8px;}
 .hanzi-big{font-size:4.2rem;line-height:1.1;font-weight:600;color:var(--ink);}
 .hanzi-sentence .hanzi-big{font-size:1.9rem;line-height:1.4;}
@@ -383,7 +400,7 @@ body{padding-bottom:36px;}
 </div>
 <div id="modalRoot"></div>
 <div id="toastRoot"></div>
-<button id="versionBadge" class="version-badge" type="button" onclick="openChangelog()" title="版本注記 / Release notes">v1.0.2</button>
+<button id="versionBadge" class="version-badge" type="button" onclick="openChangelog()" title="版本注記 / Release notes">v1.1.0</button>
 
 <!-- Firebase (cloud sync across devices). If this ever fails to load (offline,
      ad-blocker, etc.) the app quietly falls back to this browser's own
@@ -1895,7 +1912,405 @@ const ZH_PASSAGES_O=[
 {"title":"彩虹是怎么来的","titlePy":"Cǎihóng shì zěnme lái de","titleEn":"Where Rainbows Come From","sentences":[{"zh":"下过雨以后，天上有时候会出现彩虹。","py":"Xià guò yǔ yǐhòu, tiān shàng yǒu shíhou huì chūxiàn cǎihóng.","en":"After it rains, a rainbow sometimes appears in the sky."},{"zh":"彩虹是怎么来的呢？","py":"Cǎihóng shì zěnme lái de ne?","en":"Where does a rainbow come from?"},{"zh":"阳光看起来是白色的，其实里面有很多种颜色。","py":"Yángguāng kàn qǐlai shì báisè de, qíshí lǐmiàn yǒu hěn duō zhǒng yánsè.","en":"Sunlight looks white, but it actually has many colors inside it."},{"zh":"雨后，空气里还有很多小水滴。","py":"Yǔ hòu, kōngqì lǐ hái yǒu hěn duō xiǎo shuǐdī.","en":"After rain, there are still lots of tiny water drops in the air."},{"zh":"阳光照进小水滴，就会分成不同的颜色。","py":"Yángguāng zhào jìn xiǎo shuǐdī, jiù huì fēn chéng bùtóng de yánsè.","en":"When sunlight shines into the tiny drops, it splits into different colors."},{"zh":"这些颜色排在一起，就是彩虹。","py":"Zhèxiē yánsè pái zài yìqǐ, jiù shì cǎihóng.","en":"These colors lined up together make a rainbow."},{"zh":"彩虹一般有七种颜色。","py":"Cǎihóng yìbān yǒu qī zhǒng yánsè.","en":"A rainbow usually has seven colors."},{"zh":"如果你背对着太阳，就更容易看到彩虹。","py":"Rúguǒ nǐ bèi duìzhe tàiyáng, jiù gèng róngyì kàndào cǎihóng.","en":"If you stand with your back to the sun, it is easier to see a rainbow."}],"questions":[{"q":"彩虹一般有几种颜色？","qpy":"Cǎihóng yìbān yǒu jǐ zhǒng yánsè?","qen":"How many colors does a rainbow usually have?","choices":["七种","五种","三种","十种"],"choicesPy":["qī zhǒng","wǔ zhǒng","sān zhǒng","shí zhǒng"],"correct":"七种"},{"q":"雨后空气里有什么？","qpy":"Yǔ hòu kōngqì lǐ yǒu shénme?","qen":"What is in the air after rain?","choices":["很多小水滴","很多小鸟","很多雪花","很多花"],"choicesPy":["hěn duō xiǎo shuǐdī","hěn duō xiǎo niǎo","hěn duō xuěhuā","hěn duō huā"],"correct":"很多小水滴"},{"q":"什么时候可能会看到彩虹？","qpy":"Shénme shíhou kěnéng huì kàndào cǎihóng?","qen":"When might you see a rainbow?","choices":["下过雨以后","下雪的时候","半夜","刮大风的时候"],"choicesPy":["xià guò yǔ yǐhòu","xià xuě de shíhou","bànyè","guā dà fēng de shíhou"],"correct":"下过雨以后"},{"q":"这篇文章主要讲什么？","qpy":"Zhè piān wénzhāng zhǔyào jiǎng shénme?","qen":"What is this passage mainly about?","choices":["彩虹是怎么来的","怎么画彩虹","雨是怎么来的","太阳有多大"],"choicesPy":["cǎihóng shì zěnme lái de","zěnme huà cǎihóng","yǔ shì zěnme lái de","tàiyáng yǒu duō dà"],"correct":"彩虹是怎么来的"}]},
 {"title":"好帮手","titlePy":"Hǎo bāngshou","titleEn":"Good Helpers","sentences":[{"zh":"星期天，妈妈生病了，躺在床上休息。","py":"Xīngqītiān, māma shēng bìng le, tǎng zài chuáng shàng xiūxi.","en":"On Sunday, Mom was sick and lay in bed to rest."},{"zh":"小杰对弟弟说：“今天我们来做家务吧！”","py":"Xiǎojié duì dìdi shuō: \"Jīntiān wǒmen lái zuò jiāwù ba!\"","en":"Xiaojie said to his little brother, \"Let's do the housework today!\""},{"zh":"小杰扫地，弟弟擦桌子。","py":"Xiǎojié sǎo dì, dìdi cā zhuōzi.","en":"Xiaojie swept the floor, and his brother wiped the table."},{"zh":"中午，他们一起做了简单的面条。","py":"Zhōngwǔ, tāmen yìqǐ zuò le jiǎndān de miàntiáo.","en":"At noon, they made simple noodles together."},{"zh":"弟弟不小心把碗打破了。","py":"Dìdi bù xiǎoxīn bǎ wǎn dǎ pò le.","en":"His brother accidentally broke a bowl."},{"zh":"他很害怕，可是小杰说：“没关系，我们一起收拾。”","py":"Tā hěn hàipà, kěshì Xiǎojié shuō: \"Méi guānxi, wǒmen yìqǐ shōushi.\"","en":"He was scared, but Xiaojie said, \"It's okay. Let's clean it up together.\""},{"zh":"晚上，妈妈看到干干净净的家，感动地笑了。","py":"Wǎnshang, māma kàndào gāngānjìngjìng de jiā, gǎndòng de xiào le.","en":"In the evening, Mom saw the clean, tidy home and smiled, touched."},{"zh":"她说：“你们真是我的好帮手！”","py":"Tā shuō: \"Nǐmen zhēn shì wǒ de hǎo bāngshou!\"","en":"She said, \"You are truly my good helpers!\""}],"questions":[{"q":"妈妈为什么躺在床上？","qpy":"Māma wèishénme tǎng zài chuáng shàng?","qen":"Why is Mom lying in bed?","choices":["她生病了","她在看书","她在看电视","她在打电话"],"choicesPy":["tā shēng bìng le","tā zài kàn shū","tā zài kàn diànshì","tā zài dǎ diànhuà"],"correct":"她生病了"},{"q":"谁擦桌子？","qpy":"Shéi cā zhuōzi?","qen":"Who wipes the table?","choices":["弟弟","小杰","妈妈","爸爸"],"choicesPy":["dìdi","Xiǎojié","māma","bàba"],"correct":"弟弟"},{"q":"他们中午做了什么吃的？","qpy":"Tāmen zhōngwǔ zuò le shénme chī de?","qen":"What food did they make at noon?","choices":["面条","饺子","蛋糕","米饭"],"choicesPy":["miàntiáo","jiǎozi","dàngāo","mǐfàn"],"correct":"面条"},{"q":"从故事看，小杰是一个怎样的哥哥？","qpy":"Cóng gùshi kàn, Xiǎojié shì yí gè zěnyàng de gēge?","qen":"From the story, what kind of big brother is Xiaojie?","choices":["会照顾家人的哥哥","很懒的哥哥","爱生气的哥哥","不爱说话的哥哥"],"choicesPy":["huì zhàogù jiārén de gēge","hěn lǎn de gēge","ài shēng qì de gēge","bú ài shuō huà de gēge"],"correct":"会照顾家人的哥哥"}]}
 ];
-/* ================= CHINESE TRAIL (中文) — Simplified characters + Hanyu Pinyin =================
+/* ===== Taiwan Chinese content (繁體 + 注音), generated from the Simplified bank: OpenCC s2twp + meaning fixes,
+   注音 from 教育部《重編國語辭典修訂本》(MoE, via g0v moedict-data), contextual readings chosen with the bank pinyin. ===== */
+const ZHTW_CHARS=[
+{"hz":"一","py":"ㄧ","en":"one","tier":1,"emoji":"1️⃣","radical":"一"},
+{"hz":"二","py":"ㄦˋ","en":"two","tier":1,"emoji":"2️⃣","radical":"二"},
+{"hz":"三","py":"ㄙㄢ","en":"three","tier":1,"emoji":"3️⃣","radical":"一"},
+{"hz":"四","py":"ㄙˋ","en":"four","tier":1,"emoji":"4️⃣","radical":"囗"},
+{"hz":"五","py":"ㄨˇ","en":"five","tier":1,"emoji":"5️⃣","radical":"二"},
+{"hz":"六","py":"ㄌㄧㄡˋ","en":"six","tier":1,"emoji":"6️⃣","radical":"八"},
+{"hz":"七","py":"ㄑㄧ","en":"seven","tier":1,"emoji":"7️⃣","radical":"一"},
+{"hz":"八","py":"ㄅㄚ","en":"eight","tier":1,"emoji":"8️⃣","radical":"八"},
+{"hz":"九","py":"ㄐㄧㄡˇ","en":"nine","tier":1,"emoji":"9️⃣","radical":"乙"},
+{"hz":"十","py":"ㄕˊ","en":"ten","tier":1,"emoji":"🔟","radical":"十"},
+{"hz":"人","py":"ㄖㄣˊ","en":"person","tier":1,"emoji":"🧑","radical":"人"},
+{"hz":"大","py":"ㄉㄚˋ","en":"big","tier":1,"emoji":"","radical":"大"},
+{"hz":"小","py":"ㄒㄧㄠˇ","en":"small","tier":1,"emoji":"","radical":"小"},
+{"hz":"口","py":"ㄎㄡˇ","en":"mouth","tier":1,"emoji":"👄","radical":"口"},
+{"hz":"日","py":"ㄖˋ","en":"sun","tier":1,"emoji":"☀️","radical":"日"},
+{"hz":"月","py":"ㄩㄝˋ","en":"moon","tier":1,"emoji":"🌙","radical":"月"},
+{"hz":"水","py":"ㄕㄨㄟˇ","en":"water","tier":1,"emoji":"💧","radical":"水"},
+{"hz":"火","py":"ㄏㄨㄛˇ","en":"fire","tier":1,"emoji":"🔥","radical":"火"},
+{"hz":"山","py":"ㄕㄢ","en":"mountain","tier":1,"emoji":"⛰️","radical":"山"},
+{"hz":"木","py":"ㄇㄨˋ","en":"wood","tier":1,"emoji":"🪵","radical":"木"},
+{"hz":"土","py":"ㄊㄨˇ","en":"soil","tier":1,"emoji":"","radical":"土"},
+{"hz":"天","py":"ㄊㄧㄢ","en":"sky","tier":1,"emoji":"","radical":"大"},
+{"hz":"上","py":"ㄕㄤˋ","en":"up","tier":1,"emoji":"⬆️","radical":"一"},
+{"hz":"下","py":"ㄒㄧㄚˋ","en":"down","tier":1,"emoji":"⬇️","radical":"一"},
+{"hz":"我","py":"ㄨㄛˇ","en":"I / me","tier":1,"emoji":"🙋","radical":"戈"},
+{"hz":"你","py":"ㄋㄧˇ","en":"you","tier":1,"emoji":"👉","radical":"亻"},
+{"hz":"手","py":"ㄕㄡˇ","en":"hand","tier":1,"emoji":"✋","radical":"手"},
+{"hz":"目","py":"ㄇㄨˋ","en":"eye","tier":1,"emoji":"👁️","radical":"目"},
+{"hz":"耳","py":"ㄦˇ","en":"ear","tier":1,"emoji":"👂","radical":"耳"},
+{"hz":"田","py":"ㄊㄧㄢˊ","en":"field","tier":1,"emoji":"","radical":"田"},
+{"hz":"雲","py":"ㄩㄣˊ","en":"cloud","tier":1,"emoji":"☁️","radical":"雨"},
+{"hz":"雨","py":"ㄩˇ","en":"rain","tier":1,"emoji":"🌧️","radical":"雨"},
+{"hz":"門","py":"ㄇㄣˊ","en":"door","tier":1,"emoji":"🚪","radical":"门"},
+{"hz":"爸","py":"ㄅㄚˋ","en":"dad","tier":2,"emoji":"👨","radical":"父"},
+{"hz":"媽","py":"ㄇㄚ","en":"mom","tier":2,"emoji":"👩","radical":"女"},
+{"hz":"哥","py":"ㄍㄜ","en":"older brother","tier":2,"emoji":"","radical":"口"},
+{"hz":"姐","py":"ㄐㄧㄝˇ","en":"older sister","tier":2,"emoji":"","radical":"女"},
+{"hz":"頭","py":"ㄊㄡˊ","en":"head","tier":2,"emoji":"","radical":"頁"},
+{"hz":"牛","py":"ㄋㄧㄡˊ","en":"cow","tier":2,"emoji":"🐄","radical":"牛"},
+{"hz":"羊","py":"ㄧㄤˊ","en":"sheep","tier":2,"emoji":"🐑","radical":"羊"},
+{"hz":"馬","py":"ㄇㄚˇ","en":"horse","tier":2,"emoji":"🐎","radical":"马"},
+{"hz":"鳥","py":"ㄋㄧㄠˇ","en":"bird","tier":2,"emoji":"🐦","radical":"鸟"},
+{"hz":"魚","py":"ㄩˊ","en":"fish","tier":2,"emoji":"🐟","radical":"鱼"},
+{"hz":"蟲","py":"ㄔㄨㄥˊ","en":"bug","tier":2,"emoji":"🐛","radical":"虫"},
+{"hz":"花","py":"ㄏㄨㄚ","en":"flower","tier":2,"emoji":"🌸","radical":"艹"},
+{"hz":"草","py":"ㄘㄠˇ","en":"grass","tier":2,"emoji":"🌿","radical":"艹"},
+{"hz":"石","py":"ㄕˊ","en":"stone","tier":2,"emoji":"🪨","radical":"石"},
+{"hz":"風","py":"ㄈㄥ","en":"wind","tier":2,"emoji":"🌬️","radical":"风"},
+{"hz":"白","py":"ㄅㄞˊ","en":"white","tier":2,"emoji":"⚪","radical":"白"},
+{"hz":"紅","py":"ㄏㄨㄥˊ","en":"red","tier":2,"emoji":"🔴","radical":"糹"},
+{"hz":"來","py":"ㄌㄞˊ","en":"come","tier":2,"emoji":"","radical":"人"},
+{"hz":"去","py":"ㄑㄩˋ","en":"go to","tier":2,"emoji":"","radical":"厶"},
+{"hz":"有","py":"ㄧㄡˇ","en":"have","tier":2,"emoji":"","radical":"月"},
+{"hz":"在","py":"ㄗㄞˋ","en":"at / in","tier":2,"emoji":"📍","radical":"土"},
+{"hz":"是","py":"ㄕˋ","en":"is / am / are","tier":2,"emoji":"","radical":"日"},
+{"hz":"不","py":"ㄅㄨˋ","en":"not","tier":2,"emoji":"🚫","radical":"一"},
+{"hz":"他","py":"ㄊㄚ","en":"he","tier":2,"emoji":"","radical":"亻"},
+{"hz":"她","py":"ㄊㄚ","en":"she","tier":2,"emoji":"","radical":"女"},
+{"hz":"車","py":"ㄔㄜ","en":"car","tier":2,"emoji":"🚗","radical":"车"},
+{"hz":"米","py":"ㄇㄧˇ","en":"rice","tier":2,"emoji":"🌾","radical":"米"},
+{"hz":"力","py":"ㄌㄧˋ","en":"strength","tier":2,"emoji":"💪","radical":"力"},
+{"hz":"刀","py":"ㄉㄠ","en":"knife","tier":2,"emoji":"🔪","radical":"刀"},
+{"hz":"尺","py":"ㄔˇ","en":"ruler","tier":2,"emoji":"📏","radical":"尸"},
+{"hz":"開","py":"ㄎㄞ","en":"open","tier":2,"emoji":"🔓","radical":"門"},
+{"hz":"出","py":"ㄔㄨ","en":"out / exit","tier":2,"emoji":"","radical":"凵"},
+{"hz":"王","py":"ㄨㄤˊ","en":"king","tier":2,"emoji":"👑","radical":"玉"},
+{"hz":"走","py":"ㄗㄡˇ","en":"walk","tier":2,"emoji":"🚶","radical":"走"},
+{"hz":"弟","py":"ㄉㄧˋ","en":"younger brother","tier":3,"emoji":"","radical":"弓"},
+{"hz":"妹","py":"ㄇㄟˋ","en":"younger sister","tier":3,"emoji":"","radical":"女"},
+{"hz":"家","py":"ㄐㄧㄚ","en":"home","tier":3,"emoji":"🏠","radical":"宀"},
+{"hz":"男","py":"ㄋㄢˊ","en":"boy / man","tier":3,"emoji":"👦","radical":"田"},
+{"hz":"女","py":"ㄋㄩˇ","en":"girl / woman","tier":3,"emoji":"👧","radical":"女"},
+{"hz":"心","py":"ㄒㄧㄣ","en":"heart","tier":3,"emoji":"❤️","radical":"心"},
+{"hz":"牙","py":"ㄧㄚˊ","en":"tooth","tier":3,"emoji":"🦷","radical":"牙"},
+{"hz":"樹","py":"ㄕㄨˋ","en":"tree","tier":3,"emoji":"🌳","radical":"木"},
+{"hz":"河","py":"ㄏㄜˊ","en":"river","tier":3,"emoji":"🏞️","radical":"氵"},
+{"hz":"星","py":"ㄒㄧㄥ","en":"star","tier":3,"emoji":"⭐","radical":"日"},
+{"hz":"雪","py":"ㄒㄩㄝˇ","en":"snow","tier":3,"emoji":"❄️","radical":"雨"},
+{"hz":"黃","py":"ㄏㄨㄤˊ","en":"yellow","tier":3,"emoji":"🟡","radical":"黄"},
+{"hz":"黑","py":"ㄏㄟ","en":"black","tier":3,"emoji":"⚫","radical":"黑"},
+{"hz":"吃","py":"ㄔ","en":"eat","tier":3,"emoji":"🥢","radical":"口"},
+{"hz":"狗","py":"ㄍㄡˇ","en":"dog","tier":3,"emoji":"🐕","radical":"犭"},
+{"hz":"貓","py":"ㄇㄠ","en":"cat","tier":3,"emoji":"🐈","radical":"豸"},
+{"hz":"書","py":"ㄕㄨ","en":"book","tier":3,"emoji":"📖","radical":"曰"},
+{"hz":"字","py":"ㄗˋ","en":"Chinese character","tier":3,"emoji":"","radical":"子"},
+{"hz":"學","py":"ㄒㄩㄝˊ","en":"learn","tier":3,"emoji":"","radical":"子"},
+{"hz":"看","py":"ㄎㄢˋ","en":"look","tier":3,"emoji":"👀","radical":"目"},
+{"hz":"多","py":"ㄉㄨㄛ","en":"many","tier":3,"emoji":"","radical":"夕"},
+{"hz":"少","py":"ㄕㄠˇ","en":"few","tier":3,"emoji":"","radical":"小"},
+{"hz":"高","py":"ㄍㄠ","en":"tall","tier":3,"emoji":"🦒","radical":"高"},
+{"hz":"左","py":"ㄗㄨㄛˇ","en":"left","tier":3,"emoji":"⬅️","radical":"工"},
+{"hz":"右","py":"ㄧㄡˋ","en":"right","tier":3,"emoji":"➡️","radical":"口"},
+{"hz":"年","py":"ㄋㄧㄢˊ","en":"year","tier":3,"emoji":"📅","radical":"干"},
+{"hz":"百","py":"ㄅㄞˇ","en":"hundred","tier":3,"emoji":"💯","radical":"白"},
+{"hz":"也","py":"ㄧㄝˇ","en":"also","tier":3,"emoji":"","radical":"乙"},
+{"hz":"色","py":"ㄙㄜˋ","en":"color","tier":3,"emoji":"🌈","radical":"色"},
+{"hz":"名","py":"ㄇㄧㄥˊ","en":"name","tier":3,"emoji":"🏷️","radical":"口"},
+{"hz":"歲","py":"ㄙㄨㄟˋ","en":"age","tier":3,"emoji":"🎂","radical":"止"},
+{"hz":"葉","py":"ㄧㄝˋ","en":"leaf","tier":3,"emoji":"🍃","radical":"艹"},
+{"hz":"果","py":"ㄍㄨㄛˇ","en":"fruit","tier":3,"emoji":"🍇","radical":"木"},
+{"hz":"林","py":"ㄌㄧㄣˊ","en":"forest","tier":3,"emoji":"🌲🌳🌲","radical":"木"},
+{"hz":"坐","py":"ㄗㄨㄛˋ","en":"sit","tier":3,"emoji":"🪑","radical":"土"},
+{"hz":"飛","py":"ㄈㄟ","en":"fly","tier":3,"emoji":"🕊️","radical":"飛"},
+{"hz":"爺","py":"ㄧㄝˊ","en":"grandpa","tier":4,"emoji":"👴","radical":"父"},
+{"hz":"奶","py":"ㄋㄞˇ","en":"milk","tier":4,"emoji":"🥛","radical":"女"},
+{"hz":"腳","py":"ㄐㄧㄠˇ","en":"foot","tier":4,"emoji":"🦶","radical":"肉"},
+{"hz":"海","py":"ㄏㄞˇ","en":"sea","tier":4,"emoji":"🌊","radical":"氵"},
+{"hz":"竹","py":"ㄓㄨˊ","en":"bamboo","tier":4,"emoji":"🎋","radical":"竹"},
+{"hz":"冰","py":"ㄅㄧㄥ","en":"ice","tier":4,"emoji":"🧊","radical":"冫"},
+{"hz":"瓜","py":"ㄍㄨㄚ","en":"melon","tier":4,"emoji":"🍈","radical":"瓜"},
+{"hz":"藍","py":"ㄌㄢˊ","en":"blue","tier":4,"emoji":"🔵","radical":"艹"},
+{"hz":"綠","py":"ㄌㄩˋ","en":"green","tier":4,"emoji":"🟢","radical":"糹"},
+{"hz":"飯","py":"ㄈㄢˋ","en":"meal","tier":4,"emoji":"🍱","radical":"飠"},
+{"hz":"菜","py":"ㄘㄞˋ","en":"vegetable","tier":4,"emoji":"🥬","radical":"艹"},
+{"hz":"肉","py":"ㄖㄡˋ","en":"meat","tier":4,"emoji":"🥩","radical":"肉"},
+{"hz":"喝","py":"ㄏㄜ","en":"drink","tier":4,"emoji":"🥤","radical":"口"},
+{"hz":"雞","py":"ㄐㄧ","en":"chicken","tier":4,"emoji":"🐔","radical":"隹"},
+{"hz":"豬","py":"ㄓㄨ","en":"pig","tier":4,"emoji":"🐖","radical":"豕"},
+{"hz":"兔","py":"ㄊㄨˋ","en":"rabbit","tier":4,"emoji":"🐇","radical":"儿"},
+{"hz":"筆","py":"ㄅㄧˇ","en":"pen","tier":4,"emoji":"🖊️","radical":"⺮"},
+{"hz":"寫","py":"ㄒㄧㄝˇ","en":"write","tier":4,"emoji":"✍️","radical":"宀"},
+{"hz":"說","py":"ㄕㄨㄛ","en":"speak","tier":4,"emoji":"🗣️","radical":"言"},
+{"hz":"聽","py":"ㄊㄧㄥ","en":"listen","tier":4,"emoji":"🎧","radical":"耳"},
+{"hz":"玩","py":"ㄨㄢˊ","en":"play","tier":4,"emoji":"🧸","radical":"玉"},
+{"hz":"笑","py":"ㄒㄧㄠˋ","en":"laugh","tier":4,"emoji":"😄","radical":"⺮"},
+{"hz":"要","py":"ㄧㄠˋ","en":"want","tier":4,"emoji":"","radical":"襾"},
+{"hz":"進","py":"ㄐㄧㄣˋ","en":"enter","tier":4,"emoji":"","radical":"辶"},
+{"hz":"回","py":"ㄏㄨㄟˊ","en":"return","tier":4,"emoji":"↩️","radical":"囗"},
+{"hz":"快","py":"ㄎㄨㄞˋ","en":"fast","tier":4,"emoji":"","radical":"忄"},
+{"hz":"冷","py":"ㄌㄥˇ","en":"cold","tier":4,"emoji":"🥶","radical":"冫"},
+{"hz":"熱","py":"ㄖㄜˋ","en":"hot","tier":4,"emoji":"🥵","radical":"火"},
+{"hz":"早","py":"ㄗㄠˇ","en":"early","tier":4,"emoji":"🌅","radical":"日"},
+{"hz":"包","py":"ㄅㄠ","en":"bag","tier":4,"emoji":"👜","radical":"勹"},
+{"hz":"球","py":"ㄑㄧㄡˊ","en":"ball","tier":4,"emoji":"⚽","radical":"玉"},
+{"hz":"前","py":"ㄑㄧㄢˊ","en":"front","tier":4,"emoji":"","radical":"刂"},
+{"hz":"後","py":"ㄏㄡˋ","en":"behind","tier":4,"emoji":"","radical":"彳"},
+{"hz":"裡","py":"ㄌㄧˇ","en":"inside","tier":4,"emoji":"","radical":"衤"},
+{"hz":"外","py":"ㄨㄞˋ","en":"outside","tier":4,"emoji":"","radical":"夕"},
+{"hz":"氣","py":"ㄑㄧˋ","en":"air","tier":4,"emoji":"🎈","radical":"气"},
+{"hz":"師","py":"ㄕ","en":"teacher","tier":4,"emoji":"🧑‍🏫","radical":"巾"},
+{"hz":"半","py":"ㄅㄢˋ","en":"half","tier":5,"emoji":"","radical":"十"},
+{"hz":"千","py":"ㄑㄧㄢ","en":"thousand","tier":5,"emoji":"","radical":"十"},
+{"hz":"很","py":"ㄏㄣˇ","en":"very","tier":5,"emoji":"","radical":"彳"},
+{"hz":"它","py":"ㄊㄚ","en":"it","tier":5,"emoji":"","radical":"宀"},
+{"hz":"友","py":"ㄧㄡˇ","en":"friend","tier":5,"emoji":"🤝","radical":"又"},
+{"hz":"身","py":"ㄕㄣ","en":"body","tier":5,"emoji":"","radical":"身"},
+{"hz":"東","py":"ㄉㄨㄥ","en":"east","tier":5,"emoji":"","radical":"木"},
+{"hz":"西","py":"ㄒㄧ","en":"west","tier":5,"emoji":"","radical":"襾"},
+{"hz":"南","py":"ㄋㄢˊ","en":"south","tier":5,"emoji":"","radical":"十"},
+{"hz":"北","py":"ㄅㄟˇ","en":"north","tier":5,"emoji":"🧭","radical":"匕"},
+{"hz":"臉","py":"ㄌㄧㄢˇ","en":"face","tier":5,"emoji":"🙂","radical":"肉"},
+{"hz":"電","py":"ㄉㄧㄢˋ","en":"electricity","tier":5,"emoji":"⚡","radical":"雨"},
+{"hz":"春","py":"ㄔㄨㄣ","en":"spring","tier":5,"emoji":"🌱","radical":"日"},
+{"hz":"夏","py":"ㄒㄧㄚˋ","en":"summer","tier":5,"emoji":"🏖️","radical":"夊"},
+{"hz":"秋","py":"ㄑㄧㄡ","en":"autumn","tier":5,"emoji":"🍂","radical":"禾"},
+{"hz":"冬","py":"ㄉㄨㄥ","en":"winter","tier":5,"emoji":"🧣","radical":"冫"},
+{"hz":"光","py":"ㄍㄨㄤ","en":"brightness","tier":5,"emoji":"🔆","radical":"儿"},
+{"hz":"金","py":"ㄐㄧㄣ","en":"gold","tier":5,"emoji":"🥇","radical":"金"},
+{"hz":"面","py":"ㄇㄧㄢˋ","en":"noodles","tier":5,"emoji":"🍜","radical":"面"},
+{"hz":"蛋","py":"ㄉㄢˋ","en":"egg","tier":5,"emoji":"🥚","radical":"虫"},
+{"hz":"茶","py":"ㄔㄚˊ","en":"tea","tier":5,"emoji":"🍵","radical":"艹"},
+{"hz":"虎","py":"ㄏㄨˇ","en":"tiger","tier":5,"emoji":"🐅","radical":"虍"},
+{"hz":"龍","py":"ㄌㄨㄥˊ","en":"dragon","tier":5,"emoji":"🐉","radical":"龙"},
+{"hz":"讀","py":"ㄉㄨˊ","en":"read","tier":5,"emoji":"","radical":"言"},
+{"hz":"畫","py":"ㄏㄨㄚˋ","en":"draw","tier":5,"emoji":"🎨","radical":"田"},
+{"hz":"紙","py":"ㄓˇ","en":"paper","tier":5,"emoji":"📄","radical":"糹"},
+{"hz":"問","py":"ㄨㄣˋ","en":"ask","tier":5,"emoji":"❓","radical":"口"},
+{"hz":"唱","py":"ㄔㄤˋ","en":"sing","tier":5,"emoji":"🎤","radical":"口"},
+{"hz":"跑","py":"ㄆㄠˇ","en":"run","tier":5,"emoji":"🏃","radical":"⻊"},
+{"hz":"站","py":"ㄓㄢˋ","en":"stand","tier":5,"emoji":"🧍","radical":"立"},
+{"hz":"機","py":"ㄐㄧ","en":"machine","tier":5,"emoji":"⚙️","radical":"木"},
+{"hz":"動","py":"ㄉㄨㄥˋ","en":"move","tier":5,"emoji":"","radical":"力"},
+{"hz":"園","py":"ㄩㄢˊ","en":"garden","tier":5,"emoji":"🌷","radical":"囗"},
+{"hz":"跳","py":"ㄊㄧㄠˋ","en":"jump","tier":5,"emoji":"🦘","radical":"⻊"},
+{"hz":"買","py":"ㄇㄞˇ","en":"buy","tier":5,"emoji":"🛒","radical":"貝"},
+{"hz":"洗","py":"ㄒㄧˇ","en":"wash","tier":5,"emoji":"🧼","radical":"氵"},
+{"hz":"睡","py":"ㄕㄨㄟˋ","en":"sleep","tier":5,"emoji":"😴","radical":"目"},
+{"hz":"哭","py":"ㄎㄨ","en":"cry","tier":5,"emoji":"😢","radical":"口"},
+{"hz":"愛","py":"ㄞˋ","en":"love","tier":6,"emoji":"💕","radical":"心"},
+{"hz":"想","py":"ㄒㄧㄤˇ","en":"think / miss","tier":6,"emoji":"💭","radical":"心"},
+{"hz":"叫","py":"ㄐㄧㄠˋ","en":"call","tier":6,"emoji":"📣","radical":"口"},
+{"hz":"到","py":"ㄉㄠˋ","en":"arrive","tier":6,"emoji":"🏁","radical":"刂"},
+{"hz":"做","py":"ㄗㄨㄛˋ","en":"do / make","tier":6,"emoji":"🛠️","radical":"亻"},
+{"hz":"慢","py":"ㄇㄢˋ","en":"slow","tier":6,"emoji":"🐢","radical":"忄"},
+{"hz":"新","py":"ㄒㄧㄣ","en":"new","tier":6,"emoji":"✨","radical":"斤"},
+{"hz":"老","py":"ㄌㄠˇ","en":"old","tier":6,"emoji":"","radical":"老"},
+{"hz":"美","py":"ㄇㄟˇ","en":"beautiful","tier":6,"emoji":"","radical":"羊"},
+{"hz":"晚","py":"ㄨㄢˇ","en":"late in the day","tier":6,"emoji":"","radical":"日"},
+{"hz":"萬","py":"ㄨㄢˋ","en":"ten thousand","tier":6,"emoji":"","radical":"禸"},
+{"hz":"船","py":"ㄔㄨㄢˊ","en":"boat","tier":6,"emoji":"⛵","radical":"舟"},
+{"hz":"衣","py":"ㄧ","en":"clothes","tier":6,"emoji":"👕","radical":"衣"},
+{"hz":"床","py":"ㄔㄨㄤˊ","en":"bed","tier":6,"emoji":"🛏️","radical":"广"},
+{"hz":"燈","py":"ㄉㄥ","en":"lamp","tier":6,"emoji":"💡","radical":"火"},
+{"hz":"錢","py":"ㄑㄧㄢˊ","en":"money","tier":6,"emoji":"💰","radical":"金"},
+{"hz":"國","py":"ㄍㄨㄛˊ","en":"country","tier":6,"emoji":"","radical":"囗"},
+{"hz":"關","py":"ㄍㄨㄢ","en":"shut","tier":6,"emoji":"","radical":"門"},
+{"hz":"湖","py":"ㄏㄨˊ","en":"lake","tier":6,"emoji":"","radical":"氵"},
+{"hz":"糖","py":"ㄊㄤˊ","en":"candy","tier":6,"emoji":"🍬","radical":"米"},
+{"hz":"湯","py":"ㄊㄤ","en":"soup","tier":6,"emoji":"🍲","radical":"氵"},
+{"hz":"熊","py":"ㄒㄩㄥˊ","en":"bear","tier":6,"emoji":"🐻","radical":"火"},
+{"hz":"歌","py":"ㄍㄜ","en":"a song","tier":6,"emoji":"🎵","radical":"欠"},
+{"hz":"幫","py":"ㄅㄤ","en":"help","tier":6,"emoji":"","radical":"巾"},
+{"hz":"穿","py":"ㄔㄨㄢ","en":"wear","tier":6,"emoji":"","radical":"穴"},
+{"hz":"餓","py":"ㄜˋ","en":"hungry","tier":6,"emoji":"","radical":"飠"},
+{"hz":"甜","py":"ㄊㄧㄢˊ","en":"sweet","tier":6,"emoji":"🍯","radical":"甘"},
+{"hz":"遠","py":"ㄩㄢˇ","en":"far","tier":6,"emoji":"","radical":"辶"},
+{"hz":"近","py":"ㄐㄧㄣˋ","en":"near","tier":6,"emoji":"","radical":"辶"},
+{"hz":"對","py":"ㄉㄨㄟˋ","en":"correct","tier":6,"emoji":"✅","radical":"寸"},
+{"hz":"夜","py":"ㄧㄝˋ","en":"night","tier":6,"emoji":"🌃","radical":"夕"},
+{"hz":"鞋","py":"ㄒㄧㄝˊ","en":"shoe","tier":6,"emoji":"👟","radical":"革"},
+{"hz":"鼻","py":"ㄅㄧˊ","en":"nose","tier":6,"emoji":"👃","radical":"鼻"},
+{"hz":"猴","py":"ㄏㄡˊ","en":"monkey","tier":6,"emoji":"🐒","radical":"犭"},
+{"hz":"鴨","py":"ㄧㄚ","en":"duck","tier":6,"emoji":"🦆","radical":"鳥"},
+{"hz":"豆","py":"ㄉㄡˋ","en":"bean","tier":6,"emoji":"🫘","radical":"豆"},
+{"hz":"午","py":"ㄨˇ","en":"noon","tier":6,"emoji":"🕛","radical":"十"},
+{"hz":"再","py":"ㄗㄞˋ","en":"again","tier":6,"emoji":"🔁","radical":"冂"},
+{"hz":"用","py":"ㄩㄥˋ","en":"use","tier":6,"emoji":"","radical":"用"}
+];
+const ZHTW_WORDS=[
+{"zh":"媽媽","py":"ㄇㄚ ˙ㄇㄚ","zy":["ㄇㄚ","˙ㄇㄚ"],"en":"mom","tier":1,"emoji":"👩"},
+{"zh":"爸爸","py":"ㄅㄚˋ ˙ㄅㄚ","zy":["ㄅㄚˋ","˙ㄅㄚ"],"en":"dad","tier":1,"emoji":"👨"},
+{"zh":"哥哥","py":"ㄍㄜ ˙ㄍㄜ","zy":["ㄍㄜ","˙ㄍㄜ"],"en":"older brother","tier":1,"emoji":""},
+{"zh":"姐姐","py":"ㄐㄧㄝˇ ˙ㄐㄧㄝ","zy":["ㄐㄧㄝˇ","˙ㄐㄧㄝ"],"en":"older sister","tier":1,"emoji":""},
+{"zh":"你好","py":"ㄋㄧˇ ㄏㄠˇ","zy":["ㄋㄧˇ","ㄏㄠˇ"],"en":"hello","tier":1,"emoji":"👋"},
+{"zh":"謝謝","py":"ㄒㄧㄝˋ ˙ㄒㄧㄝ","zy":["ㄒㄧㄝˋ","˙ㄒㄧㄝ"],"en":"thank you","tier":1,"emoji":"🙏"},
+{"zh":"再見","py":"ㄗㄞˋ ㄐㄧㄢˋ","zy":["ㄗㄞˋ","ㄐㄧㄢˋ"],"en":"goodbye","tier":1,"emoji":""},
+{"zh":"小狗","py":"ㄒㄧㄠˇ ㄍㄡˇ","zy":["ㄒㄧㄠˇ","ㄍㄡˇ"],"en":"puppy","tier":1,"emoji":"🐶"},
+{"zh":"小貓","py":"ㄒㄧㄠˇ ㄇㄠ","zy":["ㄒㄧㄠˇ","ㄇㄠ"],"en":"kitten","tier":1,"emoji":"🐱"},
+{"zh":"太陽","py":"ㄊㄞˋ ㄧㄤˊ","zy":["ㄊㄞˋ","ㄧㄤˊ"],"en":"sun","tier":1,"emoji":"☀️"},
+{"zh":"月亮","py":"ㄩㄝˋ ㄌㄧㄤˋ","zy":["ㄩㄝˋ","ㄌㄧㄤˋ"],"en":"moon","tier":1,"emoji":"🌙"},
+{"zh":"中國","py":"ㄓㄨㄥ ㄍㄨㄛˊ","zy":["ㄓㄨㄥ","ㄍㄨㄛˊ"],"en":"China","tier":1,"emoji":"🇨🇳"},
+{"zh":"紅色","py":"ㄏㄨㄥˊ ㄙㄜˋ","zy":["ㄏㄨㄥˊ","ㄙㄜˋ"],"en":"red","tier":1,"emoji":"🔴"},
+{"zh":"白色","py":"ㄅㄞˊ ㄙㄜˋ","zy":["ㄅㄞˊ","ㄙㄜˋ"],"en":"white","tier":1,"emoji":"⚪"},
+{"zh":"米飯","py":"ㄇㄧˇ ㄈㄢˋ","zy":["ㄇㄧˇ","ㄈㄢˋ"],"en":"cooked rice","tier":1,"emoji":"🍚"},
+{"zh":"吃飯","py":"ㄔ ㄈㄢˋ","zy":["ㄔ","ㄈㄢˋ"],"en":"eat a meal","tier":1,"emoji":"🍽️"},
+{"zh":"大家","py":"ㄉㄚˋ ㄐㄧㄚ","zy":["ㄉㄚˋ","ㄐㄧㄚ"],"en":"everyone","tier":1,"emoji":""},
+{"zh":"弟弟","py":"ㄉㄧˋ ˙ㄉㄧ","zy":["ㄉㄧˋ","˙ㄉㄧ"],"en":"younger brother","tier":2,"emoji":""},
+{"zh":"妹妹","py":"ㄇㄟˋ ˙ㄇㄟ","zy":["ㄇㄟˋ","˙ㄇㄟ"],"en":"younger sister","tier":2,"emoji":""},
+{"zh":"爺爺","py":"ㄧㄝˊ ˙ㄧㄝ","zy":["ㄧㄝˊ","˙ㄧㄝ"],"en":"grandpa","tier":2,"emoji":"👴"},
+{"zh":"奶奶","py":"ㄋㄞˇ ˙ㄋㄞ","zy":["ㄋㄞˇ","˙ㄋㄞ"],"en":"grandma","tier":2,"emoji":"👵"},
+{"zh":"老師","py":"ㄌㄠˇ ㄕ","zy":["ㄌㄠˇ","ㄕ"],"en":"teacher","tier":2,"emoji":"🧑‍🏫"},
+{"zh":"朋友","py":"ㄆㄥˊ ㄧㄡˇ","zy":["ㄆㄥˊ","ㄧㄡˇ"],"en":"friend","tier":2,"emoji":"🤝"},
+{"zh":"學校","py":"ㄒㄩㄝˊ ㄒㄧㄠˋ","zy":["ㄒㄩㄝˊ","ㄒㄧㄠˋ"],"en":"school","tier":2,"emoji":"🏫"},
+{"zh":"牛奶","py":"ㄋㄧㄡˊ ㄋㄞˇ","zy":["ㄋㄧㄡˊ","ㄋㄞˇ"],"en":"milk","tier":2,"emoji":"🥛"},
+{"zh":"水果","py":"ㄕㄨㄟˇ ㄍㄨㄛˇ","zy":["ㄕㄨㄟˇ","ㄍㄨㄛˇ"],"en":"fruit","tier":2,"emoji":"🍇"},
+{"zh":"雞蛋","py":"ㄐㄧ ㄉㄢˋ","zy":["ㄐㄧ","ㄉㄢˋ"],"en":"egg","tier":2,"emoji":"🥚"},
+{"zh":"眼睛","py":"ㄧㄢˇ ㄐㄧㄥ","zy":["ㄧㄢˇ","ㄐㄧㄥ"],"en":"eyes","tier":2,"emoji":"👀"},
+{"zh":"耳朵","py":"ㄦˇ ˙ㄉㄨㄛ","zy":["ㄦˇ","˙ㄉㄨㄛ"],"en":"ears","tier":2,"emoji":"👂"},
+{"zh":"小鳥","py":"ㄒㄧㄠˇ ㄋㄧㄠˇ","zy":["ㄒㄧㄠˇ","ㄋㄧㄠˇ"],"en":"little bird","tier":2,"emoji":"🐦"},
+{"zh":"今天","py":"ㄐㄧㄣ ㄊㄧㄢ","zy":["ㄐㄧㄣ","ㄊㄧㄢ"],"en":"today","tier":2,"emoji":""},
+{"zh":"明天","py":"ㄇㄧㄥˊ ㄊㄧㄢ","zy":["ㄇㄧㄥˊ","ㄊㄧㄢ"],"en":"tomorrow","tier":2,"emoji":""},
+{"zh":"黑色","py":"ㄏㄟ ㄙㄜˋ","zy":["ㄏㄟ","ㄙㄜˋ"],"en":"black","tier":2,"emoji":"⚫"},
+{"zh":"黃色","py":"ㄏㄨㄤˊ ㄙㄜˋ","zy":["ㄏㄨㄤˊ","ㄙㄜˋ"],"en":"yellow","tier":2,"emoji":"🟡"},
+{"zh":"名字","py":"ㄇㄧㄥˊ ˙ㄗ","zy":["ㄇㄧㄥˊ","˙ㄗ"],"en":"name","tier":2,"emoji":"🏷️"},
+{"zh":"同學","py":"ㄊㄨㄥˊ ㄒㄩㄝˊ","zy":["ㄊㄨㄥˊ","ㄒㄩㄝˊ"],"en":"classmate","tier":3,"emoji":""},
+{"zh":"學生","py":"ㄒㄩㄝˊ ㄕㄥ","zy":["ㄒㄩㄝˊ","ㄕㄥ"],"en":"student","tier":3,"emoji":"🧑‍🎓"},
+{"zh":"中文","py":"ㄓㄨㄥ ㄨㄣˊ","zy":["ㄓㄨㄥ","ㄨㄣˊ"],"en":"Chinese language","tier":3,"emoji":""},
+{"zh":"蘋果","py":"ㄆㄧㄥˊ ㄍㄨㄛˇ","zy":["ㄆㄧㄥˊ","ㄍㄨㄛˇ"],"en":"apple","tier":3,"emoji":"🍎"},
+{"zh":"西瓜","py":"ㄒㄧ ㄍㄨㄚ","zy":["ㄒㄧ","ㄍㄨㄚ"],"en":"watermelon","tier":3,"emoji":"🍉"},
+{"zh":"麵條","py":"ㄇㄧㄢˋ ㄊㄧㄠˊ","zy":["ㄇㄧㄢˋ","ㄊㄧㄠˊ"],"en":"noodles","tier":3,"emoji":"🍜"},
+{"zh":"早飯","py":"ㄗㄠˇ ㄈㄢˋ","zy":["ㄗㄠˇ","ㄈㄢˋ"],"en":"breakfast","tier":3,"emoji":"🥣"},
+{"zh":"午飯","py":"ㄨˇ ㄈㄢˋ","zy":["ㄨˇ","ㄈㄢˋ"],"en":"lunch","tier":3,"emoji":"🍱"},
+{"zh":"晚飯","py":"ㄨㄢˇ ㄈㄢˋ","zy":["ㄨㄢˇ","ㄈㄢˋ"],"en":"dinner","tier":3,"emoji":"🍲"},
+{"zh":"星星","py":"ㄒㄧㄥ ˙ㄒㄧㄥ","zy":["ㄒㄧㄥ","˙ㄒㄧㄥ"],"en":"stars","tier":3,"emoji":"⭐"},
+{"zh":"下雨","py":"ㄒㄧㄚˋ ㄩˇ","zy":["ㄒㄧㄚˋ","ㄩˇ"],"en":"to rain","tier":3,"emoji":"🌧️"},
+{"zh":"熊貓","py":"ㄒㄩㄥˊ ㄇㄠ","zy":["ㄒㄩㄥˊ","ㄇㄠ"],"en":"panda","tier":3,"emoji":"🐼"},
+{"zh":"兔子","py":"ㄊㄨˋ ˙ㄗ","zy":["ㄊㄨˋ","˙ㄗ"],"en":"rabbit","tier":3,"emoji":"🐰"},
+{"zh":"嘴巴","py":"ㄗㄨㄟˇ ˙ㄅㄚ","zy":["ㄗㄨㄟˇ","˙ㄅㄚ"],"en":"mouth","tier":3,"emoji":"👄"},
+{"zh":"鼻子","py":"ㄅㄧˊ ˙ㄗ","zy":["ㄅㄧˊ","˙ㄗ"],"en":"nose","tier":3,"emoji":"👃"},
+{"zh":"昨天","py":"ㄗㄨㄛˊ ㄊㄧㄢ","zy":["ㄗㄨㄛˊ","ㄊㄧㄢ"],"en":"yesterday","tier":3,"emoji":""},
+{"zh":"書包","py":"ㄕㄨ ㄅㄠ","zy":["ㄕㄨ","ㄅㄠ"],"en":"school bag","tier":3,"emoji":"🎒"},
+{"zh":"高興","py":"ㄍㄠ ㄒㄧㄥˋ","zy":["ㄍㄠ","ㄒㄧㄥˋ"],"en":"happy","tier":3,"emoji":"😊"},
+{"zh":"對不起","py":"ㄉㄨㄟˋ ˙ㄅㄨ ㄑㄧˇ","zy":["ㄉㄨㄟˋ","˙ㄅㄨ","ㄑㄧˇ"],"en":"sorry","tier":4,"emoji":"🙇"},
+{"zh":"中國人","py":"ㄓㄨㄥ ㄍㄨㄛˊ ㄖㄣˊ","zy":["ㄓㄨㄥ","ㄍㄨㄛˊ","ㄖㄣˊ"],"en":"Chinese person","tier":4,"emoji":""},
+{"zh":"漢字","py":"ㄏㄢˋ ㄗˋ","zy":["ㄏㄢˋ","ㄗˋ"],"en":"Chinese character","tier":4,"emoji":"✍️"},
+{"zh":"香蕉","py":"ㄒㄧㄤ ㄐㄧㄠ","zy":["ㄒㄧㄤ","ㄐㄧㄠ"],"en":"banana","tier":4,"emoji":"🍌"},
+{"zh":"蛋糕","py":"ㄉㄢˋ ㄍㄠ","zy":["ㄉㄢˋ","ㄍㄠ"],"en":"cake","tier":4,"emoji":"🍰"},
+{"zh":"餃子","py":"ㄐㄧㄠˇ ˙ㄗ","zy":["ㄐㄧㄠˇ","˙ㄗ"],"en":"dumplings","tier":4,"emoji":"🥟"},
+{"zh":"下雪","py":"ㄒㄧㄚˋ ㄒㄩㄝˇ","zy":["ㄒㄧㄚˋ","ㄒㄩㄝˇ"],"en":"to snow","tier":4,"emoji":"🌨️"},
+{"zh":"天氣","py":"ㄊㄧㄢ ㄑㄧˋ","zy":["ㄊㄧㄢ","ㄑㄧˋ"],"en":"weather","tier":4,"emoji":"🌤️"},
+{"zh":"老虎","py":"ㄌㄠˇ ㄏㄨˇ","zy":["ㄌㄠˇ","ㄏㄨˇ"],"en":"tiger","tier":4,"emoji":"🐯"},
+{"zh":"猴子","py":"ㄏㄡˊ ˙ㄗ","zy":["ㄏㄡˊ","˙ㄗ"],"en":"monkey","tier":4,"emoji":"🐵"},
+{"zh":"頭髮","py":"ㄊㄡˊ ㄈㄚˇ","zy":["ㄊㄡˊ","ㄈㄚˇ"],"en":"hair","tier":4,"emoji":"💇"},
+{"zh":"肚子","py":"ㄉㄨˋ ˙ㄗ","zy":["ㄉㄨˋ","˙ㄗ"],"en":"tummy","tier":4,"emoji":""},
+{"zh":"早上","py":"ㄗㄠˇ ˙ㄕㄤ","zy":["ㄗㄠˇ","˙ㄕㄤ"],"en":"morning","tier":4,"emoji":"🌅"},
+{"zh":"晚上","py":"ㄨㄢˇ ˙ㄕㄤ","zy":["ㄨㄢˇ","˙ㄕㄤ"],"en":"evening","tier":4,"emoji":"🌃"},
+{"zh":"藍色","py":"ㄌㄢˊ ㄙㄜˋ","zy":["ㄌㄢˊ","ㄙㄜˋ"],"en":"blue","tier":4,"emoji":"🔵"},
+{"zh":"綠色","py":"ㄌㄩˋ ㄙㄜˋ","zy":["ㄌㄩˋ","ㄙㄜˋ"],"en":"green","tier":4,"emoji":"🟢"},
+{"zh":"鉛筆","py":"ㄑㄧㄢ ㄅㄧˇ","zy":["ㄑㄧㄢ","ㄅㄧˇ"],"en":"pencil","tier":4,"emoji":"✏️"},
+{"zh":"喜歡","py":"ㄒㄧˇ ㄏㄨㄢ","zy":["ㄒㄧˇ","ㄏㄨㄢ"],"en":"to like","tier":4,"emoji":"👍"},
+{"zh":"沒關係","py":"ㄇㄟˊ ㄍㄨㄢ ˙ㄒㄧ","zy":["ㄇㄟˊ","ㄍㄨㄢ","˙ㄒㄧ"],"en":"it's okay","tier":5,"emoji":"👌"},
+{"zh":"小朋友","py":"ㄒㄧㄠˇ ㄆㄥˊ ㄧㄡˇ","zy":["ㄒㄧㄠˇ","ㄆㄥˊ","ㄧㄡˇ"],"en":"kids","tier":5,"emoji":"🧒"},
+{"zh":"花園","py":"ㄏㄨㄚ ㄩㄢˊ","zy":["ㄏㄨㄚ","ㄩㄢˊ"],"en":"garden","tier":5,"emoji":"🌷"},
+{"zh":"大象","py":"ㄉㄚˋ ㄒㄧㄤˋ","zy":["ㄉㄚˋ","ㄒㄧㄤˋ"],"en":"elephant","tier":5,"emoji":"🐘"},
+{"zh":"動物","py":"ㄉㄨㄥˋ ㄨˋ","zy":["ㄉㄨㄥˋ","ㄨˋ"],"en":"animal","tier":5,"emoji":"🐾"},
+{"zh":"現在","py":"ㄒㄧㄢˋ ㄗㄞˋ","zy":["ㄒㄧㄢˋ","ㄗㄞˋ"],"en":"now","tier":5,"emoji":"⏰"},
+{"zh":"星期","py":"ㄒㄧㄥ ㄑㄧˊ","zy":["ㄒㄧㄥ","ㄑㄧˊ"],"en":"week","tier":5,"emoji":"🗓️"},
+{"zh":"生日","py":"ㄕㄥ ㄖˋ","zy":["ㄕㄥ","ㄖˋ"],"en":"birthday","tier":5,"emoji":"🎂"},
+{"zh":"一起","py":"ㄧ ㄑㄧˇ","zy":["ㄧ","ㄑㄧˇ"],"en":"together","tier":5,"emoji":""},
+{"zh":"顏色","py":"ㄧㄢˊ ㄙㄜˋ","zy":["ㄧㄢˊ","ㄙㄜˋ"],"en":"color","tier":5,"emoji":"🌈"},
+{"zh":"作業","py":"ㄗㄨㄛˋ ㄧㄝˋ","zy":["ㄗㄨㄛˋ","ㄧㄝˋ"],"en":"homework","tier":5,"emoji":"📝"},
+{"zh":"唱歌","py":"ㄔㄤˋ ㄍㄜ","zy":["ㄔㄤˋ","ㄍㄜ"],"en":"sing songs","tier":5,"emoji":"🎤"},
+{"zh":"跳舞","py":"ㄊㄧㄠˋ ㄨˇ","zy":["ㄊㄧㄠˋ","ㄨˇ"],"en":"dance","tier":5,"emoji":"💃"},
+{"zh":"遊戲","py":"ㄧㄡˊ ㄒㄧˋ","zy":["ㄧㄡˊ","ㄒㄧˋ"],"en":"game","tier":5,"emoji":"🎲"},
+{"zh":"足球","py":"ㄗㄨˊ ㄑㄧㄡˊ","zy":["ㄗㄨˊ","ㄑㄧㄡˊ"],"en":"soccer","tier":5,"emoji":"⚽"},
+{"zh":"難過","py":"ㄋㄢˊ ㄍㄨㄛˋ","zy":["ㄋㄢˊ","ㄍㄨㄛˋ"],"en":"sad","tier":5,"emoji":"😢"},
+{"zh":"生氣","py":"ㄕㄥ ㄑㄧˋ","zy":["ㄕㄥ","ㄑㄧˋ"],"en":"angry","tier":5,"emoji":"😠"},
+{"zh":"好吃","py":"ㄏㄠˇ ㄔ","zy":["ㄏㄠˇ","ㄔ"],"en":"tasty","tier":5,"emoji":"😋"},
+{"zh":"害怕","py":"ㄏㄞˋ ㄆㄚˋ","zy":["ㄏㄞˋ","ㄆㄚˋ"],"en":"scared","tier":6,"emoji":"😨"},
+{"zh":"漂亮","py":"ㄆㄧㄠˋ ˙ㄌㄧㄤ","zy":["ㄆㄧㄠˋ","˙ㄌㄧㄤ"],"en":"pretty","tier":6,"emoji":""},
+{"zh":"好玩","py":"ㄏㄠˇ ㄨㄢˊ","zy":["ㄏㄠˇ","ㄨㄢˊ"],"en":"fun","tier":6,"emoji":"🎠"},
+{"zh":"可愛","py":"ㄎㄜˇ ㄞˋ","zy":["ㄎㄜˇ","ㄞˋ"],"en":"cute","tier":6,"emoji":"🐣"},
+{"zh":"家人","py":"ㄐㄧㄚ ㄖㄣˊ","zy":["ㄐㄧㄚ","ㄖㄣˊ"],"en":"family","tier":6,"emoji":"👨‍👩‍👦‍👦"},
+{"zh":"房子","py":"ㄈㄤˊ ˙ㄗ","zy":["ㄈㄤˊ","˙ㄗ"],"en":"house","tier":6,"emoji":"🏠"},
+{"zh":"東西","py":"ㄉㄨㄥ ˙ㄒㄧ","zy":["ㄉㄨㄥ","˙ㄒㄧ"],"en":"thing","tier":6,"emoji":"📦"},
+{"zh":"衣服","py":"ㄧ ˙ㄈㄨ","zy":["ㄧ","˙ㄈㄨ"],"en":"clothes","tier":6,"emoji":"👕"},
+{"zh":"洗澡","py":"ㄒㄧˇ ㄗㄠˇ","zy":["ㄒㄧˇ","ㄗㄠˇ"],"en":"take a bath","tier":6,"emoji":"🛁"},
+{"zh":"睡覺","py":"ㄕㄨㄟˋ ㄐㄧㄠˋ","zy":["ㄕㄨㄟˋ","ㄐㄧㄠˋ"],"en":"go to sleep","tier":6,"emoji":"😴"},
+{"zh":"公園","py":"ㄍㄨㄥ ㄩㄢˊ","zy":["ㄍㄨㄥ","ㄩㄢˊ"],"en":"park","tier":6,"emoji":"🏞️"},
+{"zh":"商店","py":"ㄕㄤ ㄉㄧㄢˋ","zy":["ㄕㄤ","ㄉㄧㄢˋ"],"en":"shop","tier":6,"emoji":"🏪"},
+{"zh":"醫生","py":"ㄧ ㄕㄥ","zy":["ㄧ","ㄕㄥ"],"en":"doctor","tier":6,"emoji":"🧑‍⚕️"},
+{"zh":"飛機","py":"ㄈㄟ ㄐㄧ","zy":["ㄈㄟ","ㄐㄧ"],"en":"airplane","tier":6,"emoji":"✈️"},
+{"zh":"汽車","py":"ㄑㄧˋ ㄔㄜ","zy":["ㄑㄧˋ","ㄔㄜ"],"en":"car","tier":6,"emoji":"🚗"},
+{"zh":"火車","py":"ㄏㄨㄛˇ ㄔㄜ","zy":["ㄏㄨㄛˇ","ㄔㄜ"],"en":"train","tier":6,"emoji":"🚆"},
+{"zh":"電腦","py":"ㄉㄧㄢˋ ㄋㄠˇ","zy":["ㄉㄧㄢˋ","ㄋㄠˇ"],"en":"computer","tier":6,"emoji":"💻"},
+{"zh":"電視","py":"ㄉㄧㄢˋ ㄕˋ","zy":["ㄉㄧㄢˋ","ㄕˋ"],"en":"TV","tier":6,"emoji":"📺"},
+{"zh":"手機","py":"ㄕㄡˇ ㄐㄧ","zy":["ㄕㄡˇ","ㄐㄧ"],"en":"cell phone","tier":6,"emoji":"📱"},
+{"zh":"什麼","py":"ㄕㄣˊ ˙ㄇㄜ","zy":["ㄕㄣˊ","˙ㄇㄜ"],"en":"what","tier":6,"emoji":"❓"}
+];
+const ZHTW_SENTENCES=[
+{"zh":"我___小學生。","zy":["ㄨㄛˇ","ㄒㄧㄠˇ","ㄒㄩㄝˊ","ㄕㄥ"],"py":"ㄨㄛˇ ㄒㄧㄠˇ ㄒㄩㄝˊ ㄕㄥ","en":"I am a schoolkid.","answer":"是","choices":["是","喝","冷","飛"],"tier":1},
+{"zh":"一、二、三、___、五。","zy":["ㄧ","ㄦˋ","ㄙㄢ","ㄨˇ"],"py":"ㄧ ㄦˋ ㄙㄢ ㄨˇ","en":"One, two, three, four, five.","answer":"四","choices":["四","六","八","十"],"tier":1},
+{"zh":"我有兩隻___。","zy":["ㄨㄛˇ","ㄧㄡˇ","ㄌㄧㄤˇ","ㄓ"],"py":"ㄨㄛˇ ㄧㄡˇ ㄌㄧㄤˇ ㄓ","en":"I have two hands.","answer":"手","choices":["手","頭","口","心"],"tier":1},
+{"zh":"我今年八___。","zy":["ㄨㄛˇ","ㄐㄧㄣ","ㄋㄧㄢˊ","ㄅㄚ"],"py":"ㄨㄛˇ ㄐㄧㄣ ㄋㄧㄢˊ ㄅㄚ","en":"I am eight this year.","answer":"歲","choices":["歲","個","本","隻"],"tier":1},
+{"zh":"早上___！","zy":["ㄗㄠˇ","˙ㄕㄤ"],"py":"ㄗㄠˇ ˙ㄕㄤ","en":"Good morning!","answer":"好","choices":["好","書","狗","門"],"tier":1},
+{"zh":"我們去___飯吧。","zy":["ㄨㄛˇ","˙ㄇㄣ","ㄑㄩˋ","ㄈㄢˋ","˙ㄅㄚ"],"py":"ㄨㄛˇ ˙ㄇㄣ ㄑㄩˋ ㄈㄢˋ ˙ㄅㄚ","en":"Let's go eat.","answer":"吃","choices":["吃","喝","看","跳"],"tier":1},
+{"zh":"一加一等於___。","zy":["ㄧ","ㄐㄧㄚ","ㄧ","ㄉㄥˇ","ㄩˊ"],"py":"ㄧ ㄐㄧㄚ ㄧ ㄉㄥˇ ㄩˊ","en":"One plus one is two.","answer":"二","choices":["二","三","四","五"],"tier":2},
+{"zh":"外面在下___。","zy":["ㄨㄞˋ","ㄇㄧㄢˋ","ㄗㄞˋ","ㄒㄧㄚˋ"],"py":"ㄨㄞˋ ㄇㄧㄢˋ ㄗㄞˋ ㄒㄧㄚˋ","en":"It is raining outside.","answer":"雨","choices":["雨","書","貓","飯"],"tier":2},
+{"zh":"媽媽，我___了！","zy":["ㄇㄚ","˙ㄇㄚ","ㄨㄛˇ","˙ㄌㄜ"],"py":"ㄇㄚ ˙ㄇㄚ ㄨㄛˇ ˙ㄌㄜ","en":"Mom, I am hungry!","answer":"餓","choices":["餓","書","魚","山"],"tier":2},
+{"zh":"我渴了，我要___水。","zy":["ㄨㄛˇ","ㄎㄜˇ","˙ㄌㄜ","ㄨㄛˇ","ㄧㄠˋ","ㄕㄨㄟˇ"],"py":"ㄨㄛˇ ㄎㄜˇ ˙ㄌㄜ ㄨㄛˇ ㄧㄠˋ ㄕㄨㄟˇ","en":"I am thirsty, I want to drink water.","answer":"喝","choices":["喝","跑","睡","寫"],"tier":2},
+{"zh":"我用___寫字。","zy":["ㄨㄛˇ","ㄩㄥˋ","ㄒㄧㄝˇ","ㄗˋ"],"py":"ㄨㄛˇ ㄩㄥˋ ㄒㄧㄝˇ ㄗˋ","en":"I write with a pen.","answer":"筆","choices":["筆","魚","門","雨"],"tier":2},
+{"zh":"小鳥在天上___。","zy":["ㄒㄧㄠˇ","ㄋㄧㄠˇ","ㄗㄞˋ","ㄊㄧㄢ","ㄕㄤˋ"],"py":"ㄒㄧㄠˇ ㄋㄧㄠˇ ㄗㄞˋ ㄊㄧㄢ ㄕㄤˋ","en":"The little bird flies in the sky.","answer":"飛","choices":["飛","游","讀","洗"],"tier":2},
+{"zh":"你叫什麼___？","zy":["ㄋㄧˇ","ㄐㄧㄠˋ","ㄕㄣˊ","˙ㄇㄜ"],"py":"ㄋㄧˇ ㄐㄧㄠˋ ㄕㄣˊ ˙ㄇㄜ","en":"What is your name?","answer":"名字","choices":["名字","顏色","水果","學校"],"tier":2},
+{"zh":"夏天很___。","zy":["ㄒㄧㄚˋ","ㄊㄧㄢ","ㄏㄣˇ"],"py":"ㄒㄧㄚˋ ㄊㄧㄢ ㄏㄣˇ","en":"Summer is hot.","answer":"熱","choices":["熱","餓","圓","渴"],"tier":2},
+{"zh":"我___高興！","zy":["ㄨㄛˇ","ㄍㄠ","ㄒㄧㄥˋ"],"py":"ㄨㄛˇ ㄍㄠ ㄒㄧㄥˋ","en":"I am very happy!","answer":"很","choices":["很","吃","去","書"],"tier":2},
+{"zh":"天___了，我們回家吧。","zy":["ㄊㄧㄢ","˙ㄌㄜ","ㄨㄛˇ","˙ㄇㄣ","ㄏㄨㄟˊ","ㄐㄧㄚ","˙ㄅㄚ"],"py":"ㄊㄧㄢ ˙ㄌㄜ ㄨㄛˇ ˙ㄇㄣ ㄏㄨㄟˊ ㄐㄧㄚ ˙ㄅㄚ","en":"It's getting dark, let's go home.","answer":"黑","choices":["黑","書","吃","狗"],"tier":3},
+{"zh":"今天很___，我要穿外套。","zy":["ㄐㄧㄣ","ㄊㄧㄢ","ㄏㄣˇ","ㄨㄛˇ","ㄧㄠˋ","ㄔㄨㄢ","ㄨㄞˋ","ㄊㄠˋ"],"py":"ㄐㄧㄣ ㄊㄧㄢ ㄏㄣˇ ㄨㄛˇ ㄧㄠˋ ㄔㄨㄢ ㄨㄞˋ ㄊㄠˋ","en":"It is cold today, I need to wear a coat.","answer":"冷","choices":["冷","餓","高","圓"],"tier":3},
+{"zh":"魚在水裡___。","zy":["ㄩˊ","ㄗㄞˋ","ㄕㄨㄟˇ","ㄌㄧˇ"],"py":"ㄩˊ ㄗㄞˋ ㄕㄨㄟˇ ㄌㄧˇ","en":"The fish swims in the water.","answer":"游","choices":["游","讀","寫","唱"],"tier":3},
+{"zh":"晚上十點了，我要___覺了。","zy":["ㄨㄢˇ","˙ㄕㄤ","ㄕˊ","ㄉㄧㄢˇ","˙ㄌㄜ","ㄨㄛˇ","ㄧㄠˋ","ㄐㄧㄠˋ","˙ㄌㄜ"],"py":"ㄨㄢˇ ˙ㄕㄤ ㄕˊ ㄉㄧㄢˇ ˙ㄌㄜ ㄨㄛˇ ㄧㄠˋ ㄐㄧㄠˋ ˙ㄌㄜ","en":"It's ten at night, I'm going to sleep.","answer":"睡","choices":["睡","吃","寫","跑"],"tier":3},
+{"zh":"草是___色的。","zy":["ㄘㄠˇ","ㄕˋ","ㄙㄜˋ","˙ㄉㄜ"],"py":"ㄘㄠˇ ㄕˋ ㄙㄜˋ ˙ㄉㄜ","en":"Grass is green.","answer":"綠","choices":["綠","藍","紫","粉"],"tier":3},
+{"zh":"我們一___玩吧！","zy":["ㄨㄛˇ","˙ㄇㄣ","ㄧ","ㄨㄢˊ","˙ㄅㄚ"],"py":"ㄨㄛˇ ˙ㄇㄣ ㄧ ㄨㄢˊ ˙ㄅㄚ","en":"Let's play together!","answer":"起","choices":["起","個","本","隻"],"tier":3},
+{"zh":"“謝謝你！”“不___。”","zy":["ㄒㄧㄝˋ","˙ㄒㄧㄝ","ㄋㄧˇ","ㄅㄨˋ"],"py":"ㄒㄧㄝˋ ˙ㄒㄧㄝ ㄋㄧˇ ㄅㄨˋ","en":"\"Thank you!\" \"You're welcome.\"","answer":"客氣","choices":["客氣","好吃","書包","米飯"],"tier":3},
+{"zh":"我用耳朵___。","zy":["ㄨㄛˇ","ㄩㄥˋ","ㄦˇ","˙ㄉㄨㄛ"],"py":"ㄨㄛˇ ㄩㄥˋ ㄦˇ ˙ㄉㄨㄛ","en":"I listen with my ears.","answer":"聽","choices":["聽","看","吃","跑"],"tier":3},
+{"zh":"我的哥哥___我大。","zy":["ㄨㄛˇ","˙ㄉㄜ","ㄍㄜ","˙ㄍㄜ","ㄨㄛˇ","ㄉㄚˋ"],"py":"ㄨㄛˇ ˙ㄉㄜ ㄍㄜ ˙ㄍㄜ ㄨㄛˇ ㄉㄚˋ","en":"My older brother is older than me.","answer":"比","choices":["比","在","是","去"],"tier":4},
+{"zh":"我喜歡___足球。","zy":["ㄨㄛˇ","ㄒㄧˇ","ㄏㄨㄢ","ㄗㄨˊ","ㄑㄧㄡˊ"],"py":"ㄨㄛˇ ㄒㄧˇ ㄏㄨㄢ ㄗㄨˊ ㄑㄧㄡˊ","en":"I like to play soccer.","answer":"踢","choices":["踢","吃","喝","寫"],"tier":4},
+{"zh":"媽媽在廚房___飯。","zy":["ㄇㄚ","˙ㄇㄚ","ㄗㄞˋ","ㄔㄨˊ","ㄈㄤˊ","ㄈㄢˋ"],"py":"ㄇㄚ ˙ㄇㄚ ㄗㄞˋ ㄔㄨˊ ㄈㄤˊ ㄈㄢˋ","en":"Mom is cooking in the kitchen.","answer":"做","choices":["做","睡","跑","喝"],"tier":4},
+{"zh":"我的___是爸爸的媽媽。","zy":["ㄨㄛˇ","˙ㄉㄜ","ㄕˋ","ㄅㄚˋ","˙ㄅㄚ","˙ㄉㄜ","ㄇㄚ","˙ㄇㄚ"],"py":"ㄨㄛˇ ˙ㄉㄜ ㄕˋ ㄅㄚˋ ˙ㄅㄚ ˙ㄉㄜ ㄇㄚ ˙ㄇㄚ","en":"My grandma is my dad's mom.","answer":"奶奶","choices":["奶奶","姐姐","老師","妹妹"],"tier":4},
+{"zh":"我有一個___，她比我小。","zy":["ㄨㄛˇ","ㄧㄡˇ","ㄧ","˙ㄍㄜ","ㄊㄚ","ㄅㄧˇ","ㄨㄛˇ","ㄒㄧㄠˇ"],"py":"ㄨㄛˇ ㄧㄡˇ ㄧ ˙ㄍㄜ ㄊㄚ ㄅㄧˇ ㄨㄛˇ ㄒㄧㄠˇ","en":"I have a little sister; she is younger than me.","answer":"妹妹","choices":["妹妹","哥哥","弟弟","爺爺"],"tier":4},
+{"zh":"我用___看東西。","zy":["ㄨㄛˇ","ㄩㄥˋ","ㄎㄢˋ","ㄉㄨㄥ","˙ㄒㄧ"],"py":"ㄨㄛˇ ㄩㄥˋ ㄎㄢˋ ㄉㄨㄥ ˙ㄒㄧ","en":"I see things with my eyes.","answer":"眼睛","choices":["眼睛","耳朵","鼻子","嘴巴"],"tier":4},
+{"zh":"一個星期有___天。","zy":["ㄧ","˙ㄍㄜ","ㄒㄧㄥ","ㄑㄧˊ","ㄧㄡˇ","ㄊㄧㄢ"],"py":"ㄧ ˙ㄍㄜ ㄒㄧㄥ ㄑㄧˊ ㄧㄡˇ ㄊㄧㄢ","en":"A week has seven days.","answer":"七","choices":["七","五","十","八"],"tier":4},
+{"zh":"我們用___走路。","zy":["ㄨㄛˇ","˙ㄇㄣ","ㄩㄥˋ","ㄗㄡˇ","ㄌㄨˋ"],"py":"ㄨㄛˇ ˙ㄇㄣ ㄩㄥˋ ㄗㄡˇ ㄌㄨˋ","en":"We walk with our feet.","answer":"腳","choices":["腳","耳","口","牙"],"tier":4},
+{"zh":"太陽從___方升起。","zy":["ㄊㄞˋ","ㄧㄤˊ","ㄘㄨㄥˊ","ㄈㄤ","ㄕㄥ","ㄑㄧˇ"],"py":"ㄊㄞˋ ㄧㄤˊ ㄘㄨㄥˊ ㄈㄤ ㄕㄥ ㄑㄧˇ","en":"The sun rises in the east.","answer":"東","choices":["東","西","南","北"],"tier":5},
+{"zh":"一年有___個月。","zy":["ㄧ","ㄋㄧㄢˊ","ㄧㄡˇ","ㄍㄜˋ","ㄩㄝˋ"],"py":"ㄧ ㄋㄧㄢˊ ㄧㄡˇ ㄍㄜˋ ㄩㄝˋ","en":"A year has twelve months.","answer":"十二","choices":["十二","七","三","五"],"tier":5},
+{"zh":"小狗會汪汪___。","zy":["ㄒㄧㄠˇ","ㄍㄡˇ","ㄏㄨㄟˋ","ㄨㄤ","ㄨㄤ"],"py":"ㄒㄧㄠˇ ㄍㄡˇ ㄏㄨㄟˋ ㄨㄤ ㄨㄤ","en":"Puppies go \"woof woof\".","answer":"叫","choices":["叫","飛","寫","唱"],"tier":5},
+{"zh":"我會說___文。","zy":["ㄨㄛˇ","ㄏㄨㄟˋ","ㄕㄨㄛ","ㄨㄣˊ"],"py":"ㄨㄛˇ ㄏㄨㄟˋ ㄕㄨㄛ ㄨㄣˊ","en":"I can speak Chinese.","answer":"中","choices":["中","手","水","山"],"tier":5},
+{"zh":"今天是我的___，我八歲了！","zy":["ㄐㄧㄣ","ㄊㄧㄢ","ㄕˋ","ㄨㄛˇ","˙ㄉㄜ","ㄨㄛˇ","ㄅㄚ","ㄙㄨㄟˋ","˙ㄌㄜ"],"py":"ㄐㄧㄣ ㄊㄧㄢ ㄕˋ ㄨㄛˇ ˙ㄉㄜ ㄨㄛˇ ㄅㄚ ㄙㄨㄟˋ ˙ㄌㄜ","en":"Today is my birthday, I'm eight now!","answer":"生日","choices":["生日","名字","學校","早飯"],"tier":5},
+{"zh":"晚上，天上有很多___。","zy":["ㄨㄢˇ","˙ㄕㄤ","ㄊㄧㄢ","ㄕㄤˋ","ㄧㄡˇ","ㄏㄣˇ","ㄉㄨㄛ"],"py":"ㄨㄢˇ ˙ㄕㄤ ㄊㄧㄢ ㄕㄤˋ ㄧㄡˇ ㄏㄣˇ ㄉㄨㄛ","en":"At night there are many stars in the sky.","answer":"星星","choices":["星星","太陽","蘋果","老虎"],"tier":5},
+{"zh":"睡覺前，我要刷___。","zy":["ㄕㄨㄟˋ","ㄐㄧㄠˋ","ㄑㄧㄢˊ","ㄨㄛˇ","ㄧㄠˋ","ㄕㄨㄚ"],"py":"ㄕㄨㄟˋ ㄐㄧㄠˋ ㄑㄧㄢˊ ㄨㄛˇ ㄧㄠˋ ㄕㄨㄚ","en":"Before bed, I brush my teeth.","answer":"牙","choices":["牙","書","飯","雨"],"tier":5},
+{"zh":"熊貓喜歡吃___。","zy":["ㄒㄩㄥˊ","ㄇㄠ","ㄒㄧˇ","ㄏㄨㄢ","ㄔ"],"py":"ㄒㄩㄥˊ ㄇㄠ ㄒㄧˇ ㄏㄨㄢ ㄔ","en":"Pandas like to eat bamboo.","answer":"竹子","choices":["竹子","汽車","書包","鉛筆"],"tier":6},
+{"zh":"我家有五___人。","zy":["ㄨㄛˇ","ㄐㄧㄚ","ㄧㄡˇ","ㄨˇ","ㄖㄣˊ"],"py":"ㄨㄛˇ ㄐㄧㄚ ㄧㄡˇ ㄨˇ ㄖㄣˊ","en":"There are five people in my family.","answer":"口","choices":["口","本","條","張"],"tier":6},
+{"zh":"“對不起！”“沒___。”","zy":["ㄉㄨㄟˋ","˙ㄅㄨ","ㄑㄧˇ","ㄇㄟˊ"],"py":"ㄉㄨㄟˋ ˙ㄅㄨ ㄑㄧˇ ㄇㄟˊ","en":"\"Sorry!\" \"It's okay.\"","answer":"關係","choices":["關係","米飯","星星","書包"],"tier":6},
+{"zh":"春天來了，___開了。","zy":["ㄔㄨㄣ","ㄊㄧㄢ","ㄌㄞˊ","˙ㄌㄜ","ㄎㄞ","˙ㄌㄜ"],"py":"ㄔㄨㄣ ㄊㄧㄢ ㄌㄞˊ ˙ㄌㄜ ㄎㄞ ˙ㄌㄜ","en":"Spring is here, the flowers are blooming.","answer":"花","choices":["花","雪","書","魚"],"tier":6},
+{"zh":"爺爺是爸爸的___。","zy":["ㄧㄝˊ","˙ㄧㄝ","ㄕˋ","ㄅㄚˋ","˙ㄅㄚ","˙ㄉㄜ"],"py":"ㄧㄝˊ ˙ㄧㄝ ㄕˋ ㄅㄚˋ ˙ㄅㄚ ˙ㄉㄜ","en":"Grandpa is dad's dad.","answer":"爸爸","choices":["爸爸","哥哥","弟弟","兒子"],"tier":6},
+{"zh":"我是男孩子，我妹妹是___孩子。","zy":["ㄨㄛˇ","ㄕˋ","ㄋㄢˊ","ㄏㄞˊ","˙ㄗ","ㄨㄛˇ","ㄇㄟˋ","˙ㄇㄟ","ㄕˋ","ㄏㄞˊ","˙ㄗ"],"py":"ㄨㄛˇ ㄕˋ ㄋㄢˊ ㄏㄞˊ ˙ㄗ ㄨㄛˇ ㄇㄟˋ ˙ㄇㄟ ㄕˋ ㄏㄞˊ ˙ㄗ","en":"I am a boy, my little sister is a girl.","answer":"女","choices":["女","男","老","高"],"tier":6}
+];
+const ZHTW_PASSAGES_Y=[
+{"title":"小貓","titleZy":["ㄒㄧㄠˇ","ㄇㄠ"],"titlePy":"ㄒㄧㄠˇ ㄇㄠ","titleEn":"The Kitten","sentences":[{"zh":"我家有一隻小貓。","zy":["ㄨㄛˇ","ㄐㄧㄚ","ㄧㄡˇ","ㄧ","ㄓ","ㄒㄧㄠˇ","ㄇㄠ"],"py":"ㄨㄛˇ ㄐㄧㄚ ㄧㄡˇ ㄧ ㄓ ㄒㄧㄠˇ ㄇㄠ","en":"My family has a kitten."},{"zh":"小貓是白色的。","zy":["ㄒㄧㄠˇ","ㄇㄠ","ㄕˋ","ㄅㄞˊ","ㄙㄜˋ","˙ㄉㄜ"],"py":"ㄒㄧㄠˇ ㄇㄠ ㄕˋ ㄅㄞˊ ㄙㄜˋ ˙ㄉㄜ","en":"The kitten is white."},{"zh":"它叫雪球。","zy":["ㄊㄚ","ㄐㄧㄠˋ","ㄒㄩㄝˇ","ㄑㄧㄡˊ"],"py":"ㄊㄚ ㄐㄧㄠˋ ㄒㄩㄝˇ ㄑㄧㄡˊ","en":"Its name is Snowball."},{"zh":"雪球愛喝牛奶。","zy":["ㄒㄩㄝˇ","ㄑㄧㄡˊ","ㄞˋ","ㄏㄜ","ㄋㄧㄡˊ","ㄋㄞˇ"],"py":"ㄒㄩㄝˇ ㄑㄧㄡˊ ㄞˋ ㄏㄜ ㄋㄧㄡˊ ㄋㄞˇ","en":"Snowball loves to drink milk."},{"zh":"它也愛和我玩。","zy":["ㄊㄚ","ㄧㄝˇ","ㄞˋ","ㄏㄜˊ","ㄨㄛˇ","ㄨㄢˊ"],"py":"ㄊㄚ ㄧㄝˇ ㄞˋ ㄏㄜˊ ㄨㄛˇ ㄨㄢˊ","en":"It also loves to play with me."},{"zh":"晚上，雪球睡在我的床邊。","zy":["ㄨㄢˇ","˙ㄕㄤ","ㄒㄩㄝˇ","ㄑㄧㄡˊ","ㄕㄨㄟˋ","ㄗㄞˋ","ㄨㄛˇ","˙ㄉㄜ","ㄔㄨㄤˊ","ㄅㄧㄢ"],"py":"ㄨㄢˇ ˙ㄕㄤ ㄒㄩㄝˇ ㄑㄧㄡˊ ㄕㄨㄟˋ ㄗㄞˋ ㄨㄛˇ ˙ㄉㄜ ㄔㄨㄤˊ ㄅㄧㄢ","en":"At night, Snowball sleeps beside my bed."}],"questions":[{"q":"小貓是什麼顏色的？","qzy":["ㄒㄧㄠˇ","ㄇㄠ","ㄕˋ","ㄕㄣˊ","˙ㄇㄜ","ㄧㄢˊ","ㄙㄜˋ","˙ㄉㄜ"],"qpy":"ㄒㄧㄠˇ ㄇㄠ ㄕˋ ㄕㄣˊ ˙ㄇㄜ ㄧㄢˊ ㄙㄜˋ ˙ㄉㄜ","qen":"What color is the kitten?","choices":["白色","黑色","黃色","紅色"],"choicesZy":[["ㄅㄞˊ","ㄙㄜˋ"],["ㄏㄟ","ㄙㄜˋ"],["ㄏㄨㄤˊ","ㄙㄜˋ"],["ㄏㄨㄥˊ","ㄙㄜˋ"]],"choicesPy":["ㄅㄞˊ ㄙㄜˋ","ㄏㄟ ㄙㄜˋ","ㄏㄨㄤˊ ㄙㄜˋ","ㄏㄨㄥˊ ㄙㄜˋ"],"correct":"白色"},{"q":"小貓叫什麼名字？","qzy":["ㄒㄧㄠˇ","ㄇㄠ","ㄐㄧㄠˋ","ㄕㄣˊ","˙ㄇㄜ","ㄇㄧㄥˊ","˙ㄗ"],"qpy":"ㄒㄧㄠˇ ㄇㄠ ㄐㄧㄠˋ ㄕㄣˊ ˙ㄇㄜ ㄇㄧㄥˊ ˙ㄗ","qen":"What is the kitten's name?","choices":["雪球","樂樂","小花","豆豆"],"choicesZy":[["ㄒㄩㄝˇ","ㄑㄧㄡˊ"],["ㄌㄜˋ","ㄌㄜˋ"],["ㄒㄧㄠˇ","ㄏㄨㄚ"],["ㄉㄡˋ","ㄉㄡˋ"]],"choicesPy":["ㄒㄩㄝˇ ㄑㄧㄡˊ","ㄌㄜˋ ㄌㄜˋ","ㄒㄧㄠˇ ㄏㄨㄚ","ㄉㄡˋ ㄉㄡˋ"],"correct":"雪球"},{"q":"雪球愛喝什麼？","qzy":["ㄒㄩㄝˇ","ㄑㄧㄡˊ","ㄞˋ","ㄏㄜ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄒㄩㄝˇ ㄑㄧㄡˊ ㄞˋ ㄏㄜ ㄕㄣˊ ˙ㄇㄜ","qen":"What does Snowball love to drink?","choices":["牛奶","果汁","茶","湯"],"choicesZy":[["ㄋㄧㄡˊ","ㄋㄞˇ"],["ㄍㄨㄛˇ","ㄓ"],["ㄔㄚˊ"],["ㄊㄤ"]],"choicesPy":["ㄋㄧㄡˊ ㄋㄞˇ","ㄍㄨㄛˇ ㄓ","ㄔㄚˊ","ㄊㄤ"],"correct":"牛奶"}]},
+{"title":"下雨了","titleZy":["ㄒㄧㄚˋ","ㄩˇ","˙ㄌㄜ"],"titlePy":"ㄒㄧㄚˋ ㄩˇ ˙ㄌㄜ","titleEn":"It's Raining","sentences":[{"zh":"今天下雨了。","zy":["ㄐㄧㄣ","ㄊㄧㄢ","ㄒㄧㄚˋ","ㄩˇ","˙ㄌㄜ"],"py":"ㄐㄧㄣ ㄊㄧㄢ ㄒㄧㄚˋ ㄩˇ ˙ㄌㄜ","en":"It is raining today."},{"zh":"東東不能去公園玩。","zy":["ㄉㄨㄥ","ㄉㄨㄥ","ㄅㄨˋ","ㄋㄥˊ","ㄑㄩˋ","ㄍㄨㄥ","ㄩㄢˊ","ㄨㄢˊ"],"py":"ㄉㄨㄥ ㄉㄨㄥ ㄅㄨˋ ㄋㄥˊ ㄑㄩˋ ㄍㄨㄥ ㄩㄢˊ ㄨㄢˊ","en":"Dongdong can't go to the park to play."},{"zh":"他坐在窗邊看雨。","zy":["ㄊㄚ","ㄗㄨㄛˋ","ㄗㄞˋ","ㄔㄨㄤ","ㄅㄧㄢ","ㄎㄢˋ","ㄩˇ"],"py":"ㄊㄚ ㄗㄨㄛˋ ㄗㄞˋ ㄔㄨㄤ ㄅㄧㄢ ㄎㄢˋ ㄩˇ","en":"He sits by the window watching the rain."},{"zh":"媽媽說：“我們來畫畫吧！”","zy":["ㄇㄚ","˙ㄇㄚ","ㄕㄨㄛ","ㄨㄛˇ","˙ㄇㄣ","ㄌㄞˊ","ㄏㄨㄚˋ","ㄏㄨㄚˋ","˙ㄅㄚ"],"py":"ㄇㄚ ˙ㄇㄚ ㄕㄨㄛ ㄨㄛˇ ˙ㄇㄣ ㄌㄞˊ ㄏㄨㄚˋ ㄏㄨㄚˋ ˙ㄅㄚ","en":"Mom says, \"Let's draw pictures!\""},{"zh":"東東畫了一個大大的太陽。","zy":["ㄉㄨㄥ","ㄉㄨㄥ","ㄏㄨㄚˋ","˙ㄌㄜ","ㄧ","˙ㄍㄜ","ㄉㄚˋ","ㄉㄚˋ","˙ㄉㄜ","ㄊㄞˋ","ㄧㄤˊ"],"py":"ㄉㄨㄥ ㄉㄨㄥ ㄏㄨㄚˋ ˙ㄌㄜ ㄧ ˙ㄍㄜ ㄉㄚˋ ㄉㄚˋ ˙ㄉㄜ ㄊㄞˋ ㄧㄤˊ","en":"Dongdong draws a great big sun."},{"zh":"他笑了。","zy":["ㄊㄚ","ㄒㄧㄠˋ","˙ㄌㄜ"],"py":"ㄊㄚ ㄒㄧㄠˋ ˙ㄌㄜ","en":"He smiles."}],"questions":[{"q":"今天天氣怎麼樣？","qzy":["ㄐㄧㄣ","ㄊㄧㄢ","ㄊㄧㄢ","ㄑㄧˋ","ㄗㄣˇ","˙ㄇㄜ","ㄧㄤˋ"],"qpy":"ㄐㄧㄣ ㄊㄧㄢ ㄊㄧㄢ ㄑㄧˋ ㄗㄣˇ ˙ㄇㄜ ㄧㄤˋ","qen":"What is the weather like today?","choices":["下雨","下雪","很熱","颳風"],"choicesZy":[["ㄒㄧㄚˋ","ㄩˇ"],["ㄒㄧㄚˋ","ㄒㄩㄝˇ"],["ㄏㄣˇ","ㄖㄜˋ"],["ㄍㄨㄚ","ㄈㄥ"]],"choicesPy":["ㄒㄧㄚˋ ㄩˇ","ㄒㄧㄚˋ ㄒㄩㄝˇ","ㄏㄣˇ ㄖㄜˋ","ㄍㄨㄚ ㄈㄥ"],"correct":"下雨"},{"q":"東東坐在哪裡看雨？","qzy":["ㄉㄨㄥ","ㄉㄨㄥ","ㄗㄨㄛˋ","ㄗㄞˋ","ㄋㄚˇ","ㄌㄧˇ","ㄎㄢˋ","ㄩˇ"],"qpy":"ㄉㄨㄥ ㄉㄨㄥ ㄗㄨㄛˋ ㄗㄞˋ ㄋㄚˇ ㄌㄧˇ ㄎㄢˋ ㄩˇ","qen":"Where does Dongdong sit to watch the rain?","choices":["窗邊","床上","門口","公園"],"choicesZy":[["ㄔㄨㄤ","ㄅㄧㄢ"],["ㄔㄨㄤˊ","ㄕㄤˋ"],["ㄇㄣˊ","ㄎㄡˇ"],["ㄍㄨㄥ","ㄩㄢˊ"]],"choicesPy":["ㄔㄨㄤ ㄅㄧㄢ","ㄔㄨㄤˊ ㄕㄤˋ","ㄇㄣˊ ㄎㄡˇ","ㄍㄨㄥ ㄩㄢˊ"],"correct":"窗邊"},{"q":"東東畫了什麼？","qzy":["ㄉㄨㄥ","ㄉㄨㄥ","ㄏㄨㄚˋ","˙ㄌㄜ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄉㄨㄥ ㄉㄨㄥ ㄏㄨㄚˋ ˙ㄌㄜ ㄕㄣˊ ˙ㄇㄜ","qen":"What did Dongdong draw?","choices":["太陽","小狗","大樹","雨傘"],"choicesZy":[["ㄊㄞˋ","ㄧㄤˊ"],["ㄒㄧㄠˇ","ㄍㄡˇ"],["ㄉㄚˋ","ㄕㄨˋ"],["ㄩˇ","ㄙㄢˇ"]],"choicesPy":["ㄊㄞˋ ㄧㄤˊ","ㄒㄧㄠˇ ㄍㄡˇ","ㄉㄚˋ ㄕㄨˋ","ㄩˇ ㄙㄢˇ"],"correct":"太陽"}]},
+{"title":"我的家","titleZy":["ㄨㄛˇ","˙ㄉㄜ","ㄐㄧㄚ"],"titlePy":"ㄨㄛˇ ˙ㄉㄜ ㄐㄧㄚ","titleEn":"My Family","sentences":[{"zh":"我叫小明，今年七歲。","zy":["ㄨㄛˇ","ㄐㄧㄠˋ","ㄒㄧㄠˇ","ㄇㄧㄥˊ","ㄐㄧㄣ","ㄋㄧㄢˊ","ㄑㄧ","ㄙㄨㄟˋ"],"py":"ㄨㄛˇ ㄐㄧㄠˋ ㄒㄧㄠˇ ㄇㄧㄥˊ ㄐㄧㄣ ㄋㄧㄢˊ ㄑㄧ ㄙㄨㄟˋ","en":"My name is Xiaoming, and I am seven this year."},{"zh":"我家有四個人。","zy":["ㄨㄛˇ","ㄐㄧㄚ","ㄧㄡˇ","ㄙˋ","ㄍㄜˋ","ㄖㄣˊ"],"py":"ㄨㄛˇ ㄐㄧㄚ ㄧㄡˇ ㄙˋ ㄍㄜˋ ㄖㄣˊ","en":"There are four people in my family."},{"zh":"爸爸、媽媽、姐姐和我。","zy":["ㄅㄚˋ","˙ㄅㄚ","ㄇㄚ","˙ㄇㄚ","ㄐㄧㄝˇ","˙ㄐㄧㄝ","ㄏㄜˊ","ㄨㄛˇ"],"py":"ㄅㄚˋ ˙ㄅㄚ ㄇㄚ ˙ㄇㄚ ㄐㄧㄝˇ ˙ㄐㄧㄝ ㄏㄜˊ ㄨㄛˇ","en":"Dad, Mom, my big sister and me."},{"zh":"爸爸會做飯。","zy":["ㄅㄚˋ","˙ㄅㄚ","ㄏㄨㄟˋ","ㄗㄨㄛˋ","ㄈㄢˋ"],"py":"ㄅㄚˋ ˙ㄅㄚ ㄏㄨㄟˋ ㄗㄨㄛˋ ㄈㄢˋ","en":"Dad can cook."},{"zh":"姐姐會唱歌。","zy":["ㄐㄧㄝˇ","˙ㄐㄧㄝ","ㄏㄨㄟˋ","ㄔㄤˋ","ㄍㄜ"],"py":"ㄐㄧㄝˇ ˙ㄐㄧㄝ ㄏㄨㄟˋ ㄔㄤˋ ㄍㄜ","en":"My sister can sing."},{"zh":"我會給大家講笑話。","zy":["ㄨㄛˇ","ㄏㄨㄟˋ","ㄍㄟˇ","ㄉㄚˋ","ㄐㄧㄚ","ㄐㄧㄤˇ","ㄒㄧㄠˋ","ㄏㄨㄚˋ"],"py":"ㄨㄛˇ ㄏㄨㄟˋ ㄍㄟˇ ㄉㄚˋ ㄐㄧㄚ ㄐㄧㄤˇ ㄒㄧㄠˋ ㄏㄨㄚˋ","en":"I can tell everyone jokes."}],"questions":[{"q":"小明家有幾個人？","qzy":["ㄒㄧㄠˇ","ㄇㄧㄥˊ","ㄐㄧㄚ","ㄧㄡˇ","ㄐㄧˇ","˙ㄍㄜ","ㄖㄣˊ"],"qpy":"ㄒㄧㄠˇ ㄇㄧㄥˊ ㄐㄧㄚ ㄧㄡˇ ㄐㄧˇ ˙ㄍㄜ ㄖㄣˊ","qen":"How many people are in Xiaoming's family?","choices":["四個","三個","五個","六個"],"choicesZy":[["ㄙˋ","ㄍㄜˋ"],["ㄙㄢ","ㄍㄜˋ"],["ㄨˇ","ㄍㄜˋ"],["ㄌㄧㄡˋ","ㄍㄜˋ"]],"choicesPy":["ㄙˋ ㄍㄜˋ","ㄙㄢ ㄍㄜˋ","ㄨˇ ㄍㄜˋ","ㄌㄧㄡˋ ㄍㄜˋ"],"correct":"四個"},{"q":"誰會唱歌？","qzy":["ㄕㄟˊ","ㄏㄨㄟˋ","ㄔㄤˋ","ㄍㄜ"],"qpy":"ㄕㄟˊ ㄏㄨㄟˋ ㄔㄤˋ ㄍㄜ","qen":"Who can sing?","choices":["姐姐","爸爸","媽媽","小明"],"choicesZy":[["ㄐㄧㄝˇ","˙ㄐㄧㄝ"],["ㄅㄚˋ","˙ㄅㄚ"],["ㄇㄚ","˙ㄇㄚ"],["ㄒㄧㄠˇ","ㄇㄧㄥˊ"]],"choicesPy":["ㄐㄧㄝˇ ˙ㄐㄧㄝ","ㄅㄚˋ ˙ㄅㄚ","ㄇㄚ ˙ㄇㄚ","ㄒㄧㄠˇ ㄇㄧㄥˊ"],"correct":"姐姐"},{"q":"小明今年幾歲？","qzy":["ㄒㄧㄠˇ","ㄇㄧㄥˊ","ㄐㄧㄣ","ㄋㄧㄢˊ","ㄐㄧˇ","ㄙㄨㄟˋ"],"qpy":"ㄒㄧㄠˇ ㄇㄧㄥˊ ㄐㄧㄣ ㄋㄧㄢˊ ㄐㄧˇ ㄙㄨㄟˋ","qen":"How old is Xiaoming this year?","choices":["七歲","六歲","八歲","九歲"],"choicesZy":[["ㄑㄧ","ㄙㄨㄟˋ"],["ㄌㄧㄡˋ","ㄙㄨㄟˋ"],["ㄅㄚ","ㄙㄨㄟˋ"],["ㄐㄧㄡˇ","ㄙㄨㄟˋ"]],"choicesPy":["ㄑㄧ ㄙㄨㄟˋ","ㄌㄧㄡˋ ㄙㄨㄟˋ","ㄅㄚ ㄙㄨㄟˋ","ㄐㄧㄡˇ ㄙㄨㄟˋ"],"correct":"七歲"}]},
+{"title":"買水果","titleZy":["ㄇㄞˇ","ㄕㄨㄟˇ","ㄍㄨㄛˇ"],"titlePy":"ㄇㄞˇ ㄕㄨㄟˇ ㄍㄨㄛˇ","titleEn":"Buying Fruit","sentences":[{"zh":"星期六，奶奶帶我去買水果。","zy":["ㄒㄧㄥ","ㄑㄧˊ","ㄌㄧㄡˋ","ㄋㄞˇ","˙ㄋㄞ","ㄉㄞˋ","ㄨㄛˇ","ㄑㄩˋ","ㄇㄞˇ","ㄕㄨㄟˇ","ㄍㄨㄛˇ"],"py":"ㄒㄧㄥ ㄑㄧˊ ㄌㄧㄡˋ ㄋㄞˇ ˙ㄋㄞ ㄉㄞˋ ㄨㄛˇ ㄑㄩˋ ㄇㄞˇ ㄕㄨㄟˇ ㄍㄨㄛˇ","en":"On Saturday, Grandma takes me to buy fruit."},{"zh":"我們買了紅紅的蘋果。","zy":["ㄨㄛˇ","˙ㄇㄣ","ㄇㄞˇ","˙ㄌㄜ","ㄏㄨㄥˊ","ㄏㄨㄥˊ","˙ㄉㄜ","ㄆㄧㄥˊ","ㄍㄨㄛˇ"],"py":"ㄨㄛˇ ˙ㄇㄣ ㄇㄞˇ ˙ㄌㄜ ㄏㄨㄥˊ ㄏㄨㄥˊ ˙ㄉㄜ ㄆㄧㄥˊ ㄍㄨㄛˇ","en":"We buy bright red apples."},{"zh":"我們還買了黃黃的香蕉。","zy":["ㄨㄛˇ","˙ㄇㄣ","ㄏㄞˊ","ㄇㄞˇ","˙ㄌㄜ","ㄏㄨㄤˊ","ㄏㄨㄤˊ","˙ㄉㄜ","ㄒㄧㄤ","ㄐㄧㄠ"],"py":"ㄨㄛˇ ˙ㄇㄣ ㄏㄞˊ ㄇㄞˇ ˙ㄌㄜ ㄏㄨㄤˊ ㄏㄨㄤˊ ˙ㄉㄜ ㄒㄧㄤ ㄐㄧㄠ","en":"We also buy bright yellow bananas."},{"zh":"回到家，我和奶奶一起吃。","zy":["ㄏㄨㄟˊ","ㄉㄠˋ","ㄐㄧㄚ","ㄨㄛˇ","ㄏㄜˊ","ㄋㄞˇ","˙ㄋㄞ","ㄧ","ㄑㄧˇ","ㄔ"],"py":"ㄏㄨㄟˊ ㄉㄠˋ ㄐㄧㄚ ㄨㄛˇ ㄏㄜˊ ㄋㄞˇ ˙ㄋㄞ ㄧ ㄑㄧˇ ㄔ","en":"When we get home, Grandma and I eat together."},{"zh":"蘋果真甜！","zy":["ㄆㄧㄥˊ","ㄍㄨㄛˇ","ㄓㄣ","ㄊㄧㄢˊ"],"py":"ㄆㄧㄥˊ ㄍㄨㄛˇ ㄓㄣ ㄊㄧㄢˊ","en":"The apples are so sweet!"}],"questions":[{"q":"誰帶“我”去買水果？","qzy":["ㄕㄟˊ","ㄉㄞˋ","ㄨㄛˇ","ㄑㄩˋ","ㄇㄞˇ","ㄕㄨㄟˇ","ㄍㄨㄛˇ"],"qpy":"ㄕㄟˊ ㄉㄞˋ ㄨㄛˇ ㄑㄩˋ ㄇㄞˇ ㄕㄨㄟˇ ㄍㄨㄛˇ","qen":"Who takes \"me\" to buy fruit?","choices":["奶奶","爸爸","媽媽","姐姐"],"choicesZy":[["ㄋㄞˇ","˙ㄋㄞ"],["ㄅㄚˋ","˙ㄅㄚ"],["ㄇㄚ","˙ㄇㄚ"],["ㄐㄧㄝˇ","˙ㄐㄧㄝ"]],"choicesPy":["ㄋㄞˇ ˙ㄋㄞ","ㄅㄚˋ ˙ㄅㄚ","ㄇㄚ ˙ㄇㄚ","ㄐㄧㄝˇ ˙ㄐㄧㄝ"],"correct":"奶奶"},{"q":"蘋果是什麼顏色的？","qzy":["ㄆㄧㄥˊ","ㄍㄨㄛˇ","ㄕˋ","ㄕㄣˊ","˙ㄇㄜ","ㄧㄢˊ","ㄙㄜˋ","˙ㄉㄜ"],"qpy":"ㄆㄧㄥˊ ㄍㄨㄛˇ ㄕˋ ㄕㄣˊ ˙ㄇㄜ ㄧㄢˊ ㄙㄜˋ ˙ㄉㄜ","qen":"What color are the apples?","choices":["紅色","黃色","綠色","白色"],"choicesZy":[["ㄏㄨㄥˊ","ㄙㄜˋ"],["ㄏㄨㄤˊ","ㄙㄜˋ"],["ㄌㄩˋ","ㄙㄜˋ"],["ㄅㄞˊ","ㄙㄜˋ"]],"choicesPy":["ㄏㄨㄥˊ ㄙㄜˋ","ㄏㄨㄤˊ ㄙㄜˋ","ㄌㄩˋ ㄙㄜˋ","ㄅㄞˊ ㄙㄜˋ"],"correct":"紅色"},{"q":"他們哪天去買水果？","qzy":["ㄊㄚ","˙ㄇㄣ","ㄋㄚˇ","ㄊㄧㄢ","ㄑㄩˋ","ㄇㄞˇ","ㄕㄨㄟˇ","ㄍㄨㄛˇ"],"qpy":"ㄊㄚ ˙ㄇㄣ ㄋㄚˇ ㄊㄧㄢ ㄑㄩˋ ㄇㄞˇ ㄕㄨㄟˇ ㄍㄨㄛˇ","qen":"Which day do they go to buy fruit?","choices":["星期六","星期一","星期三","星期天"],"choicesZy":[["ㄒㄧㄥ","ㄑㄧˊ","ㄌㄧㄡˋ"],["ㄒㄧㄥ","ㄑㄧˊ","ㄧ"],["ㄒㄧㄥ","ㄑㄧˊ","ㄙㄢ"],["ㄒㄧㄥ","ㄑㄧˊ","ㄊㄧㄢ"]],"choicesPy":["ㄒㄧㄥ ㄑㄧˊ ㄌㄧㄡˋ","ㄒㄧㄥ ㄑㄧˊ ㄧ","ㄒㄧㄥ ㄑㄧˊ ㄙㄢ","ㄒㄧㄥ ㄑㄧˊ ㄊㄧㄢ"],"correct":"星期六"}]},
+{"title":"小狗豆豆","titleZy":["ㄒㄧㄠˇ","ㄍㄡˇ","ㄉㄡˋ","ㄉㄡˋ"],"titlePy":"ㄒㄧㄠˇ ㄍㄡˇ ㄉㄡˋ ㄉㄡˋ","titleEn":"Doudou the Puppy","sentences":[{"zh":"樂樂有一隻小黃狗。","zy":["ㄌㄜˋ","ㄌㄜˋ","ㄧㄡˇ","ㄧ","ㄓ","ㄒㄧㄠˇ","ㄏㄨㄤˊ","ㄍㄡˇ"],"py":"ㄌㄜˋ ㄌㄜˋ ㄧㄡˇ ㄧ ㄓ ㄒㄧㄠˇ ㄏㄨㄤˊ ㄍㄡˇ","en":"Lele has a little yellow puppy."},{"zh":"小狗叫豆豆。","zy":["ㄒㄧㄠˇ","ㄍㄡˇ","ㄐㄧㄠˋ","ㄉㄡˋ","ㄉㄡˋ"],"py":"ㄒㄧㄠˇ ㄍㄡˇ ㄐㄧㄠˋ ㄉㄡˋ ㄉㄡˋ","en":"The puppy is called Doudou."},{"zh":"豆豆跑得很快。","zy":["ㄉㄡˋ","ㄉㄡˋ","ㄆㄠˇ","˙ㄉㄜ","ㄏㄣˇ","ㄎㄨㄞˋ"],"py":"ㄉㄡˋ ㄉㄡˋ ㄆㄠˇ ˙ㄉㄜ ㄏㄣˇ ㄎㄨㄞˋ","en":"Doudou runs very fast."},{"zh":"樂樂扔球，豆豆去撿球。","zy":["ㄌㄜˋ","ㄌㄜˋ","ㄖㄥ","ㄑㄧㄡˊ","ㄉㄡˋ","ㄉㄡˋ","ㄑㄩˋ","ㄐㄧㄢˇ","ㄑㄧㄡˊ"],"py":"ㄌㄜˋ ㄌㄜˋ ㄖㄥ ㄑㄧㄡˊ ㄉㄡˋ ㄉㄡˋ ㄑㄩˋ ㄐㄧㄢˇ ㄑㄧㄡˊ","en":"Lele throws the ball, and Doudou fetches it."},{"zh":"他們玩了一下午。","zy":["ㄊㄚ","˙ㄇㄣ","ㄨㄢˊ","˙ㄌㄜ","ㄧ","ㄒㄧㄚˋ","ㄨˇ"],"py":"ㄊㄚ ˙ㄇㄣ ㄨㄢˊ ˙ㄌㄜ ㄧ ㄒㄧㄚˋ ㄨˇ","en":"They play all afternoon."},{"zh":"豆豆是樂樂最好的朋友。","zy":["ㄉㄡˋ","ㄉㄡˋ","ㄕˋ","ㄌㄜˋ","ㄌㄜˋ","ㄗㄨㄟˋ","ㄏㄠˇ","˙ㄉㄜ","ㄆㄥˊ","ㄧㄡˇ"],"py":"ㄉㄡˋ ㄉㄡˋ ㄕˋ ㄌㄜˋ ㄌㄜˋ ㄗㄨㄟˋ ㄏㄠˇ ˙ㄉㄜ ㄆㄥˊ ㄧㄡˇ","en":"Doudou is Lele's best friend."}],"questions":[{"q":"豆豆是什麼？","qzy":["ㄉㄡˋ","ㄉㄡˋ","ㄕˋ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄉㄡˋ ㄉㄡˋ ㄕˋ ㄕㄣˊ ˙ㄇㄜ","qen":"What is Doudou?","choices":["小狗","小貓","小鳥","小魚"],"choicesZy":[["ㄒㄧㄠˇ","ㄍㄡˇ"],["ㄒㄧㄠˇ","ㄇㄠ"],["ㄒㄧㄠˇ","ㄋㄧㄠˇ"],["ㄒㄧㄠˇ","ㄩˊ"]],"choicesPy":["ㄒㄧㄠˇ ㄍㄡˇ","ㄒㄧㄠˇ ㄇㄠ","ㄒㄧㄠˇ ㄋㄧㄠˇ","ㄒㄧㄠˇ ㄩˊ"],"correct":"小狗"},{"q":"豆豆是什麼顏色的？","qzy":["ㄉㄡˋ","ㄉㄡˋ","ㄕˋ","ㄕㄣˊ","˙ㄇㄜ","ㄧㄢˊ","ㄙㄜˋ","˙ㄉㄜ"],"qpy":"ㄉㄡˋ ㄉㄡˋ ㄕˋ ㄕㄣˊ ˙ㄇㄜ ㄧㄢˊ ㄙㄜˋ ˙ㄉㄜ","qen":"What color is Doudou?","choices":["黃色","黑色","白色","紅色"],"choicesZy":[["ㄏㄨㄤˊ","ㄙㄜˋ"],["ㄏㄟ","ㄙㄜˋ"],["ㄅㄞˊ","ㄙㄜˋ"],["ㄏㄨㄥˊ","ㄙㄜˋ"]],"choicesPy":["ㄏㄨㄤˊ ㄙㄜˋ","ㄏㄟ ㄙㄜˋ","ㄅㄞˊ ㄙㄜˋ","ㄏㄨㄥˊ ㄙㄜˋ"],"correct":"黃色"},{"q":"樂樂扔什麼？","qzy":["ㄌㄜˋ","ㄌㄜˋ","ㄖㄥ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄌㄜˋ ㄌㄜˋ ㄖㄥ ㄕㄣˊ ˙ㄇㄜ","qen":"What does Lele throw?","choices":["球","書","花","車"],"choicesZy":[["ㄑㄧㄡˊ"],["ㄕㄨ"],["ㄏㄨㄚ"],["ㄔㄜ"]],"choicesPy":["ㄑㄧㄡˊ","ㄕㄨ","ㄏㄨㄚ","ㄔㄜ"],"correct":"球"}]},
+{"title":"上學","titleZy":["ㄕㄤˋ","ㄒㄩㄝˊ"],"titlePy":"ㄕㄤˋ ㄒㄩㄝˊ","titleEn":"Going to School","sentences":[{"zh":"早上七點，文文起床了。","zy":["ㄗㄠˇ","˙ㄕㄤ","ㄑㄧ","ㄉㄧㄢˇ","ㄨㄣˊ","ㄨㄣˊ","ㄑㄧˇ","ㄔㄨㄤˊ","˙ㄌㄜ"],"py":"ㄗㄠˇ ˙ㄕㄤ ㄑㄧ ㄉㄧㄢˇ ㄨㄣˊ ㄨㄣˊ ㄑㄧˇ ㄔㄨㄤˊ ˙ㄌㄜ","en":"At seven in the morning, Wenwen gets up."},{"zh":"她吃了一個雞蛋，喝了一杯牛奶。","zy":["ㄊㄚ","ㄔ","˙ㄌㄜ","ㄧ","˙ㄍㄜ","ㄐㄧ","ㄉㄢˋ","ㄏㄜ","˙ㄌㄜ","ㄧ","ㄅㄟ","ㄋㄧㄡˊ","ㄋㄞˇ"],"py":"ㄊㄚ ㄔ ˙ㄌㄜ ㄧ ˙ㄍㄜ ㄐㄧ ㄉㄢˋ ㄏㄜ ˙ㄌㄜ ㄧ ㄅㄟ ㄋㄧㄡˊ ㄋㄞˇ","en":"She eats an egg and drinks a glass of milk."},{"zh":"媽媽送她去學校。","zy":["ㄇㄚ","˙ㄇㄚ","ㄙㄨㄥˋ","ㄊㄚ","ㄑㄩˋ","ㄒㄩㄝˊ","ㄒㄧㄠˋ"],"py":"ㄇㄚ ˙ㄇㄚ ㄙㄨㄥˋ ㄊㄚ ㄑㄩˋ ㄒㄩㄝˊ ㄒㄧㄠˋ","en":"Mom takes her to school."},{"zh":"在學校，她和同學一起讀書。","zy":["ㄗㄞˋ","ㄒㄩㄝˊ","ㄒㄧㄠˋ","ㄊㄚ","ㄏㄜˊ","ㄊㄨㄥˊ","ㄒㄩㄝˊ","ㄧ","ㄑㄧˇ","ㄉㄨˊ","ㄕㄨ"],"py":"ㄗㄞˋ ㄒㄩㄝˊ ㄒㄧㄠˋ ㄊㄚ ㄏㄜˊ ㄊㄨㄥˊ ㄒㄩㄝˊ ㄧ ㄑㄧˇ ㄉㄨˊ ㄕㄨ","en":"At school, she reads with her classmates."},{"zh":"文文很喜歡上學。","zy":["ㄨㄣˊ","ㄨㄣˊ","ㄏㄣˇ","ㄒㄧˇ","ㄏㄨㄢ","ㄕㄤˋ","ㄒㄩㄝˊ"],"py":"ㄨㄣˊ ㄨㄣˊ ㄏㄣˇ ㄒㄧˇ ㄏㄨㄢ ㄕㄤˋ ㄒㄩㄝˊ","en":"Wenwen really likes going to school."}],"questions":[{"q":"文文幾點起床？","qzy":["ㄨㄣˊ","ㄨㄣˊ","ㄐㄧˇ","ㄉㄧㄢˇ","ㄑㄧˇ","ㄔㄨㄤˊ"],"qpy":"ㄨㄣˊ ㄨㄣˊ ㄐㄧˇ ㄉㄧㄢˇ ㄑㄧˇ ㄔㄨㄤˊ","qen":"What time does Wenwen get up?","choices":["七點","六點","八點","九點"],"choicesZy":[["ㄑㄧ","ㄉㄧㄢˇ"],["ㄌㄧㄡˋ","ㄉㄧㄢˇ"],["ㄅㄚ","ㄉㄧㄢˇ"],["ㄐㄧㄡˇ","ㄉㄧㄢˇ"]],"choicesPy":["ㄑㄧ ㄉㄧㄢˇ","ㄌㄧㄡˋ ㄉㄧㄢˇ","ㄅㄚ ㄉㄧㄢˇ","ㄐㄧㄡˇ ㄉㄧㄢˇ"],"correct":"七點"},{"q":"誰送文文去學校？","qzy":["ㄕㄟˊ","ㄙㄨㄥˋ","ㄨㄣˊ","ㄨㄣˊ","ㄑㄩˋ","ㄒㄩㄝˊ","ㄒㄧㄠˋ"],"qpy":"ㄕㄟˊ ㄙㄨㄥˋ ㄨㄣˊ ㄨㄣˊ ㄑㄩˋ ㄒㄩㄝˊ ㄒㄧㄠˋ","qen":"Who takes Wenwen to school?","choices":["媽媽","爸爸","奶奶","哥哥"],"choicesZy":[["ㄇㄚ","˙ㄇㄚ"],["ㄅㄚˋ","˙ㄅㄚ"],["ㄋㄞˇ","˙ㄋㄞ"],["ㄍㄜ","˙ㄍㄜ"]],"choicesPy":["ㄇㄚ ˙ㄇㄚ","ㄅㄚˋ ˙ㄅㄚ","ㄋㄞˇ ˙ㄋㄞ","ㄍㄜ ˙ㄍㄜ"],"correct":"媽媽"},{"q":"文文早上喝了什麼？","qzy":["ㄨㄣˊ","ㄨㄣˊ","ㄗㄠˇ","˙ㄕㄤ","ㄏㄜ","˙ㄌㄜ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄨㄣˊ ㄨㄣˊ ㄗㄠˇ ˙ㄕㄤ ㄏㄜ ˙ㄌㄜ ㄕㄣˊ ˙ㄇㄜ","qen":"What did Wenwen drink in the morning?","choices":["牛奶","果汁","茶","湯"],"choicesZy":[["ㄋㄧㄡˊ","ㄋㄞˇ"],["ㄍㄨㄛˇ","ㄓ"],["ㄔㄚˊ"],["ㄊㄤ"]],"choicesPy":["ㄋㄧㄡˊ ㄋㄞˇ","ㄍㄨㄛˇ ㄓ","ㄔㄚˊ","ㄊㄤ"],"correct":"牛奶"}]},
+{"title":"公園裡","titleZy":["ㄍㄨㄥ","ㄩㄢˊ","ㄌㄧˇ"],"titlePy":"ㄍㄨㄥ ㄩㄢˊ ㄌㄧˇ","titleEn":"In the Park","sentences":[{"zh":"公園裡有很多好玩的東西。","zy":["ㄍㄨㄥ","ㄩㄢˊ","ㄌㄧˇ","ㄧㄡˇ","ㄏㄣˇ","ㄉㄨㄛ","ㄏㄠˇ","ㄨㄢˊ","˙ㄉㄜ","ㄉㄨㄥ","˙ㄒㄧ"],"py":"ㄍㄨㄥ ㄩㄢˊ ㄌㄧˇ ㄧㄡˇ ㄏㄣˇ ㄉㄨㄛ ㄏㄠˇ ㄨㄢˊ ˙ㄉㄜ ㄉㄨㄥ ˙ㄒㄧ","en":"There are lots of fun things in the park."},{"zh":"我看見兩隻小鳥。","zy":["ㄨㄛˇ","ㄎㄢˋ","˙ㄐㄧㄢ","ㄌㄧㄤˇ","ㄓ","ㄒㄧㄠˇ","ㄋㄧㄠˇ"],"py":"ㄨㄛˇ ㄎㄢˋ ˙ㄐㄧㄢ ㄌㄧㄤˇ ㄓ ㄒㄧㄠˇ ㄋㄧㄠˇ","en":"I see two little birds."},{"zh":"我看見三朵紅花。","zy":["ㄨㄛˇ","ㄎㄢˋ","˙ㄐㄧㄢ","ㄙㄢ","ㄉㄨㄛˇ","ㄏㄨㄥˊ","ㄏㄨㄚ"],"py":"ㄨㄛˇ ㄎㄢˋ ˙ㄐㄧㄢ ㄙㄢ ㄉㄨㄛˇ ㄏㄨㄥˊ ㄏㄨㄚ","en":"I see three red flowers."},{"zh":"我還看見五條小魚在水裡游。","zy":["ㄨㄛˇ","ㄏㄞˊ","ㄎㄢˋ","˙ㄐㄧㄢ","ㄨˇ","ㄊㄧㄠˊ","ㄒㄧㄠˇ","ㄩˊ","ㄗㄞˋ","ㄕㄨㄟˇ","ㄌㄧˇ","ㄧㄡˊ"],"py":"ㄨㄛˇ ㄏㄞˊ ㄎㄢˋ ˙ㄐㄧㄢ ㄨˇ ㄊㄧㄠˊ ㄒㄧㄠˇ ㄩˊ ㄗㄞˋ ㄕㄨㄟˇ ㄌㄧˇ ㄧㄡˊ","en":"I also see five little fish swimming in the water."},{"zh":"小紅和我一起數，真好玩！","zy":["ㄒㄧㄠˇ","ㄏㄨㄥˊ","ㄏㄜˊ","ㄨㄛˇ","ㄧ","ㄑㄧˇ","ㄕㄨˇ","ㄓㄣ","ㄏㄠˇ","ㄨㄢˊ"],"py":"ㄒㄧㄠˇ ㄏㄨㄥˊ ㄏㄜˊ ㄨㄛˇ ㄧ ㄑㄧˇ ㄕㄨˇ ㄓㄣ ㄏㄠˇ ㄨㄢˊ","en":"Xiaohong and I count together. It's so much fun!"}],"questions":[{"q":"公園裡有幾隻小鳥？","qzy":["ㄍㄨㄥ","ㄩㄢˊ","ㄌㄧˇ","ㄧㄡˇ","ㄐㄧˇ","ㄓ","ㄒㄧㄠˇ","ㄋㄧㄠˇ"],"qpy":"ㄍㄨㄥ ㄩㄢˊ ㄌㄧˇ ㄧㄡˇ ㄐㄧˇ ㄓ ㄒㄧㄠˇ ㄋㄧㄠˇ","qen":"How many little birds are in the park?","choices":["兩隻","三隻","四隻","五隻"],"choicesZy":[["ㄌㄧㄤˇ","ㄓ"],["ㄙㄢ","ㄓ"],["ㄙˋ","ㄓ"],["ㄨˇ","ㄓ"]],"choicesPy":["ㄌㄧㄤˇ ㄓ","ㄙㄢ ㄓ","ㄙˋ ㄓ","ㄨˇ ㄓ"],"correct":"兩隻"},{"q":"花是什麼顏色的？","qzy":["ㄏㄨㄚ","ㄕˋ","ㄕㄣˊ","˙ㄇㄜ","ㄧㄢˊ","ㄙㄜˋ","˙ㄉㄜ"],"qpy":"ㄏㄨㄚ ㄕˋ ㄕㄣˊ ˙ㄇㄜ ㄧㄢˊ ㄙㄜˋ ˙ㄉㄜ","qen":"What color are the flowers?","choices":["紅色","黃色","白色","藍色"],"choicesZy":[["ㄏㄨㄥˊ","ㄙㄜˋ"],["ㄏㄨㄤˊ","ㄙㄜˋ"],["ㄅㄞˊ","ㄙㄜˋ"],["ㄌㄢˊ","ㄙㄜˋ"]],"choicesPy":["ㄏㄨㄥˊ ㄙㄜˋ","ㄏㄨㄤˊ ㄙㄜˋ","ㄅㄞˊ ㄙㄜˋ","ㄌㄢˊ ㄙㄜˋ"],"correct":"紅色"},{"q":"小魚在哪裡游？","qzy":["ㄒㄧㄠˇ","ㄩˊ","ㄗㄞˋ","ㄋㄚˇ","ㄌㄧˇ","ㄧㄡˊ"],"qpy":"ㄒㄧㄠˇ ㄩˊ ㄗㄞˋ ㄋㄚˇ ㄌㄧˇ ㄧㄡˊ","qen":"Where are the little fish swimming?","choices":["水裡","樹上","草地上","天上"],"choicesZy":[["ㄕㄨㄟˇ","ㄌㄧˇ"],["ㄕㄨˋ","ㄕㄤˋ"],["ㄘㄠˇ","ㄉㄧˋ","ㄕㄤˋ"],["ㄊㄧㄢ","ㄕㄤˋ"]],"choicesPy":["ㄕㄨㄟˇ ㄌㄧˇ","ㄕㄨˋ ㄕㄤˋ","ㄘㄠˇ ㄉㄧˋ ㄕㄤˋ","ㄊㄧㄢ ㄕㄤˋ"],"correct":"水裡"}]},
+{"title":"生日快樂","titleZy":["ㄕㄥ","ㄖˋ","ㄎㄨㄞˋ","ㄌㄜˋ"],"titlePy":"ㄕㄥ ㄖˋ ㄎㄨㄞˋ ㄌㄜˋ","titleEn":"Happy Birthday","sentences":[{"zh":"今天是丁丁的生日。","zy":["ㄐㄧㄣ","ㄊㄧㄢ","ㄕˋ","ㄉㄧㄥ","ㄉㄧㄥ","˙ㄉㄜ","ㄕㄥ","ㄖˋ"],"py":"ㄐㄧㄣ ㄊㄧㄢ ㄕˋ ㄉㄧㄥ ㄉㄧㄥ ˙ㄉㄜ ㄕㄥ ㄖˋ","en":"Today is Dingding's birthday."},{"zh":"他八歲了。","zy":["ㄊㄚ","ㄅㄚ","ㄙㄨㄟˋ","˙ㄌㄜ"],"py":"ㄊㄚ ㄅㄚ ㄙㄨㄟˋ ˙ㄌㄜ","en":"He is eight years old."},{"zh":"媽媽做了一個大蛋糕。","zy":["ㄇㄚ","˙ㄇㄚ","ㄗㄨㄛˋ","˙ㄌㄜ","ㄧ","˙ㄍㄜ","ㄉㄚˋ","ㄉㄢˋ","ㄍㄠ"],"py":"ㄇㄚ ˙ㄇㄚ ㄗㄨㄛˋ ˙ㄌㄜ ㄧ ˙ㄍㄜ ㄉㄚˋ ㄉㄢˋ ㄍㄠ","en":"Mom made a big cake."},{"zh":"蛋糕上有八根蠟燭。","zy":["ㄉㄢˋ","ㄍㄠ","ㄕㄤˋ","ㄧㄡˇ","ㄅㄚ","ㄍㄣ","ㄌㄚˋ","ㄓㄨˊ"],"py":"ㄉㄢˋ ㄍㄠ ㄕㄤˋ ㄧㄡˇ ㄅㄚ ㄍㄣ ㄌㄚˋ ㄓㄨˊ","en":"There are eight candles on the cake."},{"zh":"朋友們一起唱生日歌。","zy":["ㄆㄥˊ","ㄧㄡˇ","˙ㄇㄣ","ㄧ","ㄑㄧˇ","ㄔㄤˋ","ㄕㄥ","ㄖˋ","ㄍㄜ"],"py":"ㄆㄥˊ ㄧㄡˇ ˙ㄇㄣ ㄧ ㄑㄧˇ ㄔㄤˋ ㄕㄥ ㄖˋ ㄍㄜ","en":"His friends sing the birthday song together."},{"zh":"丁丁開心地笑了。","zy":["ㄉㄧㄥ","ㄉㄧㄥ","ㄎㄞ","ㄒㄧㄣ","˙ㄉㄜ","ㄒㄧㄠˋ","˙ㄌㄜ"],"py":"ㄉㄧㄥ ㄉㄧㄥ ㄎㄞ ㄒㄧㄣ ˙ㄉㄜ ㄒㄧㄠˋ ˙ㄌㄜ","en":"Dingding smiles happily."}],"questions":[{"q":"今天是誰的生日？","qzy":["ㄐㄧㄣ","ㄊㄧㄢ","ㄕˋ","ㄕㄟˊ","˙ㄉㄜ","ㄕㄥ","ㄖˋ"],"qpy":"ㄐㄧㄣ ㄊㄧㄢ ㄕˋ ㄕㄟˊ ˙ㄉㄜ ㄕㄥ ㄖˋ","qen":"Whose birthday is it today?","choices":["丁丁","樂樂","文文","東東"],"choicesZy":[["ㄉㄧㄥ","ㄉㄧㄥ"],["ㄌㄜˋ","ㄌㄜˋ"],["ㄨㄣˊ","ㄨㄣˊ"],["ㄉㄨㄥ","ㄉㄨㄥ"]],"choicesPy":["ㄉㄧㄥ ㄉㄧㄥ","ㄌㄜˋ ㄌㄜˋ","ㄨㄣˊ ㄨㄣˊ","ㄉㄨㄥ ㄉㄨㄥ"],"correct":"丁丁"},{"q":"丁丁幾歲了？","qzy":["ㄉㄧㄥ","ㄉㄧㄥ","ㄐㄧˇ","ㄙㄨㄟˋ","˙ㄌㄜ"],"qpy":"ㄉㄧㄥ ㄉㄧㄥ ㄐㄧˇ ㄙㄨㄟˋ ˙ㄌㄜ","qen":"How old is Dingding?","choices":["八歲","七歲","九歲","六歲"],"choicesZy":[["ㄅㄚ","ㄙㄨㄟˋ"],["ㄑㄧ","ㄙㄨㄟˋ"],["ㄐㄧㄡˇ","ㄙㄨㄟˋ"],["ㄌㄧㄡˋ","ㄙㄨㄟˋ"]],"choicesPy":["ㄅㄚ ㄙㄨㄟˋ","ㄑㄧ ㄙㄨㄟˋ","ㄐㄧㄡˇ ㄙㄨㄟˋ","ㄌㄧㄡˋ ㄙㄨㄟˋ"],"correct":"八歲"},{"q":"誰做了蛋糕？","qzy":["ㄕㄟˊ","ㄗㄨㄛˋ","˙ㄌㄜ","ㄉㄢˋ","ㄍㄠ"],"qpy":"ㄕㄟˊ ㄗㄨㄛˋ ˙ㄌㄜ ㄉㄢˋ ㄍㄠ","qen":"Who made the cake?","choices":["媽媽","爸爸","奶奶","丁丁"],"choicesZy":[["ㄇㄚ","˙ㄇㄚ"],["ㄅㄚˋ","˙ㄅㄚ"],["ㄋㄞˇ","˙ㄋㄞ"],["ㄉㄧㄥ","ㄉㄧㄥ"]],"choicesPy":["ㄇㄚ ˙ㄇㄚ","ㄅㄚˋ ˙ㄅㄚ","ㄋㄞˇ ˙ㄋㄞ","ㄉㄧㄥ ㄉㄧㄥ"],"correct":"媽媽"}]}
+];
+const ZHTW_PASSAGES_O=[
+{"title":"檸檬水小攤","titleZy":["ㄋㄧㄥˊ","ㄇㄥˊ","ㄕㄨㄟˇ","ㄒㄧㄠˇ","ㄊㄢ"],"titlePy":"ㄋㄧㄥˊ ㄇㄥˊ ㄕㄨㄟˇ ㄒㄧㄠˇ ㄊㄢ","titleEn":"The Lemonade Stand","sentences":[{"zh":"夏天到了，天氣很熱。","zy":["ㄒㄧㄚˋ","ㄊㄧㄢ","ㄉㄠˋ","˙ㄌㄜ","ㄊㄧㄢ","ㄑㄧˋ","ㄏㄣˇ","ㄖㄜˋ"],"py":"ㄒㄧㄚˋ ㄊㄧㄢ ㄉㄠˋ ˙ㄌㄜ ㄊㄧㄢ ㄑㄧˋ ㄏㄣˇ ㄖㄜˋ","en":"Summer has come, and the weather is very hot."},{"zh":"小紅和弟弟想賣檸檬水。","zy":["ㄒㄧㄠˇ","ㄏㄨㄥˊ","ㄏㄜˊ","ㄉㄧˋ","˙ㄉㄧ","ㄒㄧㄤˇ","ㄇㄞˋ","ㄋㄧㄥˊ","ㄇㄥˊ","ㄕㄨㄟˇ"],"py":"ㄒㄧㄠˇ ㄏㄨㄥˊ ㄏㄜˊ ㄉㄧˋ ˙ㄉㄧ ㄒㄧㄤˇ ㄇㄞˋ ㄋㄧㄥˊ ㄇㄥˊ ㄕㄨㄟˇ","en":"Xiaohong and her little brother want to sell lemonade."},{"zh":"他們在家門口擺了一張小桌子。","zy":["ㄊㄚ","˙ㄇㄣ","ㄗㄞˋ","ㄐㄧㄚ","ㄇㄣˊ","ㄎㄡˇ","ㄅㄞˇ","˙ㄌㄜ","ㄧ","ㄓㄤ","ㄒㄧㄠˇ","ㄓㄨㄛ","˙ㄗ"],"py":"ㄊㄚ ˙ㄇㄣ ㄗㄞˋ ㄐㄧㄚ ㄇㄣˊ ㄎㄡˇ ㄅㄞˇ ˙ㄌㄜ ㄧ ㄓㄤ ㄒㄧㄠˇ ㄓㄨㄛ ˙ㄗ","en":"They set up a small table in front of their house."},{"zh":"一杯檸檬水賣兩塊錢。","zy":["ㄧ","ㄅㄟ","ㄋㄧㄥˊ","ㄇㄥˊ","ㄕㄨㄟˇ","ㄇㄞˋ","ㄌㄧㄤˇ","ㄎㄨㄞˋ","ㄑㄧㄢˊ"],"py":"ㄧ ㄅㄟ ㄋㄧㄥˊ ㄇㄥˊ ㄕㄨㄟˇ ㄇㄞˋ ㄌㄧㄤˇ ㄎㄨㄞˋ ㄑㄧㄢˊ","en":"One cup of lemonade costs two yuan."},{"zh":"第一個小時，只有一個人來買。","zy":["ㄉㄧˋ","ㄧ","˙ㄍㄜ","ㄒㄧㄠˇ","ㄕˊ","ㄓˇ","ㄧㄡˇ","ㄧ","˙ㄍㄜ","ㄖㄣˊ","ㄌㄞˊ","ㄇㄞˇ"],"py":"ㄉㄧˋ ㄧ ˙ㄍㄜ ㄒㄧㄠˇ ㄕˊ ㄓˇ ㄧㄡˇ ㄧ ˙ㄍㄜ ㄖㄣˊ ㄌㄞˊ ㄇㄞˇ","en":"In the first hour, only one person came to buy."},{"zh":"弟弟有一點難過。","zy":["ㄉㄧˋ","˙ㄉㄧ","ㄧㄡˇ","ㄧ","ㄉㄧㄢˇ","ㄋㄢˊ","ㄍㄨㄛˋ"],"py":"ㄉㄧˋ ˙ㄉㄧ ㄧㄡˇ ㄧ ㄉㄧㄢˇ ㄋㄢˊ ㄍㄨㄛˋ","en":"Her brother felt a little sad."},{"zh":"小紅說：“我們做一個大牌子吧！”","zy":["ㄒㄧㄠˇ","ㄏㄨㄥˊ","ㄕㄨㄛ","ㄨㄛˇ","˙ㄇㄣ","ㄗㄨㄛˋ","ㄧ","˙ㄍㄜ","ㄉㄚˋ","ㄆㄞˊ","˙ㄗ","˙ㄅㄚ"],"py":"ㄒㄧㄠˇ ㄏㄨㄥˊ ㄕㄨㄛ ㄨㄛˇ ˙ㄇㄣ ㄗㄨㄛˋ ㄧ ˙ㄍㄜ ㄉㄚˋ ㄆㄞˊ ˙ㄗ ˙ㄅㄚ","en":"Xiaohong said, \"Let's make a big sign!\""},{"zh":"有了牌子，很多鄰居都來買了。","zy":["ㄧㄡˇ","˙ㄌㄜ","ㄆㄞˊ","˙ㄗ","ㄏㄣˇ","ㄉㄨㄛ","ㄌㄧㄣˊ","ㄐㄩ","ㄉㄡ","ㄌㄞˊ","ㄇㄞˇ","˙ㄌㄜ"],"py":"ㄧㄡˇ ˙ㄌㄜ ㄆㄞˊ ˙ㄗ ㄏㄣˇ ㄉㄨㄛ ㄌㄧㄣˊ ㄐㄩ ㄉㄡ ㄌㄞˊ ㄇㄞˇ ˙ㄌㄜ","en":"With the sign up, lots of neighbors came to buy."},{"zh":"那天，他們一共賣了二十杯。","zy":["ㄋㄚˋ","ㄊㄧㄢ","ㄊㄚ","˙ㄇㄣ","ㄧ","ㄍㄨㄥˋ","ㄇㄞˋ","˙ㄌㄜ","ㄦˋ","ㄕˊ","ㄅㄟ"],"py":"ㄋㄚˋ ㄊㄧㄢ ㄊㄚ ˙ㄇㄣ ㄧ ㄍㄨㄥˋ ㄇㄞˋ ˙ㄌㄜ ㄦˋ ㄕˊ ㄅㄟ","en":"That day, they sold twenty cups in all."}],"questions":[{"q":"一杯檸檬水賣多少錢？","qzy":["ㄧ","ㄅㄟ","ㄋㄧㄥˊ","ㄇㄥˊ","ㄕㄨㄟˇ","ㄇㄞˋ","ㄉㄨㄛ","ㄕㄠˇ","ㄑㄧㄢˊ"],"qpy":"ㄧ ㄅㄟ ㄋㄧㄥˊ ㄇㄥˊ ㄕㄨㄟˇ ㄇㄞˋ ㄉㄨㄛ ㄕㄠˇ ㄑㄧㄢˊ","qen":"How much does one cup of lemonade cost?","choices":["兩塊錢","一塊錢","三塊錢","五塊錢"],"choicesZy":[["ㄌㄧㄤˇ","ㄎㄨㄞˋ","ㄑㄧㄢˊ"],["ㄧ","ㄎㄨㄞˋ","ㄑㄧㄢˊ"],["ㄙㄢ","ㄎㄨㄞˋ","ㄑㄧㄢˊ"],["ㄨˇ","ㄎㄨㄞˋ","ㄑㄧㄢˊ"]],"choicesPy":["ㄌㄧㄤˇ ㄎㄨㄞˋ ㄑㄧㄢˊ","ㄧ ㄎㄨㄞˋ ㄑㄧㄢˊ","ㄙㄢ ㄎㄨㄞˋ ㄑㄧㄢˊ","ㄨˇ ㄎㄨㄞˋ ㄑㄧㄢˊ"],"correct":"兩塊錢"},{"q":"小紅和誰一起賣檸檬水？","qzy":["ㄒㄧㄠˇ","ㄏㄨㄥˊ","ㄏㄜˊ","ㄕㄟˊ","ㄧ","ㄑㄧˇ","ㄇㄞˋ","ㄋㄧㄥˊ","ㄇㄥˊ","ㄕㄨㄟˇ"],"qpy":"ㄒㄧㄠˇ ㄏㄨㄥˊ ㄏㄜˊ ㄕㄟˊ ㄧ ㄑㄧˇ ㄇㄞˋ ㄋㄧㄥˊ ㄇㄥˊ ㄕㄨㄟˇ","qen":"Who sells lemonade with Xiaohong?","choices":["弟弟","媽媽","哥哥","鄰居"],"choicesZy":[["ㄉㄧˋ","˙ㄉㄧ"],["ㄇㄚ","˙ㄇㄚ"],["ㄍㄜ","˙ㄍㄜ"],["ㄌㄧㄣˊ","ㄐㄩ"]],"choicesPy":["ㄉㄧˋ ˙ㄉㄧ","ㄇㄚ ˙ㄇㄚ","ㄍㄜ ˙ㄍㄜ","ㄌㄧㄣˊ ㄐㄩ"],"correct":"弟弟"},{"q":"為什麼後來很多鄰居來買？","qzy":["ㄨㄟˋ","ㄕㄣˊ","˙ㄇㄜ","ㄏㄡˋ","ㄌㄞˊ","ㄏㄣˇ","ㄉㄨㄛ","ㄌㄧㄣˊ","ㄐㄩ","ㄌㄞˊ","ㄇㄞˇ"],"qpy":"ㄨㄟˋ ㄕㄣˊ ˙ㄇㄜ ㄏㄡˋ ㄌㄞˊ ㄏㄣˇ ㄉㄨㄛ ㄌㄧㄣˊ ㄐㄩ ㄌㄞˊ ㄇㄞˇ","qen":"Why did lots of neighbors come to buy later?","choices":["因為有了大牌子","因為檸檬水不要錢","因為下雨了","因為媽媽幫忙"],"choicesZy":[["ㄧㄣ","ㄨㄟˋ","ㄧㄡˇ","˙ㄌㄜ","ㄉㄚˋ","ㄆㄞˊ","˙ㄗ"],["ㄧㄣ","ㄨㄟˋ","ㄋㄧㄥˊ","ㄇㄥˊ","ㄕㄨㄟˇ","ㄅㄨˋ","ㄧㄠˋ","ㄑㄧㄢˊ"],["ㄧㄣ","ㄨㄟˋ","ㄒㄧㄚˋ","ㄩˇ","˙ㄌㄜ"],["ㄧㄣ","ㄨㄟˋ","ㄇㄚ","˙ㄇㄚ","ㄅㄤ","ㄇㄤˊ"]],"choicesPy":["ㄧㄣ ㄨㄟˋ ㄧㄡˇ ˙ㄌㄜ ㄉㄚˋ ㄆㄞˊ ˙ㄗ","ㄧㄣ ㄨㄟˋ ㄋㄧㄥˊ ㄇㄥˊ ㄕㄨㄟˇ ㄅㄨˋ ㄧㄠˋ ㄑㄧㄢˊ","ㄧㄣ ㄨㄟˋ ㄒㄧㄚˋ ㄩˇ ˙ㄌㄜ","ㄧㄣ ㄨㄟˋ ㄇㄚ ˙ㄇㄚ ㄅㄤ ㄇㄤˊ"],"correct":"因為有了大牌子"},{"q":"他們一共賣了多少杯？","qzy":["ㄊㄚ","˙ㄇㄣ","ㄧ","ㄍㄨㄥˋ","ㄇㄞˋ","˙ㄌㄜ","ㄉㄨㄛ","ㄕㄠˇ","ㄅㄟ"],"qpy":"ㄊㄚ ˙ㄇㄣ ㄧ ㄍㄨㄥˋ ㄇㄞˋ ˙ㄌㄜ ㄉㄨㄛ ㄕㄠˇ ㄅㄟ","qen":"How many cups did they sell in all?","choices":["二十杯","十杯","三十杯","五杯"],"choicesZy":[["ㄦˋ","ㄕˊ","ㄅㄟ"],["ㄕˊ","ㄅㄟ"],["ㄙㄢ","ㄕˊ","ㄅㄟ"],["ㄨˇ","ㄅㄟ"]],"choicesPy":["ㄦˋ ㄕˊ ㄅㄟ","ㄕˊ ㄅㄟ","ㄙㄢ ㄕˊ ㄅㄟ","ㄨˇ ㄅㄟ"],"correct":"二十杯"}]},
+{"title":"再試一次","titleZy":["ㄗㄞˋ","ㄕˋ","ㄧ","ㄘˋ"],"titlePy":"ㄗㄞˋ ㄕˋ ㄧ ㄘˋ","titleEn":"Try One More Time","sentences":[{"zh":"小明想學騎腳踏車。","zy":["ㄒㄧㄠˇ","ㄇㄧㄥˊ","ㄒㄧㄤˇ","ㄒㄩㄝˊ","ㄑㄧˊ","ㄐㄧㄠˇ","ㄊㄚˋ","ㄔㄜ"],"py":"ㄒㄧㄠˇ ㄇㄧㄥˊ ㄒㄧㄤˇ ㄒㄩㄝˊ ㄑㄧˊ ㄐㄧㄠˇ ㄊㄚˋ ㄔㄜ","en":"Xiaoming wants to learn to ride a bike."},{"zh":"第一天，他剛騎上去就摔倒了。","zy":["ㄉㄧˋ","ㄧ","ㄊㄧㄢ","ㄊㄚ","ㄍㄤ","ㄑㄧˊ","ㄕㄤˋ","˙ㄑㄩ","ㄐㄧㄡˋ","ㄕㄨㄞ","ㄉㄠˇ","˙ㄌㄜ"],"py":"ㄉㄧˋ ㄧ ㄊㄧㄢ ㄊㄚ ㄍㄤ ㄑㄧˊ ㄕㄤˋ ˙ㄑㄩ ㄐㄧㄡˋ ㄕㄨㄞ ㄉㄠˇ ˙ㄌㄜ","en":"On the first day, he fell over as soon as he got on."},{"zh":"他的腿很疼，他不想再騎了。","zy":["ㄊㄚ","˙ㄉㄜ","ㄊㄨㄟˇ","ㄏㄣˇ","ㄊㄥˊ","ㄊㄚ","ㄅㄨˋ","ㄒㄧㄤˇ","ㄗㄞˋ","ㄑㄧˊ","˙ㄌㄜ"],"py":"ㄊㄚ ˙ㄉㄜ ㄊㄨㄟˇ ㄏㄣˇ ㄊㄥˊ ㄊㄚ ㄅㄨˋ ㄒㄧㄤˇ ㄗㄞˋ ㄑㄧˊ ˙ㄌㄜ","en":"His leg hurt, and he didn't want to ride anymore."},{"zh":"爸爸說：“每個人學騎車都會摔倒，我們明天再試試。”","zy":["ㄅㄚˋ","˙ㄅㄚ","ㄕㄨㄛ","ㄇㄟˇ","ㄍㄜˋ","ㄖㄣˊ","ㄒㄩㄝˊ","ㄑㄧˊ","ㄔㄜ","ㄉㄡ","ㄏㄨㄟˋ","ㄕㄨㄞ","ㄉㄠˇ","ㄨㄛˇ","˙ㄇㄣ","ㄇㄧㄥˊ","ㄊㄧㄢ","ㄗㄞˋ","ㄕˋ","˙ㄕ"],"py":"ㄅㄚˋ ˙ㄅㄚ ㄕㄨㄛ ㄇㄟˇ ㄍㄜˋ ㄖㄣˊ ㄒㄩㄝˊ ㄑㄧˊ ㄔㄜ ㄉㄡ ㄏㄨㄟˋ ㄕㄨㄞ ㄉㄠˇ ㄨㄛˇ ˙ㄇㄣ ㄇㄧㄥˊ ㄊㄧㄢ ㄗㄞˋ ㄕˋ ˙ㄕ","en":"Dad said, \"Everyone falls when learning to ride. Let's try again tomorrow.\""},{"zh":"第二天，小明又試了一次。","zy":["ㄉㄧˋ","ㄦˋ","ㄊㄧㄢ","ㄒㄧㄠˇ","ㄇㄧㄥˊ","ㄧㄡˋ","ㄕˋ","˙ㄌㄜ","ㄧ","ㄘˋ"],"py":"ㄉㄧˋ ㄦˋ ㄊㄧㄢ ㄒㄧㄠˇ ㄇㄧㄥˊ ㄧㄡˋ ㄕˋ ˙ㄌㄜ ㄧ ㄘˋ","en":"The next day, Xiaoming tried again."},{"zh":"他還是摔倒了兩次。","zy":["ㄊㄚ","ㄏㄞˊ","ㄕˋ","ㄕㄨㄞ","ㄉㄠˇ","˙ㄌㄜ","ㄌㄧㄤˇ","ㄘˋ"],"py":"ㄊㄚ ㄏㄞˊ ㄕˋ ㄕㄨㄞ ㄉㄠˇ ˙ㄌㄜ ㄌㄧㄤˇ ㄘˋ","en":"He still fell over twice."},{"zh":"可是他沒有放棄。","zy":["ㄎㄜˇ","ㄕˋ","ㄊㄚ","ㄇㄟˊ","ㄧㄡˇ","ㄈㄤˋ","ㄑㄧˋ"],"py":"ㄎㄜˇ ㄕˋ ㄊㄚ ㄇㄟˊ ㄧㄡˇ ㄈㄤˋ ㄑㄧˋ","en":"But he did not give up."},{"zh":"一個星期以後，小明能自己騎車了！","zy":["ㄧ","˙ㄍㄜ","ㄒㄧㄥ","ㄑㄧˊ","ㄧˇ","ㄏㄡˋ","ㄒㄧㄠˇ","ㄇㄧㄥˊ","ㄋㄥˊ","ㄗˋ","ㄐㄧˇ","ㄑㄧˊ","ㄔㄜ","˙ㄌㄜ"],"py":"ㄧ ˙ㄍㄜ ㄒㄧㄥ ㄑㄧˊ ㄧˇ ㄏㄡˋ ㄒㄧㄠˇ ㄇㄧㄥˊ ㄋㄥˊ ㄗˋ ㄐㄧˇ ㄑㄧˊ ㄔㄜ ˙ㄌㄜ","en":"A week later, Xiaoming could ride by himself!"},{"zh":"他高興地說：“我做到了！”","zy":["ㄊㄚ","ㄍㄠ","ㄒㄧㄥˋ","˙ㄉㄜ","ㄕㄨㄛ","ㄨㄛˇ","ㄗㄨㄛˋ","ㄉㄠˋ","˙ㄌㄜ"],"py":"ㄊㄚ ㄍㄠ ㄒㄧㄥˋ ˙ㄉㄜ ㄕㄨㄛ ㄨㄛˇ ㄗㄨㄛˋ ㄉㄠˋ ˙ㄌㄜ","en":"He said happily, \"I did it!\""}],"questions":[{"q":"小明想學什麼？","qzy":["ㄒㄧㄠˇ","ㄇㄧㄥˊ","ㄒㄧㄤˇ","ㄒㄩㄝˊ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄒㄧㄠˇ ㄇㄧㄥˊ ㄒㄧㄤˇ ㄒㄩㄝˊ ㄕㄣˊ ˙ㄇㄜ","qen":"What does Xiaoming want to learn?","choices":["騎腳踏車","游泳","畫畫","踢足球"],"choicesZy":[["ㄑㄧˊ","ㄐㄧㄠˇ","ㄊㄚˋ","ㄔㄜ"],["ㄧㄡˊ","ㄩㄥˇ"],["ㄏㄨㄚˋ","ㄏㄨㄚˋ"],["ㄊㄧ","ㄗㄨˊ","ㄑㄧㄡˊ"]],"choicesPy":["ㄑㄧˊ ㄐㄧㄠˇ ㄊㄚˋ ㄔㄜ","ㄧㄡˊ ㄩㄥˇ","ㄏㄨㄚˋ ㄏㄨㄚˋ","ㄊㄧ ㄗㄨˊ ㄑㄧㄡˊ"],"correct":"騎腳踏車"},{"q":"誰鼓勵小明明天再試試？","qzy":["ㄕㄟˊ","ㄍㄨˇ","ㄌㄧˋ","ㄒㄧㄠˇ","ㄇㄧㄥˊ","ㄇㄧㄥˊ","ㄊㄧㄢ","ㄗㄞˋ","ㄕˋ","˙ㄕ"],"qpy":"ㄕㄟˊ ㄍㄨˇ ㄌㄧˋ ㄒㄧㄠˇ ㄇㄧㄥˊ ㄇㄧㄥˊ ㄊㄧㄢ ㄗㄞˋ ㄕˋ ˙ㄕ","qen":"Who encourages Xiaoming to try again tomorrow?","choices":["爸爸","媽媽","老師","哥哥"],"choicesZy":[["ㄅㄚˋ","˙ㄅㄚ"],["ㄇㄚ","˙ㄇㄚ"],["ㄌㄠˇ","ㄕ"],["ㄍㄜ","˙ㄍㄜ"]],"choicesPy":["ㄅㄚˋ ˙ㄅㄚ","ㄇㄚ ˙ㄇㄚ","ㄌㄠˇ ㄕ","ㄍㄜ ˙ㄍㄜ"],"correct":"爸爸"},{"q":"小明多久以後能自己騎車了？","qzy":["ㄒㄧㄠˇ","ㄇㄧㄥˊ","ㄉㄨㄛ","ㄐㄧㄡˇ","ㄧˇ","ㄏㄡˋ","ㄋㄥˊ","ㄗˋ","ㄐㄧˇ","ㄑㄧˊ","ㄔㄜ","˙ㄌㄜ"],"qpy":"ㄒㄧㄠˇ ㄇㄧㄥˊ ㄉㄨㄛ ㄐㄧㄡˇ ㄧˇ ㄏㄡˋ ㄋㄥˊ ㄗˋ ㄐㄧˇ ㄑㄧˊ ㄔㄜ ˙ㄌㄜ","qen":"How long did it take before Xiaoming could ride by himself?","choices":["一個星期","一天","兩天","一個月"],"choicesZy":[["ㄧ","˙ㄍㄜ","ㄒㄧㄥ","ㄑㄧˊ"],["ㄧ","ㄊㄧㄢ"],["ㄌㄧㄤˇ","ㄊㄧㄢ"],["ㄧ","˙ㄍㄜ","ㄩㄝˋ"]],"choicesPy":["ㄧ ˙ㄍㄜ ㄒㄧㄥ ㄑㄧˊ","ㄧ ㄊㄧㄢ","ㄌㄧㄤˇ ㄊㄧㄢ","ㄧ ˙ㄍㄜ ㄩㄝˋ"],"correct":"一個星期"},{"q":"這個故事主要告訴我們什麼？","qzy":["ㄓㄜˋ","˙ㄍㄜ","ㄍㄨˋ","˙ㄕ","ㄓㄨˇ","ㄧㄠˋ","ㄍㄠˋ","˙ㄙㄨ","ㄨㄛˇ","˙ㄇㄣ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄓㄜˋ ˙ㄍㄜ ㄍㄨˋ ˙ㄕ ㄓㄨˇ ㄧㄠˋ ㄍㄠˋ ˙ㄙㄨ ㄨㄛˇ ˙ㄇㄣ ㄕㄣˊ ˙ㄇㄜ","qen":"What is the main lesson of this story?","choices":["失敗了也要再試","騎車很危險","爸爸很會騎車","腳踏車很貴"],"choicesZy":[["ㄕ","ㄅㄞˋ","˙ㄌㄜ","ㄧㄝˇ","ㄧㄠˋ","ㄗㄞˋ","ㄕˋ"],["ㄑㄧˊ","ㄔㄜ","ㄏㄣˇ","ㄨㄟˊ","ㄒㄧㄢˇ"],["ㄅㄚˋ","˙ㄅㄚ","ㄏㄣˇ","ㄏㄨㄟˋ","ㄑㄧˊ","ㄔㄜ"],["ㄐㄧㄠˇ","ㄊㄚˋ","ㄔㄜ","ㄏㄣˇ","ㄍㄨㄟˋ"]],"choicesPy":["ㄕ ㄅㄞˋ ˙ㄌㄜ ㄧㄝˇ ㄧㄠˋ ㄗㄞˋ ㄕˋ","ㄑㄧˊ ㄔㄜ ㄏㄣˇ ㄨㄟˊ ㄒㄧㄢˇ","ㄅㄚˋ ˙ㄅㄚ ㄏㄣˇ ㄏㄨㄟˋ ㄑㄧˊ ㄔㄜ","ㄐㄧㄠˇ ㄊㄚˋ ㄔㄜ ㄏㄣˇ ㄍㄨㄟˋ"],"correct":"失敗了也要再試"}]},
+{"title":"中秋節","titleZy":["ㄓㄨㄥ","ㄑㄧㄡ","ㄐㄧㄝˊ"],"titlePy":"ㄓㄨㄥ ㄑㄧㄡ ㄐㄧㄝˊ","titleEn":"The Mid-Autumn Festival","sentences":[{"zh":"今天是中秋節。","zy":["ㄐㄧㄣ","ㄊㄧㄢ","ㄕˋ","ㄓㄨㄥ","ㄑㄧㄡ","ㄐㄧㄝˊ"],"py":"ㄐㄧㄣ ㄊㄧㄢ ㄕˋ ㄓㄨㄥ ㄑㄧㄡ ㄐㄧㄝˊ","en":"Today is the Mid-Autumn Festival."},{"zh":"晚上，爺爺、奶奶都來我們家吃飯。","zy":["ㄨㄢˇ","˙ㄕㄤ","ㄧㄝˊ","˙ㄧㄝ","ㄋㄞˇ","˙ㄋㄞ","ㄉㄡ","ㄌㄞˊ","ㄨㄛˇ","˙ㄇㄣ","ㄐㄧㄚ","ㄔ","ㄈㄢˋ"],"py":"ㄨㄢˇ ˙ㄕㄤ ㄧㄝˊ ˙ㄧㄝ ㄋㄞˇ ˙ㄋㄞ ㄉㄡ ㄌㄞˊ ㄨㄛˇ ˙ㄇㄣ ㄐㄧㄚ ㄔ ㄈㄢˋ","en":"In the evening, Grandpa and Grandma come to our home for dinner."},{"zh":"吃完飯，我們一起到院子裡看月亮。","zy":["ㄔ","ㄨㄢˊ","ㄈㄢˋ","ㄨㄛˇ","˙ㄇㄣ","ㄧ","ㄑㄧˇ","ㄉㄠˋ","ㄩㄢˋ","˙ㄗ","ㄌㄧˇ","ㄎㄢˋ","ㄩㄝˋ","ㄌㄧㄤˋ"],"py":"ㄔ ㄨㄢˊ ㄈㄢˋ ㄨㄛˇ ˙ㄇㄣ ㄧ ㄑㄧˇ ㄉㄠˋ ㄩㄢˋ ˙ㄗ ㄌㄧˇ ㄎㄢˋ ㄩㄝˋ ㄌㄧㄤˋ","en":"After dinner, we all go into the yard to look at the moon."},{"zh":"今天的月亮又大又圓，像一個白色的盤子。","zy":["ㄐㄧㄣ","ㄊㄧㄢ","˙ㄉㄜ","ㄩㄝˋ","ㄌㄧㄤˋ","ㄧㄡˋ","ㄉㄚˋ","ㄧㄡˋ","ㄩㄢˊ","ㄒㄧㄤˋ","ㄧ","˙ㄍㄜ","ㄅㄞˊ","ㄙㄜˋ","˙ㄉㄜ","ㄆㄢˊ","˙ㄗ"],"py":"ㄐㄧㄣ ㄊㄧㄢ ˙ㄉㄜ ㄩㄝˋ ㄌㄧㄤˋ ㄧㄡˋ ㄉㄚˋ ㄧㄡˋ ㄩㄢˊ ㄒㄧㄤˋ ㄧ ˙ㄍㄜ ㄅㄞˊ ㄙㄜˋ ˙ㄉㄜ ㄆㄢˊ ˙ㄗ","en":"Tonight the moon is big and round, like a white plate."},{"zh":"媽媽拿出月餅，大家一人一塊。","zy":["ㄇㄚ","˙ㄇㄚ","ㄋㄚˊ","ㄔㄨ","ㄩㄝˋ","ㄅㄧㄥˇ","ㄉㄚˋ","ㄐㄧㄚ","ㄧ","ㄖㄣˊ","ㄧ","ㄎㄨㄞˋ"],"py":"ㄇㄚ ˙ㄇㄚ ㄋㄚˊ ㄔㄨ ㄩㄝˋ ㄅㄧㄥˇ ㄉㄚˋ ㄐㄧㄚ ㄧ ㄖㄣˊ ㄧ ㄎㄨㄞˋ","en":"Mom brings out mooncakes, one piece for each person."},{"zh":"我的月餅裡面有一個鹹蛋黃。","zy":["ㄨㄛˇ","˙ㄉㄜ","ㄩㄝˋ","ㄅㄧㄥˇ","ㄌㄧˇ","ㄇㄧㄢˋ","ㄧㄡˇ","ㄧ","˙ㄍㄜ","ㄒㄧㄢˊ","ㄉㄢˋ","ㄏㄨㄤˊ"],"py":"ㄨㄛˇ ˙ㄉㄜ ㄩㄝˋ ㄅㄧㄥˇ ㄌㄧˇ ㄇㄧㄢˋ ㄧㄡˇ ㄧ ˙ㄍㄜ ㄒㄧㄢˊ ㄉㄢˋ ㄏㄨㄤˊ","en":"My mooncake has a salted egg yolk inside."},{"zh":"奶奶說，圓圓的月亮代表一家人團圓。","zy":["ㄋㄞˇ","˙ㄋㄞ","ㄕㄨㄛ","ㄩㄢˊ","ㄩㄢˊ","˙ㄉㄜ","ㄩㄝˋ","ㄌㄧㄤˋ","ㄉㄞˋ","ㄅㄧㄠˇ","ㄧ","ㄐㄧㄚ","ㄖㄣˊ","ㄊㄨㄢˊ","ㄩㄢˊ"],"py":"ㄋㄞˇ ˙ㄋㄞ ㄕㄨㄛ ㄩㄢˊ ㄩㄢˊ ˙ㄉㄜ ㄩㄝˋ ㄌㄧㄤˋ ㄉㄞˋ ㄅㄧㄠˇ ㄧ ㄐㄧㄚ ㄖㄣˊ ㄊㄨㄢˊ ㄩㄢˊ","en":"Grandma says the round moon stands for the whole family being together."},{"zh":"我覺得這是最開心的一天。","zy":["ㄨㄛˇ","ㄐㄩㄝˊ","˙ㄉㄜ","ㄓㄜˋ","ㄕˋ","ㄗㄨㄟˋ","ㄎㄞ","ㄒㄧㄣ","˙ㄉㄜ","ㄧ","ㄊㄧㄢ"],"py":"ㄨㄛˇ ㄐㄩㄝˊ ˙ㄉㄜ ㄓㄜˋ ㄕˋ ㄗㄨㄟˋ ㄎㄞ ㄒㄧㄣ ˙ㄉㄜ ㄧ ㄊㄧㄢ","en":"I think this is the happiest day."}],"questions":[{"q":"今天的月亮像什麼？","qzy":["ㄐㄧㄣ","ㄊㄧㄢ","˙ㄉㄜ","ㄩㄝˋ","ㄌㄧㄤˋ","ㄒㄧㄤˋ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄐㄧㄣ ㄊㄧㄢ ˙ㄉㄜ ㄩㄝˋ ㄌㄧㄤˋ ㄒㄧㄤˋ ㄕㄣˊ ˙ㄇㄜ","qen":"What does the moon look like tonight?","choices":["白色的盤子","一條小船","紅色的球","一塊月餅"],"choicesZy":[["ㄅㄞˊ","ㄙㄜˋ","˙ㄉㄜ","ㄆㄢˊ","˙ㄗ"],["ㄧ","ㄊㄧㄠˊ","ㄒㄧㄠˇ","ㄔㄨㄢˊ"],["ㄏㄨㄥˊ","ㄙㄜˋ","˙ㄉㄜ","ㄑㄧㄡˊ"],["ㄧ","ㄎㄨㄞˋ","ㄩㄝˋ","ㄅㄧㄥˇ"]],"choicesPy":["ㄅㄞˊ ㄙㄜˋ ˙ㄉㄜ ㄆㄢˊ ˙ㄗ","ㄧ ㄊㄧㄠˊ ㄒㄧㄠˇ ㄔㄨㄢˊ","ㄏㄨㄥˊ ㄙㄜˋ ˙ㄉㄜ ㄑㄧㄡˊ","ㄧ ㄎㄨㄞˋ ㄩㄝˋ ㄅㄧㄥˇ"],"correct":"白色的盤子"},{"q":"誰來“我們”家吃飯？","qzy":["ㄕㄟˊ","ㄌㄞˊ","ㄨㄛˇ","˙ㄇㄣ","ㄐㄧㄚ","ㄔ","ㄈㄢˋ"],"qpy":"ㄕㄟˊ ㄌㄞˊ ㄨㄛˇ ˙ㄇㄣ ㄐㄧㄚ ㄔ ㄈㄢˋ","qen":"Who comes to \"our\" home for dinner?","choices":["爺爺和奶奶","老師和同學","叔叔和阿姨","哥哥和姐姐"],"choicesZy":[["ㄧㄝˊ","˙ㄧㄝ","ㄏㄜˊ","ㄋㄞˇ","˙ㄋㄞ"],["ㄌㄠˇ","ㄕ","ㄏㄜˊ","ㄊㄨㄥˊ","ㄒㄩㄝˊ"],["ㄕㄨˊ","˙ㄕㄨ","ㄏㄜˊ","ㄚ","ㄧˊ"],["ㄍㄜ","˙ㄍㄜ","ㄏㄜˊ","ㄐㄧㄝˇ","˙ㄐㄧㄝ"]],"choicesPy":["ㄧㄝˊ ˙ㄧㄝ ㄏㄜˊ ㄋㄞˇ ˙ㄋㄞ","ㄌㄠˇ ㄕ ㄏㄜˊ ㄊㄨㄥˊ ㄒㄩㄝˊ","ㄕㄨˊ ˙ㄕㄨ ㄏㄜˊ ㄚ ㄧˊ","ㄍㄜ ˙ㄍㄜ ㄏㄜˊ ㄐㄧㄝˇ ˙ㄐㄧㄝ"],"correct":"爺爺和奶奶"},{"q":"奶奶說圓圓的月亮代表什麼？","qzy":["ㄋㄞˇ","˙ㄋㄞ","ㄕㄨㄛ","ㄩㄢˊ","ㄩㄢˊ","˙ㄉㄜ","ㄩㄝˋ","ㄌㄧㄤˋ","ㄉㄞˋ","ㄅㄧㄠˇ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄋㄞˇ ˙ㄋㄞ ㄕㄨㄛ ㄩㄢˊ ㄩㄢˊ ˙ㄉㄜ ㄩㄝˋ ㄌㄧㄤˋ ㄉㄞˋ ㄅㄧㄠˇ ㄕㄣˊ ˙ㄇㄜ","qen":"What does Grandma say the round moon stands for?","choices":["一家人團圓","明天會下雨","冬天來了","月餅很好吃"],"choicesZy":[["ㄧ","ㄐㄧㄚ","ㄖㄣˊ","ㄊㄨㄢˊ","ㄩㄢˊ"],["ㄇㄧㄥˊ","ㄊㄧㄢ","ㄏㄨㄟˋ","ㄒㄧㄚˋ","ㄩˇ"],["ㄉㄨㄥ","ㄊㄧㄢ","ㄌㄞˊ","˙ㄌㄜ"],["ㄩㄝˋ","ㄅㄧㄥˇ","ㄏㄣˇ","ㄏㄠˇ","ㄔ"]],"choicesPy":["ㄧ ㄐㄧㄚ ㄖㄣˊ ㄊㄨㄢˊ ㄩㄢˊ","ㄇㄧㄥˊ ㄊㄧㄢ ㄏㄨㄟˋ ㄒㄧㄚˋ ㄩˇ","ㄉㄨㄥ ㄊㄧㄢ ㄌㄞˊ ˙ㄌㄜ","ㄩㄝˋ ㄅㄧㄥˇ ㄏㄣˇ ㄏㄠˇ ㄔ"],"correct":"一家人團圓"},{"q":"這個故事主要講什麼？","qzy":["ㄓㄜˋ","˙ㄍㄜ","ㄍㄨˋ","˙ㄕ","ㄓㄨˇ","ㄧㄠˋ","ㄐㄧㄤˇ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄓㄜˋ ˙ㄍㄜ ㄍㄨˋ ˙ㄕ ㄓㄨˇ ㄧㄠˋ ㄐㄧㄤˇ ㄕㄣˊ ˙ㄇㄜ","qen":"What is this story mainly about?","choices":["一家人過中秋節","怎麼做月餅","去公園看花","爺爺的生日"],"choicesZy":[["ㄧ","ㄐㄧㄚ","ㄖㄣˊ","ㄍㄨㄛˋ","ㄓㄨㄥ","ㄑㄧㄡ","ㄐㄧㄝˊ"],["ㄗㄣˇ","˙ㄇㄜ","ㄗㄨㄛˋ","ㄩㄝˋ","ㄅㄧㄥˇ"],["ㄑㄩˋ","ㄍㄨㄥ","ㄩㄢˊ","ㄎㄢˋ","ㄏㄨㄚ"],["ㄧㄝˊ","˙ㄧㄝ","˙ㄉㄜ","ㄕㄥ","ㄖˋ"]],"choicesPy":["ㄧ ㄐㄧㄚ ㄖㄣˊ ㄍㄨㄛˋ ㄓㄨㄥ ㄑㄧㄡ ㄐㄧㄝˊ","ㄗㄣˇ ˙ㄇㄜ ㄗㄨㄛˋ ㄩㄝˋ ㄅㄧㄥˇ","ㄑㄩˋ ㄍㄨㄥ ㄩㄢˊ ㄎㄢˋ ㄏㄨㄚ","ㄧㄝˊ ˙ㄧㄝ ˙ㄉㄜ ㄕㄥ ㄖˋ"],"correct":"一家人過中秋節"}]},
+{"title":"新朋友","titleZy":["ㄒㄧㄣ","ㄆㄥˊ","ㄧㄡˇ"],"titlePy":"ㄒㄧㄣ ㄆㄥˊ ㄧㄡˇ","titleEn":"A New Friend","sentences":[{"zh":"方方是班上新來的同學。","zy":["ㄈㄤ","ㄈㄤ","ㄕˋ","ㄅㄢ","ㄕㄤˋ","ㄒㄧㄣ","ㄌㄞˊ","˙ㄉㄜ","ㄊㄨㄥˊ","ㄒㄩㄝˊ"],"py":"ㄈㄤ ㄈㄤ ㄕˋ ㄅㄢ ㄕㄤˋ ㄒㄧㄣ ㄌㄞˊ ˙ㄉㄜ ㄊㄨㄥˊ ㄒㄩㄝˊ","en":"Fangfang is a new student in the class."},{"zh":"她不認識別人，下課的時候總是一個人坐著。","zy":["ㄊㄚ","ㄅㄨˋ","ㄖㄣˋ","ㄕˋ","ㄅㄧㄝˊ","ㄖㄣˊ","ㄒㄧㄚˋ","ㄎㄜˋ","˙ㄉㄜ","ㄕˊ","ㄏㄡˋ","ㄗㄨㄥˇ","ㄕˋ","ㄧ","˙ㄍㄜ","ㄖㄣˊ","ㄗㄨㄛˋ","˙ㄓㄜ"],"py":"ㄊㄚ ㄅㄨˋ ㄖㄣˋ ㄕˋ ㄅㄧㄝˊ ㄖㄣˊ ㄒㄧㄚˋ ㄎㄜˋ ˙ㄉㄜ ㄕˊ ㄏㄡˋ ㄗㄨㄥˇ ㄕˋ ㄧ ˙ㄍㄜ ㄖㄣˊ ㄗㄨㄛˋ ˙ㄓㄜ","en":"She doesn't know anyone, so at recess she always sits by herself."},{"zh":"小亮看見了，就走過去問她：“你想和我們一起玩嗎？”","zy":["ㄒㄧㄠˇ","ㄌㄧㄤˋ","ㄎㄢˋ","˙ㄐㄧㄢ","˙ㄌㄜ","ㄐㄧㄡˋ","ㄗㄡˇ","ㄍㄨㄛˋ","˙ㄑㄩ","ㄨㄣˋ","ㄊㄚ","ㄋㄧˇ","ㄒㄧㄤˇ","ㄏㄜˊ","ㄨㄛˇ","˙ㄇㄣ","ㄧ","ㄑㄧˇ","ㄨㄢˊ","˙ㄇㄚ"],"py":"ㄒㄧㄠˇ ㄌㄧㄤˋ ㄎㄢˋ ˙ㄐㄧㄢ ˙ㄌㄜ ㄐㄧㄡˋ ㄗㄡˇ ㄍㄨㄛˋ ˙ㄑㄩ ㄨㄣˋ ㄊㄚ ㄋㄧˇ ㄒㄧㄤˇ ㄏㄜˊ ㄨㄛˇ ˙ㄇㄣ ㄧ ㄑㄧˇ ㄨㄢˊ ˙ㄇㄚ","en":"Xiaoliang noticed, walked over and asked her, \"Do you want to play with us?\""},{"zh":"方方笑著點點頭。","zy":["ㄈㄤ","ㄈㄤ","ㄒㄧㄠˋ","˙ㄓㄜ","ㄉㄧㄢˇ","ㄉㄧㄢˇ","ㄊㄡˊ"],"py":"ㄈㄤ ㄈㄤ ㄒㄧㄠˋ ˙ㄓㄜ ㄉㄧㄢˇ ㄉㄧㄢˇ ㄊㄡˊ","en":"Fangfang smiled and nodded."},{"zh":"他們一起跳繩，一起畫畫。","zy":["ㄊㄚ","˙ㄇㄣ","ㄧ","ㄑㄧˇ","ㄊㄧㄠˋ","ㄕㄥˊ","ㄧ","ㄑㄧˇ","ㄏㄨㄚˋ","ㄏㄨㄚˋ"],"py":"ㄊㄚ ˙ㄇㄣ ㄧ ㄑㄧˇ ㄊㄧㄠˋ ㄕㄥˊ ㄧ ㄑㄧˇ ㄏㄨㄚˋ ㄏㄨㄚˋ","en":"They jumped rope together and drew pictures together."},{"zh":"後來，方方教小亮摺紙飛機。","zy":["ㄏㄡˋ","ㄌㄞˊ","ㄈㄤ","ㄈㄤ","ㄐㄧㄠ","ㄒㄧㄠˇ","ㄌㄧㄤˋ","ㄓㄜˊ","ㄓˇ","ㄈㄟ","ㄐㄧ"],"py":"ㄏㄡˋ ㄌㄞˊ ㄈㄤ ㄈㄤ ㄐㄧㄠ ㄒㄧㄠˇ ㄌㄧㄤˋ ㄓㄜˊ ㄓˇ ㄈㄟ ㄐㄧ","en":"Later, Fangfang taught Xiaoliang how to fold paper airplanes."},{"zh":"現在，他們是最好的朋友。","zy":["ㄒㄧㄢˋ","ㄗㄞˋ","ㄊㄚ","˙ㄇㄣ","ㄕˋ","ㄗㄨㄟˋ","ㄏㄠˇ","˙ㄉㄜ","ㄆㄥˊ","ㄧㄡˇ"],"py":"ㄒㄧㄢˋ ㄗㄞˋ ㄊㄚ ˙ㄇㄣ ㄕˋ ㄗㄨㄟˋ ㄏㄠˇ ˙ㄉㄜ ㄆㄥˊ ㄧㄡˇ","en":"Now they are best friends."}],"questions":[{"q":"方方為什麼一個人坐著？","qzy":["ㄈㄤ","ㄈㄤ","ㄨㄟˋ","ㄕㄣˊ","˙ㄇㄜ","ㄧ","˙ㄍㄜ","ㄖㄣˊ","ㄗㄨㄛˋ","˙ㄓㄜ"],"qpy":"ㄈㄤ ㄈㄤ ㄨㄟˋ ㄕㄣˊ ˙ㄇㄜ ㄧ ˙ㄍㄜ ㄖㄣˊ ㄗㄨㄛˋ ˙ㄓㄜ","qen":"Why does Fangfang sit by herself?","choices":["她不認識別人","她生病了","她不喜歡玩","她在看書"],"choicesZy":[["ㄊㄚ","ㄅㄨˋ","ㄖㄣˋ","ㄕˋ","ㄅㄧㄝˊ","ㄖㄣˊ"],["ㄊㄚ","ㄕㄥ","ㄅㄧㄥˋ","˙ㄌㄜ"],["ㄊㄚ","ㄅㄨˋ","ㄒㄧˇ","ㄏㄨㄢ","ㄨㄢˊ"],["ㄊㄚ","ㄗㄞˋ","ㄎㄢˋ","ㄕㄨ"]],"choicesPy":["ㄊㄚ ㄅㄨˋ ㄖㄣˋ ㄕˋ ㄅㄧㄝˊ ㄖㄣˊ","ㄊㄚ ㄕㄥ ㄅㄧㄥˋ ˙ㄌㄜ","ㄊㄚ ㄅㄨˋ ㄒㄧˇ ㄏㄨㄢ ㄨㄢˊ","ㄊㄚ ㄗㄞˋ ㄎㄢˋ ㄕㄨ"],"correct":"她不認識別人"},{"q":"誰走過去問方方要不要一起玩？","qzy":["ㄕㄟˊ","ㄗㄡˇ","ㄍㄨㄛˋ","˙ㄑㄩ","ㄨㄣˋ","ㄈㄤ","ㄈㄤ","ㄧㄠˋ","ㄅㄨˋ","ㄧㄠˋ","ㄧ","ㄑㄧˇ","ㄨㄢˊ"],"qpy":"ㄕㄟˊ ㄗㄡˇ ㄍㄨㄛˋ ˙ㄑㄩ ㄨㄣˋ ㄈㄤ ㄈㄤ ㄧㄠˋ ㄅㄨˋ ㄧㄠˋ ㄧ ㄑㄧˇ ㄨㄢˊ","qen":"Who walks over and asks Fangfang to play?","choices":["小亮","老師","媽媽","小紅"],"choicesZy":[["ㄒㄧㄠˇ","ㄌㄧㄤˋ"],["ㄌㄠˇ","ㄕ"],["ㄇㄚ","˙ㄇㄚ"],["ㄒㄧㄠˇ","ㄏㄨㄥˊ"]],"choicesPy":["ㄒㄧㄠˇ ㄌㄧㄤˋ","ㄌㄠˇ ㄕ","ㄇㄚ ˙ㄇㄚ","ㄒㄧㄠˇ ㄏㄨㄥˊ"],"correct":"小亮"},{"q":"方方教小亮做什麼？","qzy":["ㄈㄤ","ㄈㄤ","ㄐㄧㄠ","ㄒㄧㄠˇ","ㄌㄧㄤˋ","ㄗㄨㄛˋ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄈㄤ ㄈㄤ ㄐㄧㄠ ㄒㄧㄠˇ ㄌㄧㄤˋ ㄗㄨㄛˋ ㄕㄣˊ ˙ㄇㄜ","qen":"What does Fangfang teach Xiaoliang to do?","choices":["摺紙飛機","跳繩","畫畫","唱歌"],"choicesZy":[["ㄓㄜˊ","ㄓˇ","ㄈㄟ","ㄐㄧ"],["ㄊㄧㄠˋ","ㄕㄥˊ"],["ㄏㄨㄚˋ","ㄏㄨㄚˋ"],["ㄔㄤˋ","ㄍㄜ"]],"choicesPy":["ㄓㄜˊ ㄓˇ ㄈㄟ ㄐㄧ","ㄊㄧㄠˋ ㄕㄥˊ","ㄏㄨㄚˋ ㄏㄨㄚˋ","ㄔㄤˋ ㄍㄜ"],"correct":"摺紙飛機"},{"q":"這個故事主要講什麼？","qzy":["ㄓㄜˋ","˙ㄍㄜ","ㄍㄨˋ","˙ㄕ","ㄓㄨˇ","ㄧㄠˋ","ㄐㄧㄤˇ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄓㄜˋ ˙ㄍㄜ ㄍㄨˋ ˙ㄕ ㄓㄨˇ ㄧㄠˋ ㄐㄧㄤˇ ㄕㄣˊ ˙ㄇㄜ","qen":"What is this story mainly about?","choices":["兩個人成了好朋友","怎麼摺紙飛機","小亮不喜歡跳繩","方方生病了"],"choicesZy":[["ㄌㄧㄤˇ","ㄍㄜˋ","ㄖㄣˊ","ㄔㄥˊ","˙ㄌㄜ","ㄏㄠˇ","ㄆㄥˊ","ㄧㄡˇ"],["ㄗㄣˇ","˙ㄇㄜ","ㄓㄜˊ","ㄓˇ","ㄈㄟ","ㄐㄧ"],["ㄒㄧㄠˇ","ㄌㄧㄤˋ","ㄅㄨˋ","ㄒㄧˇ","ㄏㄨㄢ","ㄊㄧㄠˋ","ㄕㄥˊ"],["ㄈㄤ","ㄈㄤ","ㄕㄥ","ㄅㄧㄥˋ","˙ㄌㄜ"]],"choicesPy":["ㄌㄧㄤˇ ㄍㄜˋ ㄖㄣˊ ㄔㄥˊ ˙ㄌㄜ ㄏㄠˇ ㄆㄥˊ ㄧㄡˇ","ㄗㄣˇ ˙ㄇㄜ ㄓㄜˊ ㄓˇ ㄈㄟ ㄐㄧ","ㄒㄧㄠˇ ㄌㄧㄤˋ ㄅㄨˋ ㄒㄧˇ ㄏㄨㄢ ㄊㄧㄠˋ ㄕㄥˊ","ㄈㄤ ㄈㄤ ㄕㄥ ㄅㄧㄥˋ ˙ㄌㄜ"],"correct":"兩個人成了好朋友"}]},
+{"title":"種向日葵","titleZy":["ㄓㄨㄥˋ","ㄒㄧㄤˋ","ㄖˋ","ㄎㄨㄟˊ"],"titlePy":"ㄓㄨㄥˋ ㄒㄧㄤˋ ㄖˋ ㄎㄨㄟˊ","titleEn":"Growing a Sunflower","sentences":[{"zh":"春天，老師給每個同學一顆向日葵種子。","zy":["ㄔㄨㄣ","ㄊㄧㄢ","ㄌㄠˇ","ㄕ","ㄍㄟˇ","ㄇㄟˇ","ㄍㄜˋ","ㄊㄨㄥˊ","ㄒㄩㄝˊ","ㄧ","ㄎㄜ","ㄒㄧㄤˋ","ㄖˋ","ㄎㄨㄟˊ","ㄓㄨㄥˇ","ㄗˇ"],"py":"ㄔㄨㄣ ㄊㄧㄢ ㄌㄠˇ ㄕ ㄍㄟˇ ㄇㄟˇ ㄍㄜˋ ㄊㄨㄥˊ ㄒㄩㄝˊ ㄧ ㄎㄜ ㄒㄧㄤˋ ㄖˋ ㄎㄨㄟˊ ㄓㄨㄥˇ ㄗˇ","en":"In spring, the teacher gave each student a sunflower seed."},{"zh":"小雨把種子種在花盆裡，每天給它澆水。","zy":["ㄒㄧㄠˇ","ㄩˇ","ㄅㄚˇ","ㄓㄨㄥˇ","ㄗˇ","ㄓㄨㄥˋ","ㄗㄞˋ","ㄏㄨㄚ","ㄆㄣˊ","ㄌㄧˇ","ㄇㄟˇ","ㄊㄧㄢ","ㄍㄟˇ","ㄊㄚ","ㄐㄧㄠ","ㄕㄨㄟˇ"],"py":"ㄒㄧㄠˇ ㄩˇ ㄅㄚˇ ㄓㄨㄥˇ ㄗˇ ㄓㄨㄥˋ ㄗㄞˋ ㄏㄨㄚ ㄆㄣˊ ㄌㄧˇ ㄇㄟˇ ㄊㄧㄢ ㄍㄟˇ ㄊㄚ ㄐㄧㄠ ㄕㄨㄟˇ","en":"Xiaoyu planted the seed in a flowerpot and watered it every day."},{"zh":"過了一個星期，花盆裡長出了一個小小的綠芽。","zy":["ㄍㄨㄛˋ","˙ㄌㄜ","ㄧ","˙ㄍㄜ","ㄒㄧㄥ","ㄑㄧˊ","ㄏㄨㄚ","ㄆㄣˊ","ㄌㄧˇ","ㄓㄤˇ","ㄔㄨ","˙ㄌㄜ","ㄧ","˙ㄍㄜ","ㄒㄧㄠˇ","ㄒㄧㄠˇ","˙ㄉㄜ","ㄌㄩˋ","ㄧㄚˊ"],"py":"ㄍㄨㄛˋ ˙ㄌㄜ ㄧ ˙ㄍㄜ ㄒㄧㄥ ㄑㄧˊ ㄏㄨㄚ ㄆㄣˊ ㄌㄧˇ ㄓㄤˇ ㄔㄨ ˙ㄌㄜ ㄧ ˙ㄍㄜ ㄒㄧㄠˇ ㄒㄧㄠˇ ˙ㄉㄜ ㄌㄩˋ ㄧㄚˊ","en":"After a week, a tiny green sprout came up in the pot."},{"zh":"小雨把花盆放在窗邊，因為向日葵喜歡陽光。","zy":["ㄒㄧㄠˇ","ㄩˇ","ㄅㄚˇ","ㄏㄨㄚ","ㄆㄣˊ","ㄈㄤˋ","ㄗㄞˋ","ㄔㄨㄤ","ㄅㄧㄢ","ㄧㄣ","ㄨㄟˋ","ㄒㄧㄤˋ","ㄖˋ","ㄎㄨㄟˊ","ㄒㄧˇ","ㄏㄨㄢ","ㄧㄤˊ","ㄍㄨㄤ"],"py":"ㄒㄧㄠˇ ㄩˇ ㄅㄚˇ ㄏㄨㄚ ㄆㄣˊ ㄈㄤˋ ㄗㄞˋ ㄔㄨㄤ ㄅㄧㄢ ㄧㄣ ㄨㄟˋ ㄒㄧㄤˋ ㄖˋ ㄎㄨㄟˊ ㄒㄧˇ ㄏㄨㄢ ㄧㄤˊ ㄍㄨㄤ","en":"Xiaoyu put the pot by the window, because sunflowers like sunshine."},{"zh":"小苗一天比一天高。","zy":["ㄒㄧㄠˇ","ㄇㄧㄠˊ","ㄧ","ㄊㄧㄢ","ㄅㄧˇ","ㄧ","ㄊㄧㄢ","ㄍㄠ"],"py":"ㄒㄧㄠˇ ㄇㄧㄠˊ ㄧ ㄊㄧㄢ ㄅㄧˇ ㄧ ㄊㄧㄢ ㄍㄠ","en":"The little plant grew taller day by day."},{"zh":"到了夏天，它比小雨還高！","zy":["ㄉㄠˋ","˙ㄌㄜ","ㄒㄧㄚˋ","ㄊㄧㄢ","ㄊㄚ","ㄅㄧˇ","ㄒㄧㄠˇ","ㄩˇ","ㄏㄞˊ","ㄍㄠ"],"py":"ㄉㄠˋ ˙ㄌㄜ ㄒㄧㄚˋ ㄊㄧㄢ ㄊㄚ ㄅㄧˇ ㄒㄧㄠˇ ㄩˇ ㄏㄞˊ ㄍㄠ","en":"By summer, it was even taller than Xiaoyu!"},{"zh":"黃色的大花開了，像一個笑臉。","zy":["ㄏㄨㄤˊ","ㄙㄜˋ","˙ㄉㄜ","ㄉㄚˋ","ㄏㄨㄚ","ㄎㄞ","˙ㄌㄜ","ㄒㄧㄤˋ","ㄧ","˙ㄍㄜ","ㄒㄧㄠˋ","ㄌㄧㄢˇ"],"py":"ㄏㄨㄤˊ ㄙㄜˋ ˙ㄉㄜ ㄉㄚˋ ㄏㄨㄚ ㄎㄞ ˙ㄌㄜ ㄒㄧㄤˋ ㄧ ˙ㄍㄜ ㄒㄧㄠˋ ㄌㄧㄢˇ","en":"A big yellow flower opened, like a smiling face."}],"questions":[{"q":"老師給了同學們什麼？","qzy":["ㄌㄠˇ","ㄕ","ㄍㄟˇ","˙ㄌㄜ","ㄊㄨㄥˊ","ㄒㄩㄝˊ","˙ㄇㄣ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄌㄠˇ ㄕ ㄍㄟˇ ˙ㄌㄜ ㄊㄨㄥˊ ㄒㄩㄝˊ ˙ㄇㄣ ㄕㄣˊ ˙ㄇㄜ","qen":"What did the teacher give the students?","choices":["向日葵種子","一盆花","一本書","一個蘋果"],"choicesZy":[["ㄒㄧㄤˋ","ㄖˋ","ㄎㄨㄟˊ","ㄓㄨㄥˇ","ㄗˇ"],["ㄧ","ㄆㄣˊ","ㄏㄨㄚ"],["ㄧ","ㄅㄣˇ","ㄕㄨ"],["ㄧ","˙ㄍㄜ","ㄆㄧㄥˊ","ㄍㄨㄛˇ"]],"choicesPy":["ㄒㄧㄤˋ ㄖˋ ㄎㄨㄟˊ ㄓㄨㄥˇ ㄗˇ","ㄧ ㄆㄣˊ ㄏㄨㄚ","ㄧ ㄅㄣˇ ㄕㄨ","ㄧ ˙ㄍㄜ ㄆㄧㄥˊ ㄍㄨㄛˇ"],"correct":"向日葵種子"},{"q":"小雨為什麼把花盆放在窗邊？","qzy":["ㄒㄧㄠˇ","ㄩˇ","ㄨㄟˋ","ㄕㄣˊ","˙ㄇㄜ","ㄅㄚˇ","ㄏㄨㄚ","ㄆㄣˊ","ㄈㄤˋ","ㄗㄞˋ","ㄔㄨㄤ","ㄅㄧㄢ"],"qpy":"ㄒㄧㄠˇ ㄩˇ ㄨㄟˋ ㄕㄣˊ ˙ㄇㄜ ㄅㄚˇ ㄏㄨㄚ ㄆㄣˊ ㄈㄤˋ ㄗㄞˋ ㄔㄨㄤ ㄅㄧㄢ","qen":"Why did Xiaoyu put the pot by the window?","choices":["向日葵喜歡陽光","窗邊比較涼快","桌子上沒有地方","小貓喜歡花"],"choicesZy":[["ㄒㄧㄤˋ","ㄖˋ","ㄎㄨㄟˊ","ㄒㄧˇ","ㄏㄨㄢ","ㄧㄤˊ","ㄍㄨㄤ"],["ㄔㄨㄤ","ㄅㄧㄢ","ㄅㄧˇ","ㄐㄧㄠˋ","ㄌㄧㄤˊ","ㄎㄨㄞˋ"],["ㄓㄨㄛ","˙ㄗ","ㄕㄤˋ","ㄇㄟˊ","ㄧㄡˇ","ㄉㄧˋ","˙ㄈㄤ"],["ㄒㄧㄠˇ","ㄇㄠ","ㄒㄧˇ","ㄏㄨㄢ","ㄏㄨㄚ"]],"choicesPy":["ㄒㄧㄤˋ ㄖˋ ㄎㄨㄟˊ ㄒㄧˇ ㄏㄨㄢ ㄧㄤˊ ㄍㄨㄤ","ㄔㄨㄤ ㄅㄧㄢ ㄅㄧˇ ㄐㄧㄠˋ ㄌㄧㄤˊ ㄎㄨㄞˋ","ㄓㄨㄛ ˙ㄗ ㄕㄤˋ ㄇㄟˊ ㄧㄡˇ ㄉㄧˋ ˙ㄈㄤ","ㄒㄧㄠˇ ㄇㄠ ㄒㄧˇ ㄏㄨㄢ ㄏㄨㄚ"],"correct":"向日葵喜歡陽光"},{"q":"向日葵開了什麼顏色的花？","qzy":["ㄒㄧㄤˋ","ㄖˋ","ㄎㄨㄟˊ","ㄎㄞ","˙ㄌㄜ","ㄕㄣˊ","˙ㄇㄜ","ㄧㄢˊ","ㄙㄜˋ","˙ㄉㄜ","ㄏㄨㄚ"],"qpy":"ㄒㄧㄤˋ ㄖˋ ㄎㄨㄟˊ ㄎㄞ ˙ㄌㄜ ㄕㄣˊ ˙ㄇㄜ ㄧㄢˊ ㄙㄜˋ ˙ㄉㄜ ㄏㄨㄚ","qen":"What color flower did the sunflower have?","choices":["黃色","紅色","白色","藍色"],"choicesZy":[["ㄏㄨㄤˊ","ㄙㄜˋ"],["ㄏㄨㄥˊ","ㄙㄜˋ"],["ㄅㄞˊ","ㄙㄜˋ"],["ㄌㄢˊ","ㄙㄜˋ"]],"choicesPy":["ㄏㄨㄤˊ ㄙㄜˋ","ㄏㄨㄥˊ ㄙㄜˋ","ㄅㄞˊ ㄙㄜˋ","ㄌㄢˊ ㄙㄜˋ"],"correct":"黃色"},{"q":"從故事裡可以知道，植物長大需要什麼？","qzy":["ㄘㄨㄥˊ","ㄍㄨˋ","˙ㄕ","ㄌㄧˇ","ㄎㄜˇ","ㄧˇ","ㄓ","ㄉㄠˋ","ㄓˊ","ㄨˋ","ㄓㄤˇ","ㄉㄚˋ","ㄒㄩ","ㄧㄠˋ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄘㄨㄥˊ ㄍㄨˋ ˙ㄕ ㄌㄧˇ ㄎㄜˇ ㄧˇ ㄓ ㄉㄠˋ ㄓˊ ㄨˋ ㄓㄤˇ ㄉㄚˋ ㄒㄩ ㄧㄠˋ ㄕㄣˊ ˙ㄇㄜ","qen":"From the story, what do plants need to grow?","choices":["水和陽光","糖和牛奶","音樂和畫","雪和風"],"choicesZy":[["ㄕㄨㄟˇ","ㄏㄜˊ","ㄧㄤˊ","ㄍㄨㄤ"],["ㄊㄤˊ","ㄏㄜˊ","ㄋㄧㄡˊ","ㄋㄞˇ"],["ㄧㄣ","ㄩㄝˋ","ㄏㄜˊ","ㄏㄨㄚˋ"],["ㄒㄩㄝˇ","ㄏㄜˊ","ㄈㄥ"]],"choicesPy":["ㄕㄨㄟˇ ㄏㄜˊ ㄧㄤˊ ㄍㄨㄤ","ㄊㄤˊ ㄏㄜˊ ㄋㄧㄡˊ ㄋㄞˇ","ㄧㄣ ㄩㄝˋ ㄏㄜˊ ㄏㄨㄚˋ","ㄒㄩㄝˇ ㄏㄜˊ ㄈㄥ"],"correct":"水和陽光"}]},
+{"title":"過春節","titleZy":["ㄍㄨㄛˋ","ㄔㄨㄣ","ㄐㄧㄝˊ"],"titlePy":"ㄍㄨㄛˋ ㄔㄨㄣ ㄐㄧㄝˊ","titleEn":"Celebrating Spring Festival","sentences":[{"zh":"春節是中國最大的節日。","zy":["ㄔㄨㄣ","ㄐㄧㄝˊ","ㄕˋ","ㄓㄨㄥ","ㄍㄨㄛˊ","ㄗㄨㄟˋ","ㄉㄚˋ","˙ㄉㄜ","ㄐㄧㄝˊ","ㄖˋ"],"py":"ㄔㄨㄣ ㄐㄧㄝˊ ㄕˋ ㄓㄨㄥ ㄍㄨㄛˊ ㄗㄨㄟˋ ㄉㄚˋ ˙ㄉㄜ ㄐㄧㄝˊ ㄖˋ","en":"Spring Festival is the biggest holiday in China."},{"zh":"春節前，我和爸爸一起貼春聯。","zy":["ㄔㄨㄣ","ㄐㄧㄝˊ","ㄑㄧㄢˊ","ㄨㄛˇ","ㄏㄜˊ","ㄅㄚˋ","˙ㄅㄚ","ㄧ","ㄑㄧˇ","ㄊㄧㄝ","ㄔㄨㄣ","ㄌㄧㄢˊ"],"py":"ㄔㄨㄣ ㄐㄧㄝˊ ㄑㄧㄢˊ ㄨㄛˇ ㄏㄜˊ ㄅㄚˋ ˙ㄅㄚ ㄧ ㄑㄧˇ ㄊㄧㄝ ㄔㄨㄣ ㄌㄧㄢˊ","en":"Before Spring Festival, Dad and I put up spring couplets together."},{"zh":"除夕晚上，全家人一起包餃子。","zy":["ㄔㄨˊ","ㄒㄧˋ","ㄨㄢˇ","˙ㄕㄤ","ㄑㄩㄢˊ","ㄐㄧㄚ","ㄖㄣˊ","ㄧ","ㄑㄧˇ","ㄅㄠ","ㄐㄧㄠˇ","˙ㄗ"],"py":"ㄔㄨˊ ㄒㄧˋ ㄨㄢˇ ˙ㄕㄤ ㄑㄩㄢˊ ㄐㄧㄚ ㄖㄣˊ ㄧ ㄑㄧˇ ㄅㄠ ㄐㄧㄠˇ ˙ㄗ","en":"On New Year's Eve, the whole family makes dumplings together."},{"zh":"我包的餃子有一點醜，可是大家都說很好吃。","zy":["ㄨㄛˇ","ㄅㄠ","˙ㄉㄜ","ㄐㄧㄠˇ","˙ㄗ","ㄧㄡˇ","ㄧ","ㄉㄧㄢˇ","ㄔㄡˇ","ㄎㄜˇ","ㄕˋ","ㄉㄚˋ","ㄐㄧㄚ","ㄉㄡ","ㄕㄨㄛ","ㄏㄣˇ","ㄏㄠˇ","ㄔ"],"py":"ㄨㄛˇ ㄅㄠ ˙ㄉㄜ ㄐㄧㄠˇ ˙ㄗ ㄧㄡˇ ㄧ ㄉㄧㄢˇ ㄔㄡˇ ㄎㄜˇ ㄕˋ ㄉㄚˋ ㄐㄧㄚ ㄉㄡ ㄕㄨㄛ ㄏㄣˇ ㄏㄠˇ ㄔ","en":"The dumplings I made were a bit ugly, but everyone said they were delicious."},{"zh":"第二天早上，我穿上新衣服，給爺爺奶奶拜年。","zy":["ㄉㄧˋ","ㄦˋ","ㄊㄧㄢ","ㄗㄠˇ","˙ㄕㄤ","ㄨㄛˇ","ㄔㄨㄢ","ㄕㄤˋ","ㄒㄧㄣ","ㄧ","˙ㄈㄨ","ㄍㄟˇ","ㄧㄝˊ","˙ㄧㄝ","ㄋㄞˇ","˙ㄋㄞ","ㄅㄞˋ","ㄋㄧㄢˊ"],"py":"ㄉㄧˋ ㄦˋ ㄊㄧㄢ ㄗㄠˇ ˙ㄕㄤ ㄨㄛˇ ㄔㄨㄢ ㄕㄤˋ ㄒㄧㄣ ㄧ ˙ㄈㄨ ㄍㄟˇ ㄧㄝˊ ˙ㄧㄝ ㄋㄞˇ ˙ㄋㄞ ㄅㄞˋ ㄋㄧㄢˊ","en":"The next morning, I put on new clothes and wished Grandpa and Grandma a happy new year."},{"zh":"爺爺給了我一個紅包。","zy":["ㄧㄝˊ","˙ㄧㄝ","ㄍㄟˇ","˙ㄌㄜ","ㄨㄛˇ","ㄧ","˙ㄍㄜ","ㄏㄨㄥˊ","ㄅㄠ"],"py":"ㄧㄝˊ ˙ㄧㄝ ㄍㄟˇ ˙ㄌㄜ ㄨㄛˇ ㄧ ˙ㄍㄜ ㄏㄨㄥˊ ㄅㄠ","en":"Grandpa gave me a red envelope."},{"zh":"我說：“祝爺爺身體健康！”","zy":["ㄨㄛˇ","ㄕㄨㄛ","ㄓㄨˋ","ㄧㄝˊ","˙ㄧㄝ","ㄕㄣ","ㄊㄧˇ","ㄐㄧㄢˋ","ㄎㄤ"],"py":"ㄨㄛˇ ㄕㄨㄛ ㄓㄨˋ ㄧㄝˊ ˙ㄧㄝ ㄕㄣ ㄊㄧˇ ㄐㄧㄢˋ ㄎㄤ","en":"I said, \"I wish you good health, Grandpa!\""},{"zh":"我最喜歡過春節了。","zy":["ㄨㄛˇ","ㄗㄨㄟˋ","ㄒㄧˇ","ㄏㄨㄢ","ㄍㄨㄛˋ","ㄔㄨㄣ","ㄐㄧㄝˊ","˙ㄌㄜ"],"py":"ㄨㄛˇ ㄗㄨㄟˋ ㄒㄧˇ ㄏㄨㄢ ㄍㄨㄛˋ ㄔㄨㄣ ㄐㄧㄝˊ ˙ㄌㄜ","en":"I love Spring Festival most of all."}],"questions":[{"q":"除夕晚上全家人一起做什麼？","qzy":["ㄔㄨˊ","ㄒㄧˋ","ㄨㄢˇ","˙ㄕㄤ","ㄑㄩㄢˊ","ㄐㄧㄚ","ㄖㄣˊ","ㄧ","ㄑㄧˇ","ㄗㄨㄛˋ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄔㄨˊ ㄒㄧˋ ㄨㄢˇ ˙ㄕㄤ ㄑㄩㄢˊ ㄐㄧㄚ ㄖㄣˊ ㄧ ㄑㄧˇ ㄗㄨㄛˋ ㄕㄣˊ ˙ㄇㄜ","qen":"What does the whole family do together on New Year's Eve?","choices":["包餃子","貼春聯","看月亮","買水果"],"choicesZy":[["ㄅㄠ","ㄐㄧㄠˇ","˙ㄗ"],["ㄊㄧㄝ","ㄔㄨㄣ","ㄌㄧㄢˊ"],["ㄎㄢˋ","ㄩㄝˋ","ㄌㄧㄤˋ"],["ㄇㄞˇ","ㄕㄨㄟˇ","ㄍㄨㄛˇ"]],"choicesPy":["ㄅㄠ ㄐㄧㄠˇ ˙ㄗ","ㄊㄧㄝ ㄔㄨㄣ ㄌㄧㄢˊ","ㄎㄢˋ ㄩㄝˋ ㄌㄧㄤˋ","ㄇㄞˇ ㄕㄨㄟˇ ㄍㄨㄛˇ"],"correct":"包餃子"},{"q":"誰給了“我”一個紅包？","qzy":["ㄕㄟˊ","ㄍㄟˇ","˙ㄌㄜ","ㄨㄛˇ","ㄧ","˙ㄍㄜ","ㄏㄨㄥˊ","ㄅㄠ"],"qpy":"ㄕㄟˊ ㄍㄟˇ ˙ㄌㄜ ㄨㄛˇ ㄧ ˙ㄍㄜ ㄏㄨㄥˊ ㄅㄠ","qen":"Who gave \"me\" a red envelope?","choices":["爺爺","爸爸","奶奶","媽媽"],"choicesZy":[["ㄧㄝˊ","˙ㄧㄝ"],["ㄅㄚˋ","˙ㄅㄚ"],["ㄋㄞˇ","˙ㄋㄞ"],["ㄇㄚ","˙ㄇㄚ"]],"choicesPy":["ㄧㄝˊ ˙ㄧㄝ","ㄅㄚˋ ˙ㄅㄚ","ㄋㄞˇ ˙ㄋㄞ","ㄇㄚ ˙ㄇㄚ"],"correct":"爺爺"},{"q":"“我”和爸爸一起貼什麼？","qzy":["ㄨㄛˇ","ㄏㄜˊ","ㄅㄚˋ","˙ㄅㄚ","ㄧ","ㄑㄧˇ","ㄊㄧㄝ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄨㄛˇ ㄏㄜˊ ㄅㄚˋ ˙ㄅㄚ ㄧ ㄑㄧˇ ㄊㄧㄝ ㄕㄣˊ ˙ㄇㄜ","qen":"What do \"I\" and Dad put up together?","choices":["春聯","紅包","餃子","新衣服"],"choicesZy":[["ㄔㄨㄣ","ㄌㄧㄢˊ"],["ㄏㄨㄥˊ","ㄅㄠ"],["ㄐㄧㄠˇ","˙ㄗ"],["ㄒㄧㄣ","ㄧ","˙ㄈㄨ"]],"choicesPy":["ㄔㄨㄣ ㄌㄧㄢˊ","ㄏㄨㄥˊ ㄅㄠ","ㄐㄧㄠˇ ˙ㄗ","ㄒㄧㄣ ㄧ ˙ㄈㄨ"],"correct":"春聯"},{"q":"這個故事主要講什麼？","qzy":["ㄓㄜˋ","˙ㄍㄜ","ㄍㄨˋ","˙ㄕ","ㄓㄨˇ","ㄧㄠˋ","ㄐㄧㄤˇ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄓㄜˋ ˙ㄍㄜ ㄍㄨˋ ˙ㄕ ㄓㄨˇ ㄧㄠˋ ㄐㄧㄤˇ ㄕㄣˊ ˙ㄇㄜ","qen":"What is this story mainly about?","choices":["一家人怎麼過春節","怎麼買新衣服","爺爺生病了","去學校上課"],"choicesZy":[["ㄧ","ㄐㄧㄚ","ㄖㄣˊ","ㄗㄣˇ","˙ㄇㄜ","ㄍㄨㄛˋ","ㄔㄨㄣ","ㄐㄧㄝˊ"],["ㄗㄣˇ","˙ㄇㄜ","ㄇㄞˇ","ㄒㄧㄣ","ㄧ","˙ㄈㄨ"],["ㄧㄝˊ","˙ㄧㄝ","ㄕㄥ","ㄅㄧㄥˋ","˙ㄌㄜ"],["ㄑㄩˋ","ㄒㄩㄝˊ","ㄒㄧㄠˋ","ㄕㄤˋ","ㄎㄜˋ"]],"choicesPy":["ㄧ ㄐㄧㄚ ㄖㄣˊ ㄗㄣˇ ˙ㄇㄜ ㄍㄨㄛˋ ㄔㄨㄣ ㄐㄧㄝˊ","ㄗㄣˇ ˙ㄇㄜ ㄇㄞˇ ㄒㄧㄣ ㄧ ˙ㄈㄨ","ㄧㄝˊ ˙ㄧㄝ ㄕㄥ ㄅㄧㄥˋ ˙ㄌㄜ","ㄑㄩˋ ㄒㄩㄝˊ ㄒㄧㄠˋ ㄕㄤˋ ㄎㄜˋ"],"correct":"一家人怎麼過春節"}]},
+{"title":"彩虹是怎麼來的","titleZy":["ㄘㄞˇ","ㄏㄨㄥˊ","ㄕˋ","ㄗㄣˇ","˙ㄇㄜ","ㄌㄞˊ","˙ㄉㄜ"],"titlePy":"ㄘㄞˇ ㄏㄨㄥˊ ㄕˋ ㄗㄣˇ ˙ㄇㄜ ㄌㄞˊ ˙ㄉㄜ","titleEn":"Where Rainbows Come From","sentences":[{"zh":"下過雨以後，天上有時候會出現彩虹。","zy":["ㄒㄧㄚˋ","ㄍㄨㄛˋ","ㄩˇ","ㄧˇ","ㄏㄡˋ","ㄊㄧㄢ","ㄕㄤˋ","ㄧㄡˇ","ㄕˊ","˙ㄏㄡ","ㄏㄨㄟˋ","ㄔㄨ","ㄒㄧㄢˋ","ㄘㄞˇ","ㄏㄨㄥˊ"],"py":"ㄒㄧㄚˋ ㄍㄨㄛˋ ㄩˇ ㄧˇ ㄏㄡˋ ㄊㄧㄢ ㄕㄤˋ ㄧㄡˇ ㄕˊ ˙ㄏㄡ ㄏㄨㄟˋ ㄔㄨ ㄒㄧㄢˋ ㄘㄞˇ ㄏㄨㄥˊ","en":"After it rains, a rainbow sometimes appears in the sky."},{"zh":"彩虹是怎麼來的呢？","zy":["ㄘㄞˇ","ㄏㄨㄥˊ","ㄕˋ","ㄗㄣˇ","˙ㄇㄜ","ㄌㄞˊ","˙ㄉㄜ","˙ㄋㄜ"],"py":"ㄘㄞˇ ㄏㄨㄥˊ ㄕˋ ㄗㄣˇ ˙ㄇㄜ ㄌㄞˊ ˙ㄉㄜ ˙ㄋㄜ","en":"Where does a rainbow come from?"},{"zh":"陽光看起來是白色的，其實裡面有很多種顏色。","zy":["ㄧㄤˊ","ㄍㄨㄤ","ㄎㄢˋ","ㄑㄧˇ","ㄌㄞˊ","ㄕˋ","ㄅㄞˊ","ㄙㄜˋ","˙ㄉㄜ","ㄑㄧˊ","ㄕˊ","ㄌㄧˇ","ㄇㄧㄢˋ","ㄧㄡˇ","ㄏㄣˇ","ㄉㄨㄛ","ㄓㄨㄥˇ","ㄧㄢˊ","ㄙㄜˋ"],"py":"ㄧㄤˊ ㄍㄨㄤ ㄎㄢˋ ㄑㄧˇ ㄌㄞˊ ㄕˋ ㄅㄞˊ ㄙㄜˋ ˙ㄉㄜ ㄑㄧˊ ㄕˊ ㄌㄧˇ ㄇㄧㄢˋ ㄧㄡˇ ㄏㄣˇ ㄉㄨㄛ ㄓㄨㄥˇ ㄧㄢˊ ㄙㄜˋ","en":"Sunlight looks white, but it actually has many colors inside it."},{"zh":"雨後，空氣裡還有很多小水滴。","zy":["ㄩˇ","ㄏㄡˋ","ㄎㄨㄥ","ㄑㄧˋ","ㄌㄧˇ","ㄏㄞˊ","ㄧㄡˇ","ㄏㄣˇ","ㄉㄨㄛ","ㄒㄧㄠˇ","ㄕㄨㄟˇ","ㄉㄧ"],"py":"ㄩˇ ㄏㄡˋ ㄎㄨㄥ ㄑㄧˋ ㄌㄧˇ ㄏㄞˊ ㄧㄡˇ ㄏㄣˇ ㄉㄨㄛ ㄒㄧㄠˇ ㄕㄨㄟˇ ㄉㄧ","en":"After rain, there are still lots of tiny water drops in the air."},{"zh":"陽光照進小水滴，就會分成不同的顏色。","zy":["ㄧㄤˊ","ㄍㄨㄤ","ㄓㄠˋ","ㄐㄧㄣˋ","ㄒㄧㄠˇ","ㄕㄨㄟˇ","ㄉㄧ","ㄐㄧㄡˋ","ㄏㄨㄟˋ","ㄈㄣ","ㄔㄥˊ","ㄅㄨˋ","ㄊㄨㄥˊ","˙ㄉㄜ","ㄧㄢˊ","ㄙㄜˋ"],"py":"ㄧㄤˊ ㄍㄨㄤ ㄓㄠˋ ㄐㄧㄣˋ ㄒㄧㄠˇ ㄕㄨㄟˇ ㄉㄧ ㄐㄧㄡˋ ㄏㄨㄟˋ ㄈㄣ ㄔㄥˊ ㄅㄨˋ ㄊㄨㄥˊ ˙ㄉㄜ ㄧㄢˊ ㄙㄜˋ","en":"When sunlight shines into the tiny drops, it splits into different colors."},{"zh":"這些顏色排在一起，就是彩虹。","zy":["ㄓㄜˋ","ㄒㄧㄝ","ㄧㄢˊ","ㄙㄜˋ","ㄆㄞˊ","ㄗㄞˋ","ㄧ","ㄑㄧˇ","ㄐㄧㄡˋ","ㄕˋ","ㄘㄞˇ","ㄏㄨㄥˊ"],"py":"ㄓㄜˋ ㄒㄧㄝ ㄧㄢˊ ㄙㄜˋ ㄆㄞˊ ㄗㄞˋ ㄧ ㄑㄧˇ ㄐㄧㄡˋ ㄕˋ ㄘㄞˇ ㄏㄨㄥˊ","en":"These colors lined up together make a rainbow."},{"zh":"彩虹一般有七種顏色。","zy":["ㄘㄞˇ","ㄏㄨㄥˊ","ㄧ","ㄅㄢ","ㄧㄡˇ","ㄑㄧ","ㄓㄨㄥˇ","ㄧㄢˊ","ㄙㄜˋ"],"py":"ㄘㄞˇ ㄏㄨㄥˊ ㄧ ㄅㄢ ㄧㄡˇ ㄑㄧ ㄓㄨㄥˇ ㄧㄢˊ ㄙㄜˋ","en":"A rainbow usually has seven colors."},{"zh":"如果你背對著太陽，就更容易看到彩虹。","zy":["ㄖㄨˊ","ㄍㄨㄛˇ","ㄋㄧˇ","ㄅㄟˋ","ㄉㄨㄟˋ","˙ㄓㄜ","ㄊㄞˋ","ㄧㄤˊ","ㄐㄧㄡˋ","ㄍㄥˋ","ㄖㄨㄥˊ","ㄧˋ","ㄎㄢˋ","ㄉㄠˋ","ㄘㄞˇ","ㄏㄨㄥˊ"],"py":"ㄖㄨˊ ㄍㄨㄛˇ ㄋㄧˇ ㄅㄟˋ ㄉㄨㄟˋ ˙ㄓㄜ ㄊㄞˋ ㄧㄤˊ ㄐㄧㄡˋ ㄍㄥˋ ㄖㄨㄥˊ ㄧˋ ㄎㄢˋ ㄉㄠˋ ㄘㄞˇ ㄏㄨㄥˊ","en":"If you stand with your back to the sun, it is easier to see a rainbow."}],"questions":[{"q":"彩虹一般有幾種顏色？","qzy":["ㄘㄞˇ","ㄏㄨㄥˊ","ㄧ","ㄅㄢ","ㄧㄡˇ","ㄐㄧˇ","ㄓㄨㄥˇ","ㄧㄢˊ","ㄙㄜˋ"],"qpy":"ㄘㄞˇ ㄏㄨㄥˊ ㄧ ㄅㄢ ㄧㄡˇ ㄐㄧˇ ㄓㄨㄥˇ ㄧㄢˊ ㄙㄜˋ","qen":"How many colors does a rainbow usually have?","choices":["七種","五種","三種","十種"],"choicesZy":[["ㄑㄧ","ㄓㄨㄥˇ"],["ㄨˇ","ㄓㄨㄥˇ"],["ㄙㄢ","ㄓㄨㄥˇ"],["ㄕˊ","ㄓㄨㄥˇ"]],"choicesPy":["ㄑㄧ ㄓㄨㄥˇ","ㄨˇ ㄓㄨㄥˇ","ㄙㄢ ㄓㄨㄥˇ","ㄕˊ ㄓㄨㄥˇ"],"correct":"七種"},{"q":"雨後空氣裡有什麼？","qzy":["ㄩˇ","ㄏㄡˋ","ㄎㄨㄥ","ㄑㄧˋ","ㄌㄧˇ","ㄧㄡˇ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄩˇ ㄏㄡˋ ㄎㄨㄥ ㄑㄧˋ ㄌㄧˇ ㄧㄡˇ ㄕㄣˊ ˙ㄇㄜ","qen":"What is in the air after rain?","choices":["很多小水滴","很多小鳥","很多雪花","很多花"],"choicesZy":[["ㄏㄣˇ","ㄉㄨㄛ","ㄒㄧㄠˇ","ㄕㄨㄟˇ","ㄉㄧ"],["ㄏㄣˇ","ㄉㄨㄛ","ㄒㄧㄠˇ","ㄋㄧㄠˇ"],["ㄏㄣˇ","ㄉㄨㄛ","ㄒㄩㄝˇ","ㄏㄨㄚ"],["ㄏㄣˇ","ㄉㄨㄛ","ㄏㄨㄚ"]],"choicesPy":["ㄏㄣˇ ㄉㄨㄛ ㄒㄧㄠˇ ㄕㄨㄟˇ ㄉㄧ","ㄏㄣˇ ㄉㄨㄛ ㄒㄧㄠˇ ㄋㄧㄠˇ","ㄏㄣˇ ㄉㄨㄛ ㄒㄩㄝˇ ㄏㄨㄚ","ㄏㄣˇ ㄉㄨㄛ ㄏㄨㄚ"],"correct":"很多小水滴"},{"q":"什麼時候可能會看到彩虹？","qzy":["ㄕㄣˊ","˙ㄇㄜ","ㄕˊ","ㄏㄡˋ","ㄎㄜˇ","ㄋㄥˊ","ㄏㄨㄟˋ","ㄎㄢˋ","ㄉㄠˋ","ㄘㄞˇ","ㄏㄨㄥˊ"],"qpy":"ㄕㄣˊ ˙ㄇㄜ ㄕˊ ㄏㄡˋ ㄎㄜˇ ㄋㄥˊ ㄏㄨㄟˋ ㄎㄢˋ ㄉㄠˋ ㄘㄞˇ ㄏㄨㄥˊ","qen":"When might you see a rainbow?","choices":["下過雨以後","下雪的時候","半夜","颳大風的時候"],"choicesZy":[["ㄒㄧㄚˋ","ㄍㄨㄛˋ","ㄩˇ","ㄧˇ","ㄏㄡˋ"],["ㄒㄧㄚˋ","ㄒㄩㄝˇ","˙ㄉㄜ","ㄕˊ","ㄏㄡˋ"],["ㄅㄢˋ","ㄧㄝˋ"],["ㄍㄨㄚ","ㄉㄚˋ","ㄈㄥ","˙ㄉㄜ","ㄕˊ","ㄏㄡˋ"]],"choicesPy":["ㄒㄧㄚˋ ㄍㄨㄛˋ ㄩˇ ㄧˇ ㄏㄡˋ","ㄒㄧㄚˋ ㄒㄩㄝˇ ˙ㄉㄜ ㄕˊ ㄏㄡˋ","ㄅㄢˋ ㄧㄝˋ","ㄍㄨㄚ ㄉㄚˋ ㄈㄥ ˙ㄉㄜ ㄕˊ ㄏㄡˋ"],"correct":"下過雨以後"},{"q":"這篇文章主要講什麼？","qzy":["ㄓㄜˋ","ㄆㄧㄢ","ㄨㄣˊ","ㄓㄤ","ㄓㄨˇ","ㄧㄠˋ","ㄐㄧㄤˇ","ㄕㄣˊ","˙ㄇㄜ"],"qpy":"ㄓㄜˋ ㄆㄧㄢ ㄨㄣˊ ㄓㄤ ㄓㄨˇ ㄧㄠˋ ㄐㄧㄤˇ ㄕㄣˊ ˙ㄇㄜ","qen":"What is this passage mainly about?","choices":["彩虹是怎麼來的","怎麼畫彩虹","雨是怎麼來的","太陽有多大"],"choicesZy":[["ㄘㄞˇ","ㄏㄨㄥˊ","ㄕˋ","ㄗㄣˇ","˙ㄇㄜ","ㄌㄞˊ","˙ㄉㄜ"],["ㄗㄣˇ","˙ㄇㄜ","ㄏㄨㄚˋ","ㄘㄞˇ","ㄏㄨㄥˊ"],["ㄩˇ","ㄕˋ","ㄗㄣˇ","˙ㄇㄜ","ㄌㄞˊ","˙ㄉㄜ"],["ㄊㄞˋ","ㄧㄤˊ","ㄧㄡˇ","ㄉㄨㄛ","ㄉㄚˋ"]],"choicesPy":["ㄘㄞˇ ㄏㄨㄥˊ ㄕˋ ㄗㄣˇ ˙ㄇㄜ ㄌㄞˊ ˙ㄉㄜ","ㄗㄣˇ ˙ㄇㄜ ㄏㄨㄚˋ ㄘㄞˇ ㄏㄨㄥˊ","ㄩˇ ㄕˋ ㄗㄣˇ ˙ㄇㄜ ㄌㄞˊ ˙ㄉㄜ","ㄊㄞˋ ㄧㄤˊ ㄧㄡˇ ㄉㄨㄛ ㄉㄚˋ"],"correct":"彩虹是怎麼來的"}]},
+{"title":"好幫手","titleZy":["ㄏㄠˇ","ㄅㄤ","ㄕㄡˇ"],"titlePy":"ㄏㄠˇ ㄅㄤ ㄕㄡˇ","titleEn":"Good Helpers","sentences":[{"zh":"星期天，媽媽生病了，躺在床上休息。","zy":["ㄒㄧㄥ","ㄑㄧˊ","ㄊㄧㄢ","ㄇㄚ","˙ㄇㄚ","ㄕㄥ","ㄅㄧㄥˋ","˙ㄌㄜ","ㄊㄤˇ","ㄗㄞˋ","ㄔㄨㄤˊ","ㄕㄤˋ","ㄒㄧㄡ","ㄒㄧˊ"],"py":"ㄒㄧㄥ ㄑㄧˊ ㄊㄧㄢ ㄇㄚ ˙ㄇㄚ ㄕㄥ ㄅㄧㄥˋ ˙ㄌㄜ ㄊㄤˇ ㄗㄞˋ ㄔㄨㄤˊ ㄕㄤˋ ㄒㄧㄡ ㄒㄧˊ","en":"On Sunday, Mom was sick and lay in bed to rest."},{"zh":"小杰對弟弟說：“今天我們來做家務吧！”","zy":["ㄒㄧㄠˇ","ㄐㄧㄝˊ","ㄉㄨㄟˋ","ㄉㄧˋ","˙ㄉㄧ","ㄕㄨㄛ","ㄐㄧㄣ","ㄊㄧㄢ","ㄨㄛˇ","˙ㄇㄣ","ㄌㄞˊ","ㄗㄨㄛˋ","ㄐㄧㄚ","ㄨˋ","˙ㄅㄚ"],"py":"ㄒㄧㄠˇ ㄐㄧㄝˊ ㄉㄨㄟˋ ㄉㄧˋ ˙ㄉㄧ ㄕㄨㄛ ㄐㄧㄣ ㄊㄧㄢ ㄨㄛˇ ˙ㄇㄣ ㄌㄞˊ ㄗㄨㄛˋ ㄐㄧㄚ ㄨˋ ˙ㄅㄚ","en":"Xiaojie said to his little brother, \"Let's do the housework today!\""},{"zh":"小杰掃地，弟弟擦桌子。","zy":["ㄒㄧㄠˇ","ㄐㄧㄝˊ","ㄙㄠˇ","ㄉㄧˋ","ㄉㄧˋ","˙ㄉㄧ","ㄘㄚ","ㄓㄨㄛ","˙ㄗ"],"py":"ㄒㄧㄠˇ ㄐㄧㄝˊ ㄙㄠˇ ㄉㄧˋ ㄉㄧˋ ˙ㄉㄧ ㄘㄚ ㄓㄨㄛ ˙ㄗ","en":"Xiaojie swept the floor, and his brother wiped the table."},{"zh":"中午，他們一起做了簡單的麵條。","zy":["ㄓㄨㄥ","ㄨˇ","ㄊㄚ","˙ㄇㄣ","ㄧ","ㄑㄧˇ","ㄗㄨㄛˋ","˙ㄌㄜ","ㄐㄧㄢˇ","ㄉㄢ","˙ㄉㄜ","ㄇㄧㄢˋ","ㄊㄧㄠˊ"],"py":"ㄓㄨㄥ ㄨˇ ㄊㄚ ˙ㄇㄣ ㄧ ㄑㄧˇ ㄗㄨㄛˋ ˙ㄌㄜ ㄐㄧㄢˇ ㄉㄢ ˙ㄉㄜ ㄇㄧㄢˋ ㄊㄧㄠˊ","en":"At noon, they made simple noodles together."},{"zh":"弟弟不小心把碗打破了。","zy":["ㄉㄧˋ","˙ㄉㄧ","ㄅㄨˋ","ㄒㄧㄠˇ","ㄒㄧㄣ","ㄅㄚˇ","ㄨㄢˇ","ㄉㄚˇ","ㄆㄛˋ","˙ㄌㄜ"],"py":"ㄉㄧˋ ˙ㄉㄧ ㄅㄨˋ ㄒㄧㄠˇ ㄒㄧㄣ ㄅㄚˇ ㄨㄢˇ ㄉㄚˇ ㄆㄛˋ ˙ㄌㄜ","en":"His brother accidentally broke a bowl."},{"zh":"他很害怕，可是小杰說：“沒關係，我們一起收拾。”","zy":["ㄊㄚ","ㄏㄣˇ","ㄏㄞˋ","ㄆㄚˋ","ㄎㄜˇ","ㄕˋ","ㄒㄧㄠˇ","ㄐㄧㄝˊ","ㄕㄨㄛ","ㄇㄟˊ","ㄍㄨㄢ","˙ㄒㄧ","ㄨㄛˇ","˙ㄇㄣ","ㄧ","ㄑㄧˇ","ㄕㄡ","ㄕˊ"],"py":"ㄊㄚ ㄏㄣˇ ㄏㄞˋ ㄆㄚˋ ㄎㄜˇ ㄕˋ ㄒㄧㄠˇ ㄐㄧㄝˊ ㄕㄨㄛ ㄇㄟˊ ㄍㄨㄢ ˙ㄒㄧ ㄨㄛˇ ˙ㄇㄣ ㄧ ㄑㄧˇ ㄕㄡ ㄕˊ","en":"He was scared, but Xiaojie said, \"It's okay. Let's clean it up together.\""},{"zh":"晚上，媽媽看到乾乾淨淨的家，感動地笑了。","zy":["ㄨㄢˇ","˙ㄕㄤ","ㄇㄚ","˙ㄇㄚ","ㄎㄢˋ","ㄉㄠˋ","ㄍㄢ","ㄍㄢ","ㄐㄧㄥˋ","ㄐㄧㄥˋ","˙ㄉㄜ","ㄐㄧㄚ","ㄍㄢˇ","ㄉㄨㄥˋ","˙ㄉㄜ","ㄒㄧㄠˋ","˙ㄌㄜ"],"py":"ㄨㄢˇ ˙ㄕㄤ ㄇㄚ ˙ㄇㄚ ㄎㄢˋ ㄉㄠˋ ㄍㄢ ㄍㄢ ㄐㄧㄥˋ ㄐㄧㄥˋ ˙ㄉㄜ ㄐㄧㄚ ㄍㄢˇ ㄉㄨㄥˋ ˙ㄉㄜ ㄒㄧㄠˋ ˙ㄌㄜ","en":"In the evening, Mom saw the clean, tidy home and smiled, touched."},{"zh":"她說：“你們真是我的好幫手！”","zy":["ㄊㄚ","ㄕㄨㄛ","ㄋㄧˇ","˙ㄇㄣ","ㄓㄣ","ㄕˋ","ㄨㄛˇ","˙ㄉㄜ","ㄏㄠˇ","ㄅㄤ","ㄕㄡˇ"],"py":"ㄊㄚ ㄕㄨㄛ ㄋㄧˇ ˙ㄇㄣ ㄓㄣ ㄕˋ ㄨㄛˇ ˙ㄉㄜ ㄏㄠˇ ㄅㄤ ㄕㄡˇ","en":"She said, \"You are truly my good helpers!\""}],"questions":[{"q":"媽媽為什麼躺在床上？","qzy":["ㄇㄚ","˙ㄇㄚ","ㄨㄟˋ","ㄕㄣˊ","˙ㄇㄜ","ㄊㄤˇ","ㄗㄞˋ","ㄔㄨㄤˊ","ㄕㄤˋ"],"qpy":"ㄇㄚ ˙ㄇㄚ ㄨㄟˋ ㄕㄣˊ ˙ㄇㄜ ㄊㄤˇ ㄗㄞˋ ㄔㄨㄤˊ ㄕㄤˋ","qen":"Why is Mom lying in bed?","choices":["她生病了","她在看書","她在看電視","她在打電話"],"choicesZy":[["ㄊㄚ","ㄕㄥ","ㄅㄧㄥˋ","˙ㄌㄜ"],["ㄊㄚ","ㄗㄞˋ","ㄎㄢˋ","ㄕㄨ"],["ㄊㄚ","ㄗㄞˋ","ㄎㄢˋ","ㄉㄧㄢˋ","ㄕˋ"],["ㄊㄚ","ㄗㄞˋ","ㄉㄚˇ","ㄉㄧㄢˋ","ㄏㄨㄚˋ"]],"choicesPy":["ㄊㄚ ㄕㄥ ㄅㄧㄥˋ ˙ㄌㄜ","ㄊㄚ ㄗㄞˋ ㄎㄢˋ ㄕㄨ","ㄊㄚ ㄗㄞˋ ㄎㄢˋ ㄉㄧㄢˋ ㄕˋ","ㄊㄚ ㄗㄞˋ ㄉㄚˇ ㄉㄧㄢˋ ㄏㄨㄚˋ"],"correct":"她生病了"},{"q":"誰擦桌子？","qzy":["ㄕㄟˊ","ㄘㄚ","ㄓㄨㄛ","˙ㄗ"],"qpy":"ㄕㄟˊ ㄘㄚ ㄓㄨㄛ ˙ㄗ","qen":"Who wipes the table?","choices":["弟弟","小杰","媽媽","爸爸"],"choicesZy":[["ㄉㄧˋ","˙ㄉㄧ"],["ㄒㄧㄠˇ","ㄐㄧㄝˊ"],["ㄇㄚ","˙ㄇㄚ"],["ㄅㄚˋ","˙ㄅㄚ"]],"choicesPy":["ㄉㄧˋ ˙ㄉㄧ","ㄒㄧㄠˇ ㄐㄧㄝˊ","ㄇㄚ ˙ㄇㄚ","ㄅㄚˋ ˙ㄅㄚ"],"correct":"弟弟"},{"q":"他們中午做了什麼吃的？","qzy":["ㄊㄚ","˙ㄇㄣ","ㄓㄨㄥ","ㄨˇ","ㄗㄨㄛˋ","˙ㄌㄜ","ㄕㄣˊ","˙ㄇㄜ","ㄔ","˙ㄉㄜ"],"qpy":"ㄊㄚ ˙ㄇㄣ ㄓㄨㄥ ㄨˇ ㄗㄨㄛˋ ˙ㄌㄜ ㄕㄣˊ ˙ㄇㄜ ㄔ ˙ㄉㄜ","qen":"What food did they make at noon?","choices":["麵條","餃子","蛋糕","米飯"],"choicesZy":[["ㄇㄧㄢˋ","ㄊㄧㄠˊ"],["ㄐㄧㄠˇ","˙ㄗ"],["ㄉㄢˋ","ㄍㄠ"],["ㄇㄧˇ","ㄈㄢˋ"]],"choicesPy":["ㄇㄧㄢˋ ㄊㄧㄠˊ","ㄐㄧㄠˇ ˙ㄗ","ㄉㄢˋ ㄍㄠ","ㄇㄧˇ ㄈㄢˋ"],"correct":"麵條"},{"q":"從故事看，小杰是一個怎樣的哥哥？","qzy":["ㄘㄨㄥˊ","ㄍㄨˋ","˙ㄕ","ㄎㄢˋ","ㄒㄧㄠˇ","ㄐㄧㄝˊ","ㄕˋ","ㄧ","˙ㄍㄜ","ㄗㄣˇ","ㄧㄤˋ","˙ㄉㄜ","ㄍㄜ","˙ㄍㄜ"],"qpy":"ㄘㄨㄥˊ ㄍㄨˋ ˙ㄕ ㄎㄢˋ ㄒㄧㄠˇ ㄐㄧㄝˊ ㄕˋ ㄧ ˙ㄍㄜ ㄗㄣˇ ㄧㄤˋ ˙ㄉㄜ ㄍㄜ ˙ㄍㄜ","qen":"From the story, what kind of big brother is Xiaojie?","choices":["會照顧家人的哥哥","很懶的哥哥","愛生氣的哥哥","不愛說話的哥哥"],"choicesZy":[["ㄏㄨㄟˋ","ㄓㄠˋ","ㄍㄨˋ","ㄐㄧㄚ","ㄖㄣˊ","˙ㄉㄜ","ㄍㄜ","˙ㄍㄜ"],["ㄏㄣˇ","ㄌㄢˇ","˙ㄉㄜ","ㄍㄜ","˙ㄍㄜ"],["ㄞˋ","ㄕㄥ","ㄑㄧˋ","˙ㄉㄜ","ㄍㄜ","˙ㄍㄜ"],["ㄅㄨˋ","ㄞˋ","ㄕㄨㄛ","ㄏㄨㄚˋ","˙ㄉㄜ","ㄍㄜ","˙ㄍㄜ"]],"choicesPy":["ㄏㄨㄟˋ ㄓㄠˋ ㄍㄨˋ ㄐㄧㄚ ㄖㄣˊ ˙ㄉㄜ ㄍㄜ ˙ㄍㄜ","ㄏㄣˇ ㄌㄢˇ ˙ㄉㄜ ㄍㄜ ˙ㄍㄜ","ㄞˋ ㄕㄥ ㄑㄧˋ ˙ㄉㄜ ㄍㄜ ˙ㄍㄜ","ㄅㄨˋ ㄞˋ ㄕㄨㄛ ㄏㄨㄚˋ ˙ㄉㄜ ㄍㄜ ˙ㄍㄜ"],"correct":"會照顧家人的哥哥"}]}
+];
+/* ================= CHINESE TRAIL (中文) — two scripts: 简体+拼音 / 繁體+注音 =================
    For heritage learners reading below Chinese grade level: three adaptive sessions (拼音 Pinyin,
    认字 Characters, 阅读 Reading). Question TYPE climbs with Elevation (tones -> sounds -> words ->
    sentences -> radicals), and the character pool widens with it (ZH_CHARS tiers 1-6). 🔊 buttons use
@@ -1920,11 +2335,25 @@ function zhMark(base,t){
 function zhTonePositions(py){ const out=[]; [...py].forEach((ch,i)=>{ for(const [v,set] of Object.entries(ZH_TONE_VOWELS)){ const k=set.indexOf(ch); if(k>=0) out.push({i,vowel:v,tone:k+1}); } }); return out; }
 function zhRetone(py,pos,t){ const arr=[...py]; arr[pos.i]=ZH_TONE_VOWELS[pos.vowel][t-1]; return arr.join(''); }
 const ZH_CONFUSABLE=[['木','树','林'],['晚','夜'],['心','爱'],['米','饭'],['歌','唱'],['老','年','岁'],['光','灯'],['去','走','出'],['想','要'],['糖','甜'],['读','书'],['吃','饭'],['风','气'],['冬','雪'],['口','吃'],['大','太'],['日','白'],['人','大']];
-function zhConfusable(a,b){ return ZH_CONFUSABLE.some(g=>g.includes(a)&&g.includes(b)); }
+function zhConfusable(a,b,d){ return ((d&&d.confusable)||ZH_CONFUSABLE).some(g=>g.includes(a)&&g.includes(b)); }
 const ZH_RADICAL_FAMILIES=[['水','氵'],['火','灬'],['心','忄'],['人','亻'],['手','扌'],['言','讠'],['金','钅'],['食','饣'],['衣','衤'],['犬','犭'],['艸','艹'],['竹','⺮'],['足','⻊'],['刀','刂'],['玉','王']];
-function zhSameRadicalFamily(a,b){ return a===b||ZH_RADICAL_FAMILIES.some(f=>f.includes(a)&&f.includes(b)); }
+function zhSameRadicalFamily(a,b,d){ return a===b||((d&&d.families)||ZH_RADICAL_FAMILIES).some(f=>f.includes(a)&&f.includes(b)); }
 const ZH_RADICAL_NAMES={'氵':'三点水 · water','亻':'单人旁 · person','扌':'提手旁 · hand','讠':'言字旁 · speech','钅':'金字旁 · metal','饣':'食字旁 · food','艹':'草字头 · grass','⺮':'竹字头 · bamboo','⻊':'足字旁 · foot','忄':'竖心旁 · heart','犭':'反犬旁 · animal','纟':'绞丝旁 · silk','礻':'示字旁 · spirit','衤':'衣字旁 · clothes','辶':'走之底 · walk','冫':'两点水 · ice','刂':'立刀旁 · knife'};
 const ZH_MAXTIER=[1,1,2,2,3,3,4,4,5,6];
+/* Two scripts. Each learner's Chinese skill set declares zhScript: 'tw' = 繁體中文 + 注音符號 with Taiwan
+   (MoE) readings — Osmand's Grade 2/3 set; 'cn' = 简体 + Hanyu Pinyin — Oliver's Grade 4/5 set. */
+const ZHTW_CONFUSABLE=[['木','樹','林'],['晚','夜'],['心','愛'],['米','飯'],['歌','唱'],['老','年','歲'],['光','燈'],['去','走','出'],['想','要'],['糖','甜'],['讀','書'],['吃','飯'],['風','氣'],['冬','雪'],['口','吃'],['大','太'],['日','白'],['人','大']];
+const ZHTW_RADICAL_FAMILIES=[['水','氵'],['火','灬'],['心','忄'],['人','亻'],['手','扌'],['言','訁'],['金','釒'],['食','飠'],['衣','衤'],['犬','犭'],['艸','艹'],['竹','⺮'],['足','⻊'],['刀','刂'],['玉','王'],['糸','糹'],['示','礻'],['辵','辶']];
+const ZHTW_RADICAL_NAMES={'氵':'三點水 · water','亻':'單人旁 · person','扌':'提手旁 · hand','言':'言字旁 · speech','金':'金字旁 · metal','飠':'食字旁 · food','艹':'草字頭 · grass','⺮':'竹字頭 · bamboo','⻊':'足字旁 · foot','忄':'豎心旁 · heart','犭':'犬字旁 · animal','糹':'糸字旁 · silk','礻':'示字旁 · spirit','衤':'衣字旁 · clothes','辶':'辵字旁 · walk','冫':'兩點水 · ice','刂':'立刀旁 · knife'};
+// shapes that look like the radical without being it — never offered as a wrong answer for that radical
+const ZH_LOOKALIKE={cn:{'冫':['冬','次','冷','冰'],'刂':['前']},tw:{'冫':['冬','次','冷','冰'],'刂':['前'],'糹':['關','機'],'犭':['貓','豬']}};
+function zhModeFor(learnerId){ const m=LEARNERS_META[learnerId]; const sk=m&&m.skills&&m.skills.find(x=>x.subject==='chinese'&&x.zhScript); return (sk&&sk.zhScript)||'cn'; }
+function zhMode(){ const id=(typeof session!=='undefined'&&session&&session.learnerId)||(typeof comp!=='undefined'&&comp&&comp.learnerId)||APP.currentLearnerId; return zhModeFor(id); }
+function zhLang(mode){ return (mode||zhMode())==='tw'?'zh-Hant-TW':'zh-Hans'; }
+function ZHD(mode){
+  if((mode||zhMode())==='tw') return {mode:'tw',chars:ZHTW_CHARS,words:ZHTW_WORDS,sentences:ZHTW_SENTENCES,confusable:ZHTW_CONFUSABLE,families:ZHTW_RADICAL_FAMILIES,radNames:ZHTW_RADICAL_NAMES,lookAlike:ZH_LOOKALIKE.tw};
+  return {mode:'cn',chars:ZH_CHARS,words:ZH_WORDS,sentences:ZH_SENTENCES,confusable:ZH_CONFUSABLE,families:ZH_RADICAL_FAMILIES,radNames:ZH_RADICAL_NAMES,lookAlike:ZH_LOOKALIKE.cn};
+}
 // character pool for an Elevation: mostly the newest tier(s), with older characters mixed in for review
 function zhPool(arr,level){ const maxT=ZH_MAXTIER[Math.max(1,Math.min(10,level))-1]; const recent=arr.filter(x=>x.tier>=maxT-1&&x.tier<=maxT); const all=arr.filter(x=>x.tier<=maxT); return (recent.length&&Math.random()<0.7)?recent:all; }
 function zhPickDistinct(pool,n,keyFn,exclude){ const out=[]; const seen=new Set(exclude||[]); for(const x of shuffle(pool)){ const k=keyFn(x); if(seen.has(k))continue; seen.add(k); out.push(x); if(out.length>=n)break; } return out; }
@@ -1933,7 +2362,54 @@ const ZH_INITIAL_CONFUSE={zh:['z','ch','sh','j'],ch:['c','zh','q','sh'],sh:['s',
 function zhSplitInitial(syl){ const s=syl.toLowerCase(); for(const ini of ZH_INITIALS){ if(s.startsWith(ini)&&s.length>ini.length) return {ini,rest:syl.slice(ini.length)}; } return null; }
 function zhCharCard(text,sub){ return {type:'hanzi',text,sub:sub||''}; }
 
+/* ---- 注音符號 (Zhuyin / Bopomofo) helpers. A syllable is its symbols plus a tone mark: 1st tone has no
+   mark, ˊ ˇ ˋ follow the syllable, the neutral tone ˙ goes in front (˙ㄇㄚ). */
+const ZY_MARKS=['','','ˊ','ˇ','ˋ'];
+const ZY_TONE_SHORT=['','一聲 (no mark)','二聲 ˊ','三聲 ˇ','四聲 ˋ'];
+const ZY_TONE_NAMES=['','1st tone 一聲 (no mark, high & flat)','2nd tone 二聲 ˊ (rising)','3rd tone 三聲 ˇ (dips then rises)','4th tone 四聲 ˋ (falling)'];
+function zyTone(z){ z=String(z||''); if(z.startsWith('˙'))return 0; if(z.endsWith('ˊ'))return 2; if(z.endsWith('ˇ'))return 3; if(z.endsWith('ˋ'))return 4; return 1; }
+function zyBase(z){ return String(z||'').replace(/[˙ˊˇˋˉ]/g,''); }
+function zyMark(base,t){ return t===0?'˙'+base:base+ZY_MARKS[t]; }
+const ZY_INITIALS='ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙ';
+const ZY_INITIAL_CONFUSE={'ㄓ':'ㄗㄔㄕㄐ','ㄔ':'ㄘㄓㄑㄕ','ㄕ':'ㄙㄒㄓㄔ','ㄗ':'ㄓㄘㄐㄙ','ㄘ':'ㄔㄗㄑㄙ','ㄙ':'ㄕㄒㄗㄘ','ㄅ':'ㄆㄉㄇㄈ','ㄆ':'ㄅㄊㄈㄇ','ㄉ':'ㄊㄅㄍㄋ','ㄊ':'ㄉㄆㄎㄌ','ㄍ':'ㄎㄉㄏㄐ','ㄎ':'ㄍㄏㄊㄑ','ㄐ':'ㄑㄒㄓㄗ','ㄑ':'ㄐㄒㄔㄘ','ㄒ':'ㄕㄙㄑㄐ','ㄋ':'ㄌㄇㄖㄉ','ㄌ':'ㄋㄖㄉㄊ','ㄇ':'ㄋㄅㄈㄆ','ㄈ':'ㄏㄆㄅㄇ','ㄏ':'ㄈㄎㄍㄒ','ㄖ':'ㄌㄋㄕㄙ'};
+function zySplitInitial(z){ const b=zyBase(z); if(!b||!ZY_INITIALS.includes(b[0])||b.length<2) return null; return {ini:b[0],rest:z.slice(z.indexOf(b[0])+1)}; }
+function gZhZhuyin(level){
+  const lvl=diffTier(level), d=ZHD('tw');
+  if(lvl===1){ // which tone?
+    const c=pick(zhPool(d.chars,level).filter(x=>zyTone(x.py)>0)); const t=zyTone(c.py);
+    return {prompt:`Which tone (聲調) is this?`,mode:'mc',choices:[1,2,3,4].map(k=>ZY_TONE_SHORT[k]),correctAnswer:ZY_TONE_SHORT[t],visual:zhCharCard(c.py,`${c.hz} · ${c.en}`),say:c.hz,sayWhen:'after',dedupeKey:'zt-'+c.hz,
+      explanation:`${c.py} (${c.hz}) has the ${ZY_TONE_NAMES[t]}.`};
+  }
+  if(lvl===2){ // character -> zhuyin (tone distractors)
+    const c=pick(zhPool(d.chars,level).filter(x=>zyTone(x.py)>0)); const base=zyBase(c.py);
+    const choices=[1,2,3,4].map(t=>zyMark(base,t));
+    return {prompt:`How do you say this character?`,mode:'mc',choices:shuffle(choices),correctAnswer:c.py,visual:zhCharCard(c.hz,c.en),say:c.hz,sayWhen:'after',dedupeKey:'zp-'+c.hz,
+      explanation:`${c.hz} = ${c.py} (${c.en}) — ${ZY_TONE_SHORT[zyTone(c.py)]}.`};
+  }
+  if(lvl===3){ // zhuyin -> character
+    const c=pick(zhPool(d.chars,level));
+    const others=zhPickDistinct(d.chars.filter(x=>x.tier<=ZH_MAXTIER[level-1]+1&&x.py!==c.py&&!zhConfusable(x.hz,c.hz,d)),3,x=>x.py,[c.py]);
+    return {prompt:`Which character is “${c.py}”?`,mode:'mc',choices:shuffle([c.hz,...others.map(x=>x.hz)]),correctAnswer:c.hz,visual:zhCharCard(c.py,''),say:c.hz,sayWhen:'after',dedupeKey:'zc-'+c.hz,
+      explanation:`${c.py} is ${c.hz} (${c.en}).`};
+  }
+  if(lvl===4){ // first sound (聲母)
+    let c,sp,tries=0; do{ c=pick(zhPool(d.chars,level)); sp=zySplitInitial(c.py); tries++; }while(!sp&&tries<30);
+    if(!sp) return gZhZhuyin(5);
+    const ds=shuffle([...(ZY_INITIAL_CONFUSE[sp.ini]||'')].filter(x=>x!==sp.ini)).slice(0,3);
+    while(ds.length<3){ const r=pick([...ZY_INITIALS]); if(r!==sp.ini&&!ds.includes(r))ds.push(r); }
+    return {prompt:`Which first sound (聲母) completes the 注音?  ? + ${sp.rest}`,mode:'mc',choices:shuffle([sp.ini,...ds]),correctAnswer:sp.ini,visual:zhCharCard(c.hz,`? + ${sp.rest} · ${c.en}`),say:c.hz,sayWhen:'always',dedupeKey:'zi-'+c.hz,
+      explanation:`${c.hz} = ${c.py} → ${sp.ini} + ${sp.rest}.`};
+  }
+  // two-syllable words: pick the correctly-toned zhuyin
+  const w=pick(zhPool(d.words,level)); const idx=w.zy.map((z,i)=>zyTone(z)>0?i:-1).filter(i=>i>=0);
+  const variants=new Set([w.py]); let guard=0;
+  while(variants.size<4&&guard<40&&idx.length){ guard++; const i=pick(idx); const t=pick([1,2,3,4].filter(k=>k!==zyTone(w.zy[i]))); const v=w.zy.slice(); v[i]=zyMark(zyBase(w.zy[i]),t); variants.add(v.join(' ')); }
+  if(variants.size<4) return gZhZhuyin(4);
+  return {prompt:`How do you say this word?`,mode:'mc',choices:shuffle([...variants]),correctAnswer:w.py,visual:zhCharCard(w.zh,w.en),say:w.zh,sayWhen:'after',dedupeKey:'zw-'+w.zh,
+    explanation:`${w.zh} = ${w.py} (${w.en}).`};
+}
 function gZhPinyin(level){
+  if(zhMode()==='tw') return gZhZhuyin(level);
   const lvl=diffTier(level);
   if(lvl===1){ // which tone?
     const c=pick(zhPool(ZH_CHARS,level).filter(x=>zhToneOf(x.py)>0)); const t=zhToneOf(c.py);
@@ -1969,39 +2445,39 @@ function gZhPinyin(level){
     explanation:`${w.zh} = ${w.py} (${w.en}).`};
 }
 function gZhHanzi(level){
-  const lvl=diffTier(level);
+  const lvl=diffTier(level), d=ZHD();
   if(lvl===1){ // character -> meaning (picture hints on the choices)
-    const c=pick(zhPool(ZH_CHARS,level)); const others=zhPickDistinct(ZH_CHARS.filter(x=>x.hz!==c.hz&&!zhConfusable(x.hz,c.hz)),3,x=>x.en,[c.en]);
+    const c=pick(zhPool(d.chars,level)); const others=zhPickDistinct(d.chars.filter(x=>x.hz!==c.hz&&!zhConfusable(x.hz,c.hz,d)),3,x=>x.en,[c.en]);
     const fmt=x=>(x.emoji?x.emoji+' ':'')+x.en;
     return {prompt:`What does this character mean?`,mode:'mc',choices:shuffle([fmt(c),...others.map(fmt)]),correctAnswer:fmt(c),visual:zhCharCard(c.hz,c.py),say:c.hz,sayWhen:'always',dedupeKey:'hm-'+c.hz,
       explanation:`${c.hz} (${c.py}) means “${c.en}”.`};
   }
   if(lvl===2){ // meaning -> character
-    const c=pick(zhPool(ZH_CHARS,level)); const others=zhPickDistinct(ZH_CHARS.filter(x=>x.hz!==c.hz&&!zhConfusable(x.hz,c.hz)&&x.tier<=ZH_MAXTIER[level-1]+1),3,x=>x.hz,[c.hz]);
+    const c=pick(zhPool(d.chars,level)); const others=zhPickDistinct(d.chars.filter(x=>x.hz!==c.hz&&!zhConfusable(x.hz,c.hz,d)&&x.tier<=ZH_MAXTIER[level-1]+1),3,x=>x.hz,[c.hz]);
     return {prompt:`Which character means “${c.en}”?`,mode:'mc',choices:shuffle([c.hz,...others.map(x=>x.hz)]),correctAnswer:c.hz,visual:c.emoji?zhCharCard(c.emoji,c.en):undefined,say:c.hz,sayWhen:'after',dedupeKey:'hc-'+c.hz,
       explanation:`“${c.en}” is ${c.hz} (${c.py}).`};
   }
   if(lvl===3){ // words, both directions
-    const w=pick(zhPool(ZH_WORDS,level)); const others=zhPickDistinct(ZH_WORDS.filter(x=>x.zh!==w.zh),3,x=>x.zh,[w.zh]);
+    const w=pick(zhPool(d.words,level)); const others=zhPickDistinct(d.words.filter(x=>x.zh!==w.zh),3,x=>x.zh,[w.zh]);
     if(Math.random()<0.5) return {prompt:`What does this word mean?`,mode:'mc',choices:shuffle([w.en,...others.map(x=>x.en)]),correctAnswer:w.en,visual:zhCharCard(w.zh,w.py),say:w.zh,sayWhen:'always',dedupeKey:'wm-'+w.zh,explanation:`${w.zh} (${w.py}) means “${w.en}”.`};
     return {prompt:`Which word means “${w.en}”?`,mode:'mc',choices:shuffle([w.zh,...others.map(x=>x.zh)]),correctAnswer:w.zh,visual:w.emoji?zhCharCard(w.emoji,''):undefined,say:w.zh,sayWhen:'after',dedupeKey:'wc-'+w.zh,explanation:`“${w.en}” is ${w.zh} (${w.py}).`};
   }
   if(lvl===4){ // sentence fill-in
-    const pool=zhPool(ZH_SENTENCES,level); const s=pick(pool.length?pool:ZH_SENTENCES); const full=s.zh.replace('___',s.answer);
-    return {prompt:`Fill in the blank.`,mode:'mc',choices:shuffle(s.choices.slice()),correctAnswer:s.answer,visual:{type:'hanzi',text:s.zh,sub:level<=7?s.py:'',sentence:true},say:full,sayWhen:'after',dedupeKey:'zs-'+s.zh,
+    const pool=zhPool(d.sentences,level); const s=pick(pool.length?pool:d.sentences); const full=s.zh.replace('___',s.answer);
+    return {prompt:`Fill in the blank.`,mode:'mc',choices:shuffle(s.choices.slice()),correctAnswer:s.answer,visual:{type:'hanzi',text:s.zh,sub:(level<=7&&!s.zy)?s.py:'',zy:(level<=7&&s.zy)?s.zy:null,sentence:true},say:full,sayWhen:'after',dedupeKey:'zs-'+s.zh,
       explanation:`${full}  — ${s.en}`};
   }
   // radicals — only side radicals (偏旁) whose shape almost never appears in a character except AS its
   // radical, so "which character has it" has exactly one defensible answer (木/口/日/女 are left out:
   // 想 contains 木, 要 contains 女, etc. without them being the radical).
-  const withRad=ZH_CHARS.filter(x=>x.radical&&x.radical!==x.hz);
-  const usable=Object.keys(ZH_RADICAL_NAMES).filter(r=>withRad.some(x=>x.radical===r));
+  const withRad=d.chars.filter(x=>x.radical&&x.radical!==x.hz);
+  const usable=Object.keys(d.radNames).filter(r=>withRad.some(x=>x.radical===r));
   if(!usable.length) return gZhHanzi(7);
   const r=pick(usable); const c=pick(withRad.filter(x=>x.radical===r));
-  const lookAlike={'冫':['冬','次','冷','冰']}; // shapes that read like the radical without being it
-  const others=zhPickDistinct(withRad.filter(x=>!zhSameRadicalFamily(x.radical,r)&&!(lookAlike[r]||[]).includes(x.hz)),3,x=>x.hz,[c.hz]);
-  return {prompt:`Which character has this radical (部首)?`,mode:'mc',choices:shuffle([c.hz,...others.map(x=>x.hz)]),correctAnswer:c.hz,visual:zhCharCard(r,ZH_RADICAL_NAMES[r]),say:c.hz,sayWhen:'after',dedupeKey:'zr-'+c.hz,
-    explanation:`${c.hz} (${c.py}, ${c.en}) has the ${r} radical — ${ZH_RADICAL_NAMES[r]}.`};
+  const lookAlike=d.lookAlike;
+  const others=zhPickDistinct(withRad.filter(x=>!zhSameRadicalFamily(x.radical,r,d)&&!(lookAlike[r]||[]).includes(x.hz)),3,x=>x.hz,[c.hz]);
+  return {prompt:`Which character has this radical (部首)?`,mode:'mc',choices:shuffle([c.hz,...others.map(x=>x.hz)]),correctAnswer:c.hz,visual:zhCharCard(r,d.radNames[r]),say:c.hz,sayWhen:'after',dedupeKey:'zr-'+c.hz,
+    explanation:`${c.hz} (${c.py}, ${c.en}) has the ${r} radical — ${d.radNames[r]}.`};
 }
 /* 🔊 Mandarin text-to-speech with the browser's built-in voices (no network, no audio files). */
 /* Prefer Taiwan Mandarin (國語, zh-TW) voices: Apple 美佳/Meijia; Microsoft 曉臻 HsiaoChen, 曉雨 HsiaoYu,
@@ -2038,14 +2514,32 @@ function speakZh(text){
   }catch(e){}
 }
 function sayButton(text,label){ return `<button class="say-btn" type="button" onclick="event.stopPropagation();speakZh(${JSON.stringify(String(text)).replace(/"/g,'&quot;')})" title="Listen">🔊${label?` <span>${esc(label)}</span>`:''}</button>`; }
-function svgHanziCard(v){ return `<div class="hanzi-card${v.sentence?' hanzi-sentence':''}" lang="zh-Hans"><div class="hanzi-big">${esc(v.text)}</div>${v.sub?`<div class="hanzi-sub">${esc(v.sub)}</div>`:''}</div>`; }
+/* 注音 the Taiwan-textbook way: a vertical column of symbols to the RIGHT of each character, the tone
+   mark (ˊ ˇ ˋ) beside the column and the neutral-tone dot ˙ on top (punctuation and the ___ blank get none). */
+function zyColumn(z){
+  const t=zyTone(z), base=zyBase(z);
+  return `<span class="zyp" aria-hidden="true"><span class="zys">${t===0?'<span class="zyn">˙</span>':''}${[...base].map(b=>`<span>${esc(b)}</span>`).join('')}</span>${t>=2?`<span class="zyt">${ZY_MARKS[t]}</span>`:''}</span>`;
+}
+function zhRuby(text,zy){
+  if(!zy||!zy.length) return esc(text);
+  // group: [opening punctuation] + character with its 注音 + [closing punctuation], so a line never starts with 。，！？
+  const units=[]; let pre='', i=0;
+  for(const ch of String(text)){
+    if(/[\u3400-\u9fff]/.test(ch)&&i<zy.length){ units.push({pre,core:`<span class="zyc" title="${esc(zy[i])}"><span class="zyh">${esc(ch)}</span>${zyColumn(zy[i++])}</span>`,post:''}); pre=''; }
+    else if(/[“‘「『（(《]/.test(ch)||!units.length) pre+=esc(ch);
+    else if(ch==='_'||/\s/.test(ch)){ units.push({pre:pre+esc(ch),core:'',post:''}); pre=''; }
+    else units[units.length-1].post+=esc(ch);
+  }
+  return units.map(u=>u.core?`<span class="zyw">${u.pre}${u.core}${u.post}</span>`:u.pre+u.post).join('')+pre;
+}
+function svgHanziCard(v){ return `<div class="hanzi-card${v.sentence?' hanzi-sentence':''}${v.zy?' has-zy':''}" lang="${zhLang()}"><div class="hanzi-big">${v.zy?zhRuby(v.text,v.zy):esc(v.text)}</div>${v.sub?`<div class="hanzi-sub">${esc(v.sub)}</div>`:''}</div>`; }
 /* Chinese reading passage: each sentence with (toggleable) pinyin, an English help line, and 🔊. */
 function toggleZhPinyin(){ APP.zhPinyin=!(APP.zhPinyin!==false); if(comp)openModal(renderComprehensionModal()); }
 function toggleZhEnglish(){ APP.zhEnglish=!APP.zhEnglish; if(comp)openModal(renderComprehensionModal()); }
-function zhToggles(){ const py=APP.zhPinyin!==false; return `<div class="zh-toggles"><button class="range-btn" data-active="${py}" onclick="toggleZhPinyin()">拼音 Pinyin</button><button class="range-btn" data-active="${!!APP.zhEnglish}" onclick="toggleZhEnglish()">English</button></div>`; }
+function zhToggles(){ const py=APP.zhPinyin!==false; return `<div class="zh-toggles"><button class="range-btn" data-active="${py}" onclick="toggleZhPinyin()">${zhMode()==='tw'?'注音 Zhuyin':'拼音 Pinyin'}</button><button class="range-btn" data-active="${!!APP.zhEnglish}" onclick="toggleZhEnglish()">English</button></div>`; }
 function renderZhPassage(p){
   const py=APP.zhPinyin!==false, en=!!APP.zhEnglish;
-  return `${zhToggles()}<div class="zh-passage" lang="zh-Hans">${p.sentences.map(s=>`<div class="zh-sent"><div class="zh-sent-main"><span class="zh-text">${esc(s.zh)}</span>${sayButton(s.zh)}</div>${py?`<div class="zh-py">${esc(s.py)}</div>`:''}${en?`<div class="zh-en">${esc(s.en)}</div>`:''}</div>`).join('')}</div>
+  return `${zhToggles()}<div class="zh-passage" lang="${zhLang()}">${p.sentences.map(s=>`<div class="zh-sent"><div class="zh-sent-main"><span class="zh-text">${s.zy?(py?zhRuby(s.zh,s.zy):esc(s.zh)):esc(s.zh)}</span>${sayButton(s.zh)}</div>${py&&!s.zy?`<div class="zh-py">${esc(s.py)}</div>`:''}${en?`<div class="zh-en">${esc(s.en)}</div>`:''}</div>`).join('')}</div>
     <button class="say-btn say-all" type="button" onclick="speakZh(${JSON.stringify(p.sentences.map(s=>s.zh).join('')).replace(/"/g,'&quot;')})">🔊 <span>Read it all to me</span></button>`;
 }
 
@@ -2428,14 +2922,14 @@ const LIFE_SKILLS_O=[
 /* Chinese Trail (中文): same adaptive pinyin/character practice for both kids (each climbs from
    Elevation 1 at their own pace); reading passages come in a younger and an older band. */
 const CHINESE_SKILLS_Y=[
-{id:'zh_pinyin',subject:'chinese',label:'拼音 Pinyin',icon:'speech'},
-{id:'zh_hanzi',subject:'chinese',label:'认字 Characters',icon:'zh'},
-{id:'zh_read_y',subject:'chinese',label:'阅读 Reading',icon:'book',isComprehension:true,passages:ZH_PASSAGES_Y}
+{id:'zh_pinyin',subject:'chinese',label:'注音 Zhuyin',icon:'speech',zhScript:'tw'},
+{id:'zh_hanzi',subject:'chinese',label:'認字 Characters',icon:'zh',zhScript:'tw'},
+{id:'zh_read_y',subject:'chinese',label:'閱讀 Reading',icon:'book',isComprehension:true,passages:ZHTW_PASSAGES_Y,zhScript:'tw'}
 ];
 const CHINESE_SKILLS_O=[
-{id:'zh_pinyin',subject:'chinese',label:'拼音 Pinyin',icon:'speech'},
-{id:'zh_hanzi',subject:'chinese',label:'认字 Characters',icon:'zh'},
-{id:'zh_read_o',subject:'chinese',label:'阅读 Reading',icon:'book',isComprehension:true,passages:ZH_PASSAGES_O}
+{id:'zh_pinyin',subject:'chinese',label:'拼音 Pinyin',icon:'speech',zhScript:'cn'},
+{id:'zh_hanzi',subject:'chinese',label:'认字 Characters',icon:'zh',zhScript:'cn'},
+{id:'zh_read_o',subject:'chinese',label:'阅读 Reading',icon:'book',isComprehension:true,passages:ZH_PASSAGES_O,zhScript:'cn'}
 ];
 const GRADE_TIERS={
   g2:{label:'Grade 2',skills:GRADE2_SKILLS,passages:PASSAGES2,next:'g3',life:LIFE_SKILLS_Y,chinese:CHINESE_SKILLS_Y},
@@ -3725,7 +4219,7 @@ function renderSkillTrail(subject){
   const subs={
     math:`${meta.ageLabel} · Adaptive practice — questions get harder as ${name} improves, and ease back after a rough patch.`,
     reading:`${meta.ageLabel} · Adaptive practice — questions get harder as ${name} improves, and ease back after a rough patch.`,
-    chinese:`拼音、认字、阅读 — Simplified characters with Hanyu Pinyin. Starts from the basics and climbs as ${name} improves. Tap 🔊 to hear any character or sentence.`,
+    chinese:zhModeFor(id)==='tw'?`注音、認字、閱讀 — 繁體中文＋注音符號 (Traditional characters with Zhuyin, Taiwan readings). Starts from the basics and climbs as ${name} improves. Tap 🔊 to hear any character or sentence.`:`拼音、认字、阅读 — Simplified characters with Hanyu Pinyin. Starts from the basics and climbs as ${name} improves. Tap 🔊 to hear any character or sentence.`,
     life:`Money, business and speaking skills — the "afternoon" half of an Alpha-style day. Practice here, then use them for real in a Trail Time mission.`
   };
   return `<div class="section-title">${titles[subject]||subject}</div>
@@ -3842,7 +4336,7 @@ function renderSessionModal(){
   else if(q.mode==='divmod'||q.mode==='fraction'){ const filled=fieldDefsFor(q.mode).every(f=>session.fields[f]!==''&&session.fields[f]!=null); primary=goButton('answerFields()','check',!filled); }
   const isZh=meta.subject==='chinese';
   const sayHtml=(q.say&&(q.sayWhen==='always'||session.answered))?`<div class="center" style="margin:-4px 0 10px">${sayButton(q.say,'Listen')}</div>`:'';
-  return `<div class="modal-card${isZh?' zh-mode':''}" ${isZh?'lang="zh-Hans"':''} onclick="stopProp(event)">
+  return `<div class="modal-card${isZh?' zh-mode':''}" ${isZh?`lang="${zhLang()}"`:''} onclick="stopProp(event)">
     <div class="qhead"><span>${meta.label}${session.currentIsReview?' · 🔁 Review':''}</span><span style="display:flex;align-items:center;gap:8px">${session.comboStreak>0?flameRow(session.comboStreak,av.c):''}Question ${session.qIndex+1} / ${session.total}</span></div>
     ${visual?`<div class="center">${visual}</div>`:''}
     ${sayHtml}
@@ -4085,7 +4579,7 @@ function renderComprehensionModal(){
   if(comp.stage==='read'){
     return `<div class="modal-card" onclick="stopProp(event)">
       <div class="qhead"><span>Reading Comprehension</span><span>Passage</span></div>
-      <div class="section-title" style="font-size:1.15rem" ${comp.passage.sentences?'lang="zh-Hans"':''}>${esc(comp.passage.title)}${comp.passage.titlePy?` <span class="zh-title-py">${esc(comp.passage.titlePy)} · ${esc(comp.passage.titleEn||'')}</span>`:''}</div>
+      <div class="section-title" style="font-size:1.15rem" ${comp.passage.sentences?`lang="${zhLang()}"`:''}>${comp.passage.titleZy&&APP.zhPinyin!==false?zhRuby(comp.passage.title,comp.passage.titleZy):esc(comp.passage.title)}${comp.passage.titlePy?` <span class="zh-title-py">${comp.passage.titleZy?'':esc(comp.passage.titlePy)+' · '}${esc(comp.passage.titleEn||'')}</span>`:''}</div>
       ${comp.passage.sentences?renderZhPassage(comp.passage):`<div class="passage-text">${esc(comp.passage.text)}</div>`}
       ${renderActionBar('comp',goButton('startCompQuestions()','startq'))}
     </div>`;
@@ -4094,14 +4588,16 @@ function renderComprehensionModal(){
   const orderedChoices=(comp.choiceOrders&&comp.choiceOrders[comp.qIndex])||q.choices;
   const choicesHtml=`<div class="choices">${orderedChoices.map(c=>{
     let state=''; if(comp.answered){ if(c===q.correct) state='correct'; else if(c===comp.selected) state='wrong'; }
-    const cpy=(q.choicesPy&&APP.zhPinyin!==false)?q.choicesPy[q.choices.indexOf(c)]:'';
-    return `<button class="choice-btn" data-state="${state}" ${comp.answered?'disabled':''} onclick="answerComp(${JSON.stringify(c).replace(/"/g,'&quot;')})">${esc(c)}${cpy?`<span class="choice-py">${esc(cpy)}</span>`:''}</button>`;
+    const showPy=APP.zhPinyin!==false, ci=q.choices.indexOf(c);
+    const czy=(q.choicesZy&&showPy)?q.choicesZy[ci]:null;
+    const cpy=(!czy&&q.choicesPy&&showPy)?q.choicesPy[ci]:'';
+    return `<button class="choice-btn" data-state="${state}" ${comp.answered?'disabled':''} onclick="answerComp(${JSON.stringify(c).replace(/"/g,'&quot;')})">${czy?zhRuby(c,czy):esc(c)}${cpy?`<span class="choice-py">${esc(cpy)}</span>`:''}</button>`;
   }).join('')}</div>`;
   const feedback=comp.answered?`<div class="feedback-box ${comp.lastCorrect?'feedback-good':'feedback-bad'}">${comp.lastCorrect?'✓ '+esc(pick(CORRECT_PHRASES)):esc(pick(WRONG_PHRASES))+' Correct answer: '+esc(q.correct)}</div>`:'';
   const primary=comp.answered?goButton('advanceComp()',comp.qIndex+1>=comp.passage.questions.length?'results':'next'):'';
   return `<div class="modal-card" onclick="stopProp(event)">
     <div class="qhead"><span>${esc(comp.passage.title)}</span><span>Question ${comp.qIndex+1} / ${comp.passage.questions.length}</span></div>
-    ${comp.passage.sentences?`${zhToggles()}<div class="qprompt" lang="zh-Hans">${esc(q.q)} ${sayButton(q.q)}${APP.zhPinyin!==false&&q.qpy?`<div class="zh-py">${esc(q.qpy)}</div>`:''}${APP.zhEnglish&&q.qen?`<div class="zh-en">${esc(q.qen)}</div>`:''}</div>`:`<div class="qprompt">${esc(q.q)}</div>`}
+    ${comp.passage.sentences?`${zhToggles()}<div class="qprompt" lang="${zhLang()}">${q.qzy&&APP.zhPinyin!==false?zhRuby(q.q,q.qzy):esc(q.q)} ${sayButton(q.q)}${APP.zhPinyin!==false&&q.qpy&&!q.qzy?`<div class="zh-py">${esc(q.qpy)}</div>`:''}${APP.zhEnglish&&q.qen?`<div class="zh-en">${esc(q.qen)}</div>`:''}</div>`:`<div class="qprompt">${esc(q.q)}</div>`}
     ${choicesHtml}
     ${feedback}
     ${renderActionBar('comp',primary)}
@@ -5174,8 +5670,16 @@ function rejectUser(username){
    notes live in CHANGELOG.md, and each release is also archived as olilimimi-vX.Y.Z.html so any
    version can be restored by uploading that file as index.html. The version shows in the bottom-right
    corner; tapping it opens these notes. */
-const APP_VERSION='1.0.2';
+const APP_VERSION='1.1.0';
 const APP_CHANGELOG=[
+  {v:'1.1.0',date:'2026-10-20',title:'Osmand 中文改為繁體＋注音',items:[
+    'Osmand(Grade 2/3)的中文 Trail 改用台灣繁體中文與注音符號，讀音依教育部《重編國語辭典》(例:星期 ㄑㄧˊ、休息 ㄒㄧˊ、媽媽 ㄇㄚ ˙ㄇㄚ)。',
+    '注音照課本格式直排在每個字右邊(聲調在旁、輕聲點在上)；閱讀文章、題目與選項都有注音，可用「注音 Zhuyin」按鈕開關。',
+    '「注音 Zhuyin」練習：聲調(一聲～四聲)、看字選注音、看注音選字、聲母、詞語聲調。',
+    '「認字」與「閱讀」全部改為台灣用字(例：腳踏車)，部首題改用繁體部首(言、金、飠、糹等)。',
+    'Oliver(Grade 4/5)維持簡體中文＋漢語拼音，不受影響；學習進度沿用。',
+    '修正：部首題不再把「前」當成沒有立刀旁的錯誤選項。'
+  ]},
   {v:'1.0.2',date:'2026-10-13',title:'中文發音改用台灣國語',items:[
     '🔊 發音優先使用台灣國語語音(Apple 美佳、Microsoft 曉臻/曉雨/雲哲、Google 國語(臺灣))。',
     '裝置上沒有台灣語音時，自動改用普通话語音並提示一次；絕不會選到粵語語音。'
