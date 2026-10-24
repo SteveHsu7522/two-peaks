@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Olilimimi</title>
-<meta name="app-version" content="1.1.0">
+<meta name="app-version" content="1.1.1">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22100%2070%20336%20245%22%3E%3Ccircle%20cx%3D%22191%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%232F6FC4%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22343%22%20cy%3D%22161%22%20r%3D%2259%22%20fill%3D%22none%22%20stroke%3D%22%23F3B431%22%20stroke-width%3D%2227%22/%3E%3Ccircle%20cx%3D%22219%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Ccircle%20cx%3D%22316%22%20cy%3D%22167%22%20r%3D%2215%22%20fill%3D%22%231C2A3E%22/%3E%3Cpath%20d%3D%22M200%20271%20Q268%20318%20336%20271%22%20fill%3D%22none%22%20stroke%3D%22%231C2A3E%22%20stroke-width%3D%2220%22%20stroke-linecap%3D%22round%22/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
@@ -376,6 +376,11 @@ a{color:var(--teal-strong);font-weight:600;}
 .choice-py{display:block;font-size:.75rem;font-weight:600;color:var(--teal-strong);margin-top:2px;}
 .zh-mode .qprompt{font-size:1.15rem;}
 
+/* speech test */
+.st-info{font-size:.85rem;color:var(--ink-soft);margin:4px 0;}
+.st-voices{font-size:.78rem;color:var(--ink);background:var(--surface-2);border-radius:10px;padding:8px 10px;max-height:150px;overflow:auto;}
+.st-row{display:flex;align-items:center;gap:10px;margin:6px 0;flex-wrap:wrap;}
+.st-res{font-size:.8rem;color:var(--ink-soft);}
 /* version badge (bottom-right) + release notes */
 .version-badge{position:fixed;right:10px;bottom:8px;z-index:40;font-family:var(--font-mono);font-size:.68rem;font-weight:600;color:var(--ink-faint);background:color-mix(in srgb,var(--surface) 85%,transparent);border:1px solid var(--border);border-radius:999px;padding:3px 9px;cursor:pointer;opacity:.85;}
 .version-badge:hover{opacity:1;color:var(--ink);}
@@ -400,7 +405,7 @@ body{padding-bottom:36px;}
 </div>
 <div id="modalRoot"></div>
 <div id="toastRoot"></div>
-<button id="versionBadge" class="version-badge" type="button" onclick="openChangelog()" title="版本注記 / Release notes">v1.1.0</button>
+<button id="versionBadge" class="version-badge" type="button" onclick="openChangelog()" title="版本注記 / Release notes">v1.1.1</button>
 
 <!-- Firebase (cloud sync across devices). If this ever fails to load (offline,
      ad-blocker, etc.) the app quietly falls back to this browser's own
@@ -2499,20 +2504,106 @@ function pickZhVoice(){
   const twPref=[/美佳|Mei-?Jia/i,/曉臻|晓臻|HsiaoChen/i,/曉雨|晓雨|HsiaoYu/i,/雲哲|云哲|YunJhe/i,/雅婷|Yating/i,/涵涵|Hanhan/i,/志偉|志伟|Zhiwei/i,/Google/i];
   for(const re of twPref){ const v=tw.find(v=>re.test(v.name)&&!ZH_NOVELTY_VOICE.test(v.name)); if(v) return v; }
   const twAny=tw.find(v=>!ZH_NOVELTY_VOICE.test(v.name)); if(twAny) return twAny;
+  return pickZhCnVoice()||tw[0]||null;
+}
+function pickZhCnVoice(){
+  const vs=(window.speechSynthesis&&window.speechSynthesis.getVoices())||[];
+  const cn=vs.filter(v=>zhVoiceRegion(v)==='cn');
   const cnPref=[/婷婷|Ting-?Ting/i,/語舒|语舒|Yu-?shu/i,/Li-?Mu/i,/Xiaoxiao|晓晓/i,/Huihui|慧慧/i,/Yunxi|云希/i,/Google.*(普通话|Mandarin|中国)/i];
   for(const re of cnPref){ const v=cn.find(v=>re.test(v.name)); if(v) return v; }
-  return cn.find(v=>!ZH_NOVELTY_VOICE.test(v.name))||tw[0]||cn[0]||null;
+  return cn.find(v=>!ZH_NOVELTY_VOICE.test(v.name))||cn[0]||null;
 }
 if(typeof window!=='undefined'&&window.speechSynthesis&&typeof window.speechSynthesis.getVoices==='function'){ try{ window.speechSynthesis.getVoices(); }catch(e){} } // warm up the voice list (Chrome loads it lazily)
+/* Speech is fragile on Safari / iPad / iPhone, so speakZh works around the known WebKit problems:
+   - cancel() immediately followed by speak() can silently drop the new utterance -> only cancel when
+     something is actually playing, and then wait a moment before speaking;
+   - the engine can be left "paused" -> resume() first;
+   - an utterance that gets garbage-collected stops/never fires events -> keep a reference;
+   - a chosen voice that isn't really available can produce nothing -> watchdog retries once with the
+     language's default voice, and if that also never starts, tell the family what to check. */
+const ZH_IS_ANDROID=typeof navigator!=='undefined'&&/Android/i.test(navigator.userAgent||'');
+function zhSpeechTrouble(){
+  if(APP.zhSpeechWarned) return; APP.zhSpeechWarned=true;
+  toast(ZH_IS_ANDROID
+    ?'🔇 聽不到發音？請確認音量，並到 Android「設定 › 文字轉語音輸出」選 Google 語音服務，再安裝「中文(台灣)」語音資料。右下角版本號 › 發音測試 可檢查。'
+    :'🔇 聽不到發音？請確認音量、iPad/iPhone 沒有開靜音，或到「設定 › 輔助使用 › 語音內容 › 聲音 › 中文(台灣)」下載「美佳」。',9000);
+}
+function zhMakeUtterance(text,v,lang){
+  const u=new SpeechSynthesisUtterance(String(text)); u.rate=0.8;
+  if(v) u.voice=v; u.lang=lang;
+  u._zh={started:false,ended:false};
+  u.onstart=()=>{ u._zh.started=true; }; u.onend=()=>{ u._zh.ended=true; };
+  u.onerror=e=>{ u._zh.ended=true; if(e&&(e.error==='interrupted'||e.error==='canceled')) return; u._zh.failed=(e&&e.error)||'error'; };
+  window.__zhUtter=u; // keep it alive until it finishes
+  return u;
+}
+function zhSpeakNow(ss,u,busy){
+  if(busy) ss.cancel();
+  try{ if(ss.paused) ss.resume(); }catch(e){}
+  if(busy) setTimeout(()=>ss.speak(u),120); else ss.speak(u);
+}
+/* Voices to try, best first: the Taiwan voice, the device's default voice for zh-TW, then a Mandarin
+   (zh-CN) voice. Android tablets often list a Chinese voice whose data isn't installed, so it says nothing. */
+function zhVoiceAttempts(){
+  const v=pickZhVoice(), cnV=pickZhCnVoice(); const list=[];
+  const add=(voice,lang)=>{ const key=(voice?voice.name:'default')+'|'+lang; if(!list.some(x=>x.key===key)) list.push({voice,lang,key}); };
+  if(v) add(v,String(v.lang||'zh-TW').replace('_','-'));
+  add(null,'zh-TW');
+  if(cnV) add(cnV,String(cnV.lang||'zh-CN').replace('_','-')); else add(null,'zh-CN');
+  return list;
+}
+function zhRememberedAttempt(){ try{ return localStorage.getItem('twopeaks:zhVoiceOK')||APP.zhVoiceOK||''; }catch(e){ return APP.zhVoiceOK||''; } }
+function zhRememberAttempt(key){ APP.zhVoiceOK=key; try{ localStorage.setItem('twopeaks:zhVoiceOK',key); }catch(e){} }
 function speakZh(text){
   try{
     if(typeof window==='undefined'||!window.speechSynthesis||typeof SpeechSynthesisUtterance==='undefined'){ toast('This browser can’t read Chinese aloud.'); return; }
-    const u=new SpeechSynthesisUtterance(String(text)); u.rate=0.8;
-    const v=pickZhVoice(); u.voice=v||null; u.lang=String((v&&v.lang)||'zh-TW').replace('_','-');
-    if(v&&zhVoiceRegion(v)!=='tw'&&!APP.zhVoiceNoted){ APP.zhVoiceNoted=true; toast('這台裝置沒有台灣國語語音，暫用普通话語音。'); }
-    window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
-  }catch(e){}
+    const ss=window.speechSynthesis;
+    let list=zhVoiceAttempts(); const ok=zhRememberedAttempt();
+    const k=list.findIndex(x=>x.key===ok); if(k>0) list=[list[k],...list.filter((_,i)=>i!==k)];
+    if(list[0].voice&&zhVoiceRegion(list[0].voice)!=='tw'&&!APP.zhVoiceNoted){ APP.zhVoiceNoted=true; toast('這台裝置沒有台灣國語語音，暫用普通话語音。'); }
+    const seq=(APP.zhSpeakSeq=(APP.zhSpeakSeq||0)+1);
+    const attempt=i=>{
+      if(seq!==APP.zhSpeakSeq) return;
+      if(i>=list.length){ zhSpeechTrouble(); return; }
+      const a=list[i], u=zhMakeUtterance(text,a.voice,a.lang); const busy=ss.speaking||ss.pending;
+      zhSpeakNow(ss,u,busy);
+      setTimeout(()=>{
+        if(seq!==APP.zhSpeakSeq) return;
+        if(u._zh.started||(u._zh.ended&&!u._zh.failed)||ss.speaking){ zhRememberAttempt(a.key); return; }
+        attempt(i+1); // nothing came out — try the next voice
+      },busy?1500:1300);
+    };
+    attempt(0);
+  }catch(e){ zhSpeechTrouble(); }
 }
+/* 發音測試: lists this device's Chinese voices and plays each, so a parent can see what works. */
+function openSpeechTest(){
+  const ss=window.speechSynthesis; const vs=(ss&&ss.getVoices())||[];
+  const zh=vs.filter(v=>/^(zh|cmn|yue)/i.test(String(v.lang))||/中文|Chinese|國語|普通话|粵|粤/.test(v.name));
+  const att=ss?zhVoiceAttempts():[];
+  const row=(a,i)=>`<div class="st-row"><button class="btn btn-secondary" onclick="runSpeechTest(${i})">🔊 ${esc(a.voice?a.voice.name:'系統預設')} · ${esc(a.lang)}</button><span class="st-res mono" id="stres${i}">—</span></div>`;
+  APP.__speechTestList=att;
+  openModal(`<div class="modal-card" onclick="stopProp(event)">
+    <div class="qhead"><span>🔊 發音測試 · Speech test</span><span class="mono">v${esc(APP_VERSION)}</span></div>
+    <div class="st-info mono">${esc((navigator.userAgent||'').replace(/^Mozilla\/5\.0 /,'').slice(0,140))}</div>
+    <div class="st-info">${ss?`語音總數 ${vs.length}，中文語音 ${zh.length}：`:'這個瀏覽器不支援發音 (speechSynthesis)。'}</div>
+    <div class="st-voices mono">${zh.map(v=>esc(v.name+' ['+v.lang+']'+(v.localService===false?' ☁︎':''))).join('<br>')||'(沒有中文語音)'}</div>
+    <div class="st-info" style="margin-top:8px">逐一按下測試，有聽到聲音的就是可用的語音：</div>
+    ${att.map(row).join('')}
+    <div class="st-info" style="margin-top:6px">目前記住的語音：<span class="mono" id="stmem">${esc(zhRememberedAttempt()||'(尚未)')}</span></div>
+    <button class="btn btn-secondary btn-block" style="margin-top:12px" onclick="closeModal()">Close</button>
+  </div>`);
+}
+function runSpeechTest(i){
+  const a=(APP.__speechTestList||[])[i]; const ss=window.speechSynthesis; const el=document.getElementById('stres'+i); if(!a||!ss||!el) return;
+  const t0=Date.now(); const u=zhMakeUtterance('星期六，我們一起去公園。',a.voice,a.lang); el.textContent='…';
+  u.onstart=()=>{ u._zh.started=true; el.textContent='▶ 開始 '+(Date.now()-t0)+'ms'; };
+  u.onend=()=>{ el.textContent+=(u._zh.started?' · ':'⚠︎ 沒開始就 ')+'結束 '+(Date.now()-t0)+'ms'; if(u._zh.started){ zhRememberAttempt(a.key); const m=document.getElementById('stmem'); if(m) m.textContent=a.key; } };
+  u.onerror=e=>{ el.textContent='✖ '+((e&&e.error)||'error'); };
+  zhSpeakNow(ss,u,ss.speaking||ss.pending);
+  setTimeout(()=>{ if(!u._zh.started&&el.textContent==='…') el.textContent='✖ 沒有反應 (no start)'; },2500);
+}
+if(typeof window!=='undefined'&&window.speechSynthesis){ try{ window.speechSynthesis.addEventListener('voiceschanged',()=>{}); }catch(e){} }
 function sayButton(text,label){ return `<button class="say-btn" type="button" onclick="event.stopPropagation();speakZh(${JSON.stringify(String(text)).replace(/"/g,'&quot;')})" title="Listen">🔊${label?` <span>${esc(label)}</span>`:''}</button>`; }
 /* 注音 the Taiwan-textbook way: a vertical column of symbols to the RIGHT of each character, the tone
    mark (ˊ ˇ ˋ) beside the column and the neutral-tone dot ˙ on top (punctuation and the ___ blank get none). */
@@ -4149,11 +4240,11 @@ function redeemReward(rid){
   learner.redemptions=learner.redemptions.slice(0,20);
   saveLearner(id); toast(`Redeemed: ${r.label}!`); render();
 }
-function toast(msg){
+function toast(msg,ms){
   const el=document.getElementById('toastRoot');
   el.innerHTML=`<div class="toast">${esc(msg)}</div>`;
   clearTimeout(window.__toastTimer);
-  window.__toastTimer=setTimeout(()=>{el.innerHTML='';},2600);
+  window.__toastTimer=setTimeout(()=>{el.innerHTML='';},ms||2600);
 }
 
 /* ================= MATH / READING TRAIL (skill grids) ================= */
@@ -5670,8 +5761,14 @@ function rejectUser(username){
    notes live in CHANGELOG.md, and each release is also archived as olilimimi-vX.Y.Z.html so any
    version can be restored by uploading that file as index.html. The version shows in the bottom-right
    corner; tapping it opens these notes. */
-const APP_VERSION='1.1.0';
+const APP_VERSION='1.1.1';
 const APP_CHANGELOG=[
+  {v:'1.1.1',date:'2026-10-24',title:'修正 Android 平板／Safari 發音沒有聲音',items:[
+    '🔊 發音避開 Safari 的已知問題：不再「先停止再立刻播放」(會被吞掉)、自動解除卡住的暫停、播放中不會被系統回收。',
+    '依序嘗試：台灣語音 → 系統預設中文 → 普通话語音，並記住這台裝置可用的那一個(Android 平板常見台灣語音資料沒安裝)。',
+    '都沒聲音時，畫面會提示檢查音量、靜音或安裝語音資料(Android:Google 語音服務 › 中文(台灣))。',
+    '新增「🔊 發音測試」:點右下角版本號即可看到這台裝置的中文語音清單並逐一試聽。'
+  ]},
   {v:'1.1.0',date:'2026-10-20',title:'Osmand 中文改為繁體＋注音',items:[
     'Osmand(Grade 2/3)的中文 Trail 改用台灣繁體中文與注音符號，讀音依教育部《重編國語辭典》(例:星期 ㄑㄧˊ、休息 ㄒㄧˊ、媽媽 ㄇㄚ ˙ㄇㄚ)。',
     '注音照課本格式直排在每個字右邊(聲調在旁、輕聲點在上)；閱讀文章、題目與選項都有注音，可用「注音 Zhuyin」按鈕開關。',
@@ -5708,6 +5805,7 @@ function openChangelog(){
     </div>`).join('');
   openModal(`<div class="modal-card" onclick="stopProp(event)">
     <div class="qhead"><span>版本注記 · Release notes</span><span class="mono">目前 v${esc(APP_VERSION)}</span></div>
+    <button class="btn btn-secondary btn-block" style="margin:4px 0 10px" onclick="openSpeechTest()">🔊 發音測試 · Speech test</button>
     ${rows}
     <button class="btn btn-secondary btn-block" style="margin-top:12px" onclick="closeModal()">Close</button>
   </div>`);
